@@ -1,0 +1,121 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="MasterPage.master.cs" Inherits="MasterPage" %>
+
+<!DOCTYPE html>
+
+<html>
+<head runat="server">
+    <title>Bashaer Music</title>
+    <asp:ContentPlaceHolder id="head" runat="server">
+    </asp:ContentPlaceHolder>
+    
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.js"
+      integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+      crossorigin="anonymous"></script>
+
+    <script type="text/javascript" src="Script/Master.js"></script>
+
+    <link rel="stylesheet" href="Style/Master.css" />
+    <link rel="icon" href="Images/bashaer_music_logo.png" />
+ 
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div id="modal_background" runat="server">
+        <asp:ContentPlaceHolder id="modal_place_holder" runat="server">
+        
+        </asp:ContentPlaceHolder>
+
+        <div class="modal login_style_modal" id="login_modal" runat="server">
+            <div class="login_title">Log In</div>
+
+            <asp:TextBox runat="server" ID="LogInUsernameTextBox" CssClass="login_textbox"
+                placeholder="Username"></asp:TextBox>
+            <asp:RequiredFieldValidator ID="RequiredFieldValidator_LogInUsernameTextBox" ControlToValidate="LogInUsernameTextBox"
+                Text="Username is required" runat="server" ValidationGroup="LogInValidatoinGroup"></asp:RequiredFieldValidator>
+                    
+            <asp:TextBox runat="server" ID="LogInPasswordTextBox" CssClass="login_textbox"
+                placeholder="Password" TextMode="Password"></asp:TextBox>
+            <asp:RequiredFieldValidator ControlToValidate="LogInPasswordTextBox"
+                Text="Password is required" runat="server" ValidationGroup="LogInValidatoinGroup"></asp:RequiredFieldValidator>
+                    
+            <div class="login_button_space">
+                <asp:Button runat="server" ID="LoginSubmitButton" CssClass="login_button" OnClick="LoginSubmitButton_Click"
+                    Text="Log In" ValidationGroup="LogInValidatoinGroup"/>
+
+                <asp:Button runat="server" ID="LoginCancelButton" CssClass="login_button" OnClick="LoginCancelButton_Click"
+                    Text="Cancel" CausesValidation="false"/>
+            </div>
+                    
+            <asp:label runat="server" ID="LoginWarningLabel" CssClass="warning_label_login" 
+                Text="Username and password do not match" ForeColor="Red"></asp:label>
+
+            <div class="login_form_separator"></div>
+            <div class="form_switch_link_container">
+                <span class="switch_form_text">Don't have an account?</span>&nbsp
+                <asp:LinkButton runat="server" ID="SwitchToSignupFormLinkButton" CausesValidation="false" 
+                    OnClick="SwitchToSignupFormLinkButton_Click"
+                    CssClass="switch_form_link_button">sign up here</asp:LinkButton>
+            </div>
+
+        </div>
+
+        <div class="modal login_style_modal" id="signup_modal" runat="server">
+            <div class="login_title">Sign Up</div>
+
+            <asp:TextBox runat="server" ID="SignupUsernameTextBox" CssClass="login_textbox"
+                placeholder="Username"></asp:TextBox>
+            <asp:RequiredFieldValidator ControlToValidate="SignupUsernameTextBox"
+                Text="" runat="server" ValidationGroup="SignupValidatoinGroup"></asp:RequiredFieldValidator>
+                    
+            <asp:TextBox runat="server" ID="SignupPasswordTextBox" CssClass="login_textbox"
+                placeholder="Password" TextMode="Password"></asp:TextBox>
+            <asp:RequiredFieldValidator ControlToValidate="SignupPasswordTextBox"
+                Text="" runat="server" ValidationGroup="SignupValidatoinGroup"></asp:RequiredFieldValidator>
+                    
+            <div class="login_button_space">
+                <asp:Button runat="server" ID="SignupSubmitButton" CssClass="login_button"
+                    Text="Sign Up" OnClick="SignupSubmitButton_Click" ValidationGroup="SignupValidatoinGroup"/>
+
+                <asp:Button runat="server" ID="SignupCancelButton" CssClass="login_button"
+                    Text="Cancel" OnClick="SignupCancelButton_Click" CausesValidation="false"/>
+            </div>
+                    
+            <asp:label runat="server" ID="Label1" CssClass="warning_label_login" 
+                Text="" Visible="false" ForeColor="Red"></asp:label>
+
+            <div class="login_form_separator"></div>
+            <div class="form_switch_link_container">
+                <span class="switch_form_text">Don't have an account?</span>&nbsp
+                <asp:LinkButton runat="server" ID="SwitchToLoginFormLinkButton" CausesValidation="false"
+                    OnClick="SwitchToLoginFormLinkButton_Click"
+                    CssClass="switch_form_link_button">log in here</asp:LinkButton>
+            </div>
+
+        </div>
+    </div>
+    <div class="page_div">
+        <div class="nav_bar">
+            <asp:Image runat="server" CssClass="main_logo navbar_item" AlternateText="logo" ID="LogoImage" ImageUrl="~/Images/bashaer_music_logo.png" />
+            <div class="search_bar navbar_item">
+                <asp:TextBox ID="SearchTextBox" CssClass="search_area" runat="server" placeholder="search"></asp:TextBox>
+                <asp:ImageButton ID="SearchImageButton" CssClass="search_icon" runat="server" ImageUrl="~/Images/icons/search.png"
+                    OnClick="SearchImageButton_Click" ToolTip="Search" />
+            </div>
+            <div class="nav_spacer navbar_item"></div>
+            <div class="main_menu navbar_item">
+                <asp:ImageButton CssClass="menu_item" ToolTip="Admin Tools" runat="server" ImageUrl="~/Images/icons/admin_tools.png" 
+                    ID="AdminToolsImageButton" OnClick="AdminToolsImageButton_Click"/>
+                <asp:ImageButton CssClass="menu_item" ToolTip="Account" runat="server" ImageUrl="~/Images/icons/account_unknown.png"
+                    ID="AccountImageButton"/>
+            </div>
+        </div>
+        <div class="content">
+            <asp:ContentPlaceHolder id="main_content" runat="server">
+        
+            </asp:ContentPlaceHolder>
+        </div>
+    </div>
+    </form>
+</body>
+</html>
