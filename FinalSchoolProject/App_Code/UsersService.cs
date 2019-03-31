@@ -16,52 +16,6 @@ using System.Web.Script.Serialization;
 [ScriptService]
 public class UsersService : System.Web.Services.WebService
 {
-    #region select functions
-
-    [WebMethod]
-    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public List<UsersClass> GetAll()
-    {
-        string sql_str = "SELECT * FROM [Users]";
-        DataTable all = Dbase.SelectFromTable(sql_str);
-        int count = all.Rows.Count;
-
-        List<UsersClass> result = new List<UsersClass>();
-
-        for(int i = 0; i < count; i++)
-        {
-            result.Add(new UsersClass(all.Rows[i]));
-        }
-
-        return result;
-    }
-
-    [WebMethod]
-    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public UsersClass GetByID(int id)
-    {
-        string sql_str = "SELECT * FROM [Users] WHERE [ID]=" + id.ToString();
-        DataTable user_dt = Dbase.SelectFromTable(sql_str);
-        if (user_dt.Rows.Count == 0) return null;
-
-        UsersClass user = new UsersClass(user_dt.Rows[0]);
-        return user;
-    }
-
-    [WebMethod]
-    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public UsersClass GetByCredentials(string username, string password)
-    {
-        string sql_str = "SELECT * FROM [Users] WHERE [Username]='{0}' AND [Password]='{1}'";
-        string.Format(sql_str, username, password);
-        DataTable user_dt = Dbase.SelectFromTable(sql_str);
-        if (user_dt.Rows.Count == 0) return null;
-
-        UsersClass user = new UsersClass(user_dt.Rows[0]);
-        return user;
-    }
-
-    #endregion
 
     #region utility functions
 
@@ -79,7 +33,7 @@ public class UsersService : System.Web.Services.WebService
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     public bool UserExists(string username, string password)
     {
-        UsersClass user = GetByCredentials(username, password);
+        UsersClass user = UsersClass.GetByCredentials(username, password);
         return user != null;
 
     }

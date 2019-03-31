@@ -71,27 +71,23 @@ function switchToModal(id) {
 
 function validateLoginInfo(username, password) {
 
-    var data = {};
+    var data = { username: username, password: password };
     data = JSON.stringify(data);
 
     console.log(data);
 
     $.ajax({
         type: "POST",
-        url: "UsersService.asmx/GetAll",
+        url: "UsersService.asmx/UserExists",
         dataType: "json",
         contentType: "application/json; charset=utf-8",
         data: data,
         success: function (r) {
             console.log("success");
-            console.log(r.d);
+            console.log(r);
         },
         error: function (r) {
             console.log("error");
-            console.log(r.responseText);
-        },
-        failure: function (r) {
-            console.log("failure");
             console.log(r.responseText);
         }
     });

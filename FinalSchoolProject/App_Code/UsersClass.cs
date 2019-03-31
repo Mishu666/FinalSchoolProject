@@ -83,5 +83,47 @@ public class UsersClass
         Dbase.ChangeTable(sql_str);
     }
 
+
+    #region select functions
+    
+    public List<UsersClass> GetAll()
+    {
+        string sql_str = "SELECT * FROM [Users]";
+        DataTable all = Dbase.SelectFromTable(sql_str);
+        int count = all.Rows.Count;
+
+        List<UsersClass> result = new List<UsersClass>();
+
+        for (int i = 0; i < count; i++)
+        {
+            result.Add(new UsersClass(all.Rows[i]));
+        }
+
+        return result;
+    }
+    
+    public static UsersClass GetByID(int id)
+    {
+        string sql_str = "SELECT * FROM [Users] WHERE [ID]=" + id.ToString();
+        DataTable user_dt = Dbase.SelectFromTable(sql_str);
+        if (user_dt.Rows.Count == 0) return null;
+
+        UsersClass user = new UsersClass(user_dt.Rows[0]);
+        return user;
+    }
+    
+    public static UsersClass GetByCredentials(string username, string password)
+    {
+        string sql_str = "SELECT * FROM [Users] WHERE [Username]='{0}' AND [Password]='{1}'";
+        string.Format(sql_str, username, password);
+        DataTable user_dt = Dbase.SelectFromTable(sql_str);
+        if (user_dt.Rows.Count == 0) return null;
+
+        UsersClass user = new UsersClass(user_dt.Rows[0]);
+        return user;
+    }
+
+    #endregion
+
     #endregion
 }
