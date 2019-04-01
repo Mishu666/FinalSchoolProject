@@ -5,7 +5,6 @@ using System.Web;
 using System.Data;
 using System.Web.Services;
 using System.Web.Script.Services;
-using System.Web.Script.Serialization;
 
 /// <summary>
 /// Summary description for UsersService
@@ -23,18 +22,14 @@ public class UsersService : System.Web.Services.WebService
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     public bool UserNameTaken(string username)
     {
-        string sql_str = "SELECT * FROM [Users] WHERE [Username]='{0}'";
-        string.Format(sql_str, username);
-        DataTable user_dt = Dbase.SelectFromTable(sql_str);
-        return user_dt.Rows.Count > 0;
+        return UsersClass.UserNameTaken(username);
     }
 
     [WebMethod]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     public bool UserExists(string username, string password)
     {
-        UsersClass user = UsersClass.GetByCredentials(username, password);
-        return user != null;
+        return UsersClass.UserExists(username, password);
 
     }
     #endregion

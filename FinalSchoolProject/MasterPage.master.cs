@@ -14,7 +14,7 @@ public partial class MasterPage : System.Web.UI.MasterPage
     {
         if (!IsPostBack)
         {
-            modal_background.Style["display"] = "none";
+            //modal_background.Style["display"] = "none";
         }
     }
 
@@ -53,9 +53,9 @@ public partial class MasterPage : System.Web.UI.MasterPage
 
     protected void LoginSubmitButton_Click(object sender, EventArgs e)
     {
-        string username = LogInUsernameTextBox.Text;
-        string password = LogInPasswordTextBox.Text;
-        LogInUser(username, password);
+        //string username = LogInUsernameTextBox.Text;
+        //string password = LogInPasswordTextBox.Text;
+        //LogInUser(username, password);
     }
 
     protected void SignupSubmitButton_Click(object sender, EventArgs e)
