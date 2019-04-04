@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.Services;
+using System.Data;
 
 public partial class MasterPage : System.Web.UI.MasterPage
 {
@@ -14,7 +15,7 @@ public partial class MasterPage : System.Web.UI.MasterPage
     {
         if (!IsPostBack)
         {
-            //modal_background.Style["display"] = "none";
+            
         }
     }
 
@@ -24,7 +25,9 @@ public partial class MasterPage : System.Web.UI.MasterPage
 
     public void LogInUser(string username, string password)
     {
-        
+        DataRow user = UsersClass.GetByCredentials(username, password);
+        Session["Logged"] = true;
+        Session["current_user_id"] = Convert.ToInt32(user["ID"]);
     }
 
     public void SignUpUser(string username, string password, string Email, DateTime DOB)
@@ -53,9 +56,7 @@ public partial class MasterPage : System.Web.UI.MasterPage
 
     protected void LoginSubmitButton_Click(object sender, EventArgs e)
     {
-        //string username = LogInUsernameTextBox.Text;
-        //string password = LogInPasswordTextBox.Text;
-        //LogInUser(username, password);
+
     }
 
     protected void SignupSubmitButton_Click(object sender, EventArgs e)
@@ -65,7 +66,9 @@ public partial class MasterPage : System.Web.UI.MasterPage
 
     protected void LoginCancelButton_Click(object sender, EventArgs e)
     {
-
+        string username = loginInputUsername.Text;
+        string password = loginInputPassword.Text;
+        LogInUser(username, password);
     }
 
     protected void SwitchToSignupFormLinkButton_Click(object sender, EventArgs e)
@@ -84,5 +87,5 @@ public partial class MasterPage : System.Web.UI.MasterPage
     }
 
     #endregion
-
+    
 }

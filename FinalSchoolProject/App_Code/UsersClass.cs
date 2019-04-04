@@ -142,15 +142,14 @@ public class UsersClass
         return user_dt;
     }
     
-    public static UsersClass GetByCredentials(string username, string password)
+    public static DataRow GetByCredentials(string username, string password)
     {
         string sql_str = "SELECT * FROM [Users] WHERE [Username]='{0}' AND [Password]='{1}'";
         string.Format(sql_str, username, password);
         DataTable user_dt = Dbase.SelectFromTable(sql_str);
         if (user_dt.Rows.Count == 0) return null;
 
-        UsersClass user = new UsersClass(user_dt.Rows[0]);
-        return user;
+        return user_dt.Rows[0];
     }
 
     #endregion
@@ -167,7 +166,7 @@ public class UsersClass
     
     public static bool UserExists(string username, string password)
     {
-        UsersClass user = GetByCredentials(username, password);
+        DataRow user = GetByCredentials(username, password);
         return user != null;
 
     }
