@@ -60,12 +60,12 @@ public class PostReportsClass
             throw new Exception("already inserted");
         }
 
-        string sql_insert = "INSERT INTO [PostReports] " +
+        string sql_str = "INSERT INTO [PostReports] " +
             "([ReporterID], [ReportedPostID], [ReportBody], [CreationDate]) " +
             "VALUES ({0}, {1}, '{2}', #{3}#) ";
 
-        string.Format(sql_insert, this.ReporterID, this.ReportedPostID, this.ReportBody, this.CreationDate);
-        Dbase.ChangeTable(sql_insert);
+        sql_str = string.Format(sql_str, this.ReporterID, this.ReportedPostID, this.ReportBody, this.CreationDate);
+        Dbase.ChangeTable(sql_str);
 
         string get_id = "SELECT @@IDENTITY AS ID";
 
@@ -79,7 +79,7 @@ public class PostReportsClass
         string sql_str = "Update [PostReports] " +
             "SET [ReporterID] = {0}, [ReportedPostID] = {1}, " +
             "[ReportBody] = '{2}', [CreationDate] = #{3}#";
-        string.Format(sql_str, this.ReporterID, this.ReportedPostID, this.ReportBody, this.CreationDate);
+        sql_str = string.Format(sql_str, this.ReporterID, this.ReportedPostID, this.ReportBody, this.CreationDate);
         Dbase.ChangeTable(sql_str);
     }
 

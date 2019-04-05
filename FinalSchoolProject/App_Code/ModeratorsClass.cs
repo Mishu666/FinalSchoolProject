@@ -51,12 +51,12 @@ public class ModeratorsClass
             throw new Exception("already inserted");
         }
 
-        string sql_insert = "INSERT INTO [Moderators] " +
+        string sql_str = "INSERT INTO [Moderators] " +
             "([PageID], [ModeratorID]) " +
             "VALUES ({0}, {1}) ";
 
-        string.Format(sql_insert, this.PageID, this.ModeratorID);
-        Dbase.ChangeTable(sql_insert);
+        sql_str = string.Format(sql_str, this.PageID, this.ModeratorID);
+        Dbase.ChangeTable(sql_str);
 
         string get_id = "SELECT @@IDENTITY AS ID";
 
@@ -69,7 +69,7 @@ public class ModeratorsClass
     {
         string sql_str = "Update [Moderators] " +
             "SET [PageID] = {0}, [ModeratorID] = {1}";
-        string.Format(sql_str, this.PageID, this.ModeratorID);
+        sql_str = string.Format(sql_str, this.PageID, this.ModeratorID);
         Dbase.ChangeTable(sql_str);
     }
 

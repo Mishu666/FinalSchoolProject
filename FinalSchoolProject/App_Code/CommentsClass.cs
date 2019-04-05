@@ -76,14 +76,14 @@ public class CommentsClass
             throw new Exception("already inserted");
         }
 
-        string sql_insert = "INSERT INTO [Comments] " +
+        string sql_str = "INSERT INTO [Comments] " +
             "([Title], [Body], [CommentorID], [ParentPostID], [ParentCommentID], " +
             "[CreationDate]. [IsRemoved], [IsDeleted]) " +
             "VALUES ('{0}','{1}',{2}, {3}, {4}, #{5}#, {6}, {7}) ";
 
-        string.Format(sql_insert, this.Title, this.Body, this.CommentorID, this.ParentPostID,
+        sql_str = string.Format(sql_str, this.Title, this.Body, this.CommentorID, this.ParentPostID,
             this.ParentCommentID, this.CreationDate, this.IsRemoved, this.IsDeleted);
-        Dbase.ChangeTable(sql_insert);
+        Dbase.ChangeTable(sql_str);
 
         string get_id = "SELECT @@IDENTITY AS ID";
 
@@ -98,7 +98,7 @@ public class CommentsClass
             "SET [Title] = '{0}', [Body] = '{1}', [CommentorID] = {2}, " +
             "[ParentPostID] = {3}, [ParentCommentID] = {4}, [CreationDate] = #{5}#," +
             "[IsRemoved = {6}, [IsDeleted] = {7}";
-        string.Format(sql_str, this.Title, this.Body, this.CommentorID, this.ParentPostID,
+        sql_str = string.Format(sql_str, this.Title, this.Body, this.CommentorID, this.ParentPostID,
             this.ParentCommentID, this.CreationDate, this.IsRemoved, this.IsDeleted);
         Dbase.ChangeTable(sql_str);
     }

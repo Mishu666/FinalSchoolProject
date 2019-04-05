@@ -74,15 +74,15 @@ public class PostsClass
             throw new Exception("already inserted");
         }
 
-        string sql_insert = "INSERT INTO [Posts] " +
+        string sql_str = "INSERT INTO [Posts] " +
             "([ConsultPageID], [AuthorID], [VoteCount], [Title], [Body], " +
             "[IsDeleted], [IsRemoved], [CreationDate]) " +
             "VALUES ({0}, {1}, {2},'{3}', '{4}', {5}, {6}, #{7}#) ";
 
-        string.Format(sql_insert, this.ConsultPageID, this.AuthorID,
+        sql_str = string.Format(sql_str, this.ConsultPageID, this.AuthorID,
             this.VoteCount, this.Title, this.Body, this.IsDeleted,
             this.IsRemoved, this.CreationDate);
-        Dbase.ChangeTable(sql_insert);
+        Dbase.ChangeTable(sql_str);
 
         string get_id = "SELECT @@IDENTITY AS ID";
 
@@ -97,7 +97,7 @@ public class PostsClass
             "SET [ConsultPageID] = {0}, [AuthorID] = {1}, " +
             "[VoteCount] = {2}, [Title] = '{3}', [Body] = '{4}', " +
             "[IsDeleted] = {5}, [IsRemoved] = {6}, [CreationDate] = #{7}#";
-        string.Format(sql_str, this.ConsultPageID, this.AuthorID,
+        sql_str = string.Format(sql_str, this.ConsultPageID, this.AuthorID,
             this.VoteCount, this.Title, this.Body, this.IsDeleted,
             this.IsRemoved, this.CreationDate);
         Dbase.ChangeTable(sql_str);

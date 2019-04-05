@@ -20,8 +20,10 @@
 
     <!-- Custom styles for this template-->
     <link href="Style/sb-admin-2.css" rel="stylesheet">
-
     <link rel="stylesheet" href="Style/Master.css" />
+
+    <!-- date picker css -->
+    <link rel="stylesheet" href="Style/bootstrap-datepicker.css" />
 
 </head>
 
@@ -188,11 +190,11 @@
                             <div class="topbar-divider d-none d-sm-block"></div>
 
                             <!-- Nav Item - User Information -->
-                            <% if (Session["LoggedIn"] != null && (bool)Session["LoggedIn"] == true)
+                            <% if (Session["Logged"] != null && (bool)Session["Logged"] == true)
                                 { %>
                             <li class="nav-item dropdown no-arrow">
                                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <span class="mr-2 d-none d-lg-inline text-gray-600 small">Valerie Luna</span>
+                                    <span class="mr-2 d-none d-lg-inline text-gray-600 small"><%= UsersClass.GetUserUsername(Convert.ToInt32(Session["CurrentUserID"])) %></span>
                                     <img class="img-profile rounded-circle" src="https://source.unsplash.com/QAB-WJcbgJk/60x60">
                                 </a>
                                 <!-- Dropdown - User Information -->
@@ -204,10 +206,6 @@
                                     <a class="dropdown-item" href="#">
                                         <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                                         Settings
-                                    </a>
-                                    <a class="dropdown-item" href="#">
-                                        <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                                        Activity Log
                                     </a>
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
@@ -221,7 +219,7 @@
                                 { %>
                             <li class="nav-item dropdown no-arrow">
                                 <a class="nav-link dropdown-toggle" href="#" id="noUserButton" role="button" data-toggle="modal" data-target="#loginModal" aria-haspopup="true" aria-expanded="false">
-                                    <span class="mr-2 d-none d-lg-inline text-gray-600 small">Log in / Log out </span>
+                                    <span class="mr-2 d-none d-lg-inline text-gray-600 small">Log In / Sign Up</span>
                                     <i class="fas fa-user"></i>
                                 </a>
                                 <!-- Dropdown - User Information -->
@@ -268,7 +266,7 @@
                         <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                         <div class="modal-footer">
                             <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                            <asp:Button runat="server" class="btn btn-dark" href="login.html" Text="Logout" />
+                            <asp:Button ID="LogoutConfirmButton" runat="server" CssClass="btn btn-dark" Text="Logout" OnClick="LogoutConfirmButton_Click" />
                         </div>
                     </div>
                 </div>
@@ -289,10 +287,10 @@
                         </div>
                         <div class="modal-body">
                             <div class="form-group">
-                                <asp:TextBox type="text" runat="server" class="login_textbox form-control form-control-user" ID="loginInputUsername" placeholder="Username"></asp:TextBox>
+                                <asp:TextBox runat="server" CssClass="login_textbox form-control form-control-user" ID="loginInputUsername" placeholder="Username"></asp:TextBox>
                             </div>
                             <div class="form-group">
-                                <asp:TextBox type="password" runat="server" class="login_textbox form-control form-control-user" ID="loginInputPassword" placeholder="Password"></asp:TextBox>
+                                <asp:TextBox TextMode="password" runat="server" CssClass="login_textbox form-control form-control-user" ID="loginInputPassword" placeholder="Password"></asp:TextBox>
                             </div>
                         </div>
                         <div id="login_warning_space"></div>
@@ -302,7 +300,7 @@
                         <br />
                         <div class="modal-footer">
                             <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                            <asp:Button runat="server" class="btn btn-dark" ID="LogInConfirmButton" Text="Log In"
+                            <asp:Button runat="server" CssClass="btn btn-dark" ID="LogInConfirmButton" Text="Log In"
                                 OnClick="LoginSubmitButton_Click" />
                         </div>
                     </div>
@@ -324,10 +322,16 @@
                         </div>
                         <div class="modal-body">
                             <div class="form-group">
-                                <input type="text" class="form-control form-control-user" id="signupInputUsername" placeholder="Username">
+                                <asp:TextBox runat="server" CssClass="form-control form-control-user" ID="signupInputUsername" placeholder="Username"></asp:TextBox>
                             </div>
                             <div class="form-group">
-                                <input type="password" class="form-control form-control-user" id="signupInputPassword" placeholder="Password">
+                                <asp:TextBox runat="server" TextMode="password" class="form-control form-control-user" ID="signupInputPassword" placeholder="Password"></asp:TextBox>
+                            </div>
+                            <div class="form-group">
+                                <asp:TextBox runat="server" TextMode="password" class="form-control form-control-user" ID="signupInputPasswordConfirm" placeholder="Confirm password"></asp:TextBox>
+                            </div>
+                            <div class="form-group">
+                                <asp:TextBox runat="server" CssClass="form-control form-control-user" data-provide="datepicker" ID="signupInputDOB" placeholder="Date of birth"></asp:TextBox>
                             </div>
                         </div>
                         <div class="text-center">
@@ -336,7 +340,7 @@
                         <br />
                         <div class="modal-footer">
                             <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                            <asp:Button runat="server" class="btn btn-dark" ID="Button1" Text="Sign Up" OnClick="SignupSubmitButton_Click" />
+                            <asp:Button runat="server" CssClass="btn btn-dark" ID="Button1" Text="Sign Up" OnClick="SignupSubmitButton_Click" />
                         </div>
                     </div>
                 </div>
@@ -346,11 +350,18 @@
 
 
         <!-- Bootstrap core JavaScript-->
-        <script src="vendor/jquery/jquery.min.js"></script>
+        <script src="vendor/jquery/jquery.js"></script>
         <script src="vendor/bootstrap/js/bootstrap.bundle.js"></script>
 
         <!-- Core plugin JavaScript-->
         <script src="vendor/jquery-easing/jquery.easing.js"></script>
+
+        <!-- Date picker js -->
+        <script type="text/javascript" src="Script/bootstrap-datepicker.js"></script>
+
+        <!-- luxon datetime manipulation -->
+
+        <script type="text/javascript" src="Script/luxon.js"></script>
 
         <!-- Custom scripts for all pages-->
         <script src="Script/sb-admin-2.js"></script>

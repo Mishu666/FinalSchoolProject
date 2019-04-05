@@ -55,12 +55,12 @@ public class FollowersClass
             throw new Exception("already inserted");
         }
 
-        string sql_insert = "INSERT INTO [Followers] " +
+        string sql_str = "INSERT INTO [Followers] " +
             "([FollowerID], [FollowedID], [FollowDate]) " +
             "VALUES ({0}, {1}, #{2}#) ";
 
-        string.Format(sql_insert, this.FollowerID, this.FollowedID, this.FollowDate);
-        Dbase.ChangeTable(sql_insert);
+        sql_str = string.Format(sql_str, this.FollowerID, this.FollowedID, this.FollowDate);
+        Dbase.ChangeTable(sql_str);
 
         string get_id = "SELECT @@IDENTITY AS ID";
 
@@ -73,7 +73,7 @@ public class FollowersClass
     {
         string sql_str = "Update [Followers] " +
             "SET [FollowerID] = {0}, [FollowedID] = {1}, [FollowDate] = {2}";
-        string.Format(sql_str, this.FollowerID, this.FollowedID, this.FollowDate);
+        sql_str = string.Format(sql_str, this.FollowerID, this.FollowedID, this.FollowDate);
         Dbase.ChangeTable(sql_str);
     }
 

@@ -23,11 +23,18 @@ public partial class MasterPage : System.Web.UI.MasterPage
 
     #region utility methods
 
+    public void LogOutUser()
+    {
+        Session["Logged"] = false;
+        Session["current_user_id"] = null;
+
+    }
+
     public void LogInUser(string username, string password)
     {
         DataRow user = UsersClass.GetByCredentials(username, password);
         Session["Logged"] = true;
-        Session["current_user_id"] = Convert.ToInt32(user["ID"]);
+        Session["CurrentUserID"] = user["ID"];
     }
 
     public void SignUpUser(string username, string password, string Email, DateTime DOB)
@@ -56,7 +63,9 @@ public partial class MasterPage : System.Web.UI.MasterPage
 
     protected void LoginSubmitButton_Click(object sender, EventArgs e)
     {
-
+        string username = loginInputUsername.Text;
+        string password = loginInputPassword.Text;
+        LogInUser(username, password);
     }
 
     protected void SignupSubmitButton_Click(object sender, EventArgs e)
@@ -66,9 +75,6 @@ public partial class MasterPage : System.Web.UI.MasterPage
 
     protected void LoginCancelButton_Click(object sender, EventArgs e)
     {
-        string username = loginInputUsername.Text;
-        string password = loginInputPassword.Text;
-        LogInUser(username, password);
     }
 
     protected void SwitchToSignupFormLinkButton_Click(object sender, EventArgs e)
@@ -86,6 +92,9 @@ public partial class MasterPage : System.Web.UI.MasterPage
 
     }
 
+    protected void LogoutConfirmButton_Click(object sender, EventArgs e)
+    {
+        LogOutUser();
+    }
     #endregion
-    
 }

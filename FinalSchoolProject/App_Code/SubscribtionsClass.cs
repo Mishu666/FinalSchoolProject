@@ -56,12 +56,12 @@ public class SubscribtionsClass
             throw new Exception("already inserted");
         }
 
-        string sql_insert = "INSERT INTO [Subscribtions] " +
+        string sql_str = "INSERT INTO [Subscribtions] " +
             "([SubscriberID], [SubscribedPageID], [SubscribtionDate]) " +
             "VALUES ({0}, {1}, #{3}#) ";
 
-        string.Format(sql_insert, this.SubscriberID, this.SubscribedPageID, this.SubscribtionDate);
-        Dbase.ChangeTable(sql_insert);
+        sql_str = string.Format(sql_str, this.SubscriberID, this.SubscribedPageID, this.SubscribtionDate);
+        Dbase.ChangeTable(sql_str);
 
         string get_id = "SELECT @@IDENTITY AS ID";
 
@@ -74,7 +74,7 @@ public class SubscribtionsClass
     {
         string sql_str = "Update [Subscribtions] " +
             "SET [SubscriberID] = {0}, [SubscribedPageID] = {1}, [SubscribtionDate] = #{3}#";
-        string.Format(sql_str, this.SubscriberID, this.SubscribedPageID, this.SubscribtionDate);
+        sql_str = string.Format(sql_str, this.SubscriberID, this.SubscribedPageID, this.SubscribtionDate);
         Dbase.ChangeTable(sql_str);
     }
 

@@ -56,12 +56,12 @@ public class SavedPostsClass
             throw new Exception("already inserted");
         }
 
-        string sql_insert = "INSERT INTO [SavedPosts] " +
+        string sql_str = "INSERT INTO [SavedPosts] " +
             "([SaverID], [SavedPostID], [SaveDate]) " +
             "VALUES ({0}, {1}, #{3}#) ";
 
-        string.Format(sql_insert, this.SaverID, this.SavedPostID, this.SaveDate);
-        Dbase.ChangeTable(sql_insert);
+        sql_str = string.Format(sql_str, this.SaverID, this.SavedPostID, this.SaveDate);
+        Dbase.ChangeTable(sql_str);
 
         string get_id = "SELECT @@IDENTITY AS ID";
 
@@ -74,7 +74,7 @@ public class SavedPostsClass
     {
         string sql_str = "Update [SavedPosts] " +
             "SET [SaverID] = {0}, [SavedPostID] = {1}, [SaveDate] = #{3}#";
-        string.Format(sql_str, this.SaverID, this.SavedPostID, this.SaveDate);
+        sql_str = string.Format(sql_str, this.SaverID, this.SavedPostID, this.SaveDate);
         Dbase.ChangeTable(sql_str);
     }
 

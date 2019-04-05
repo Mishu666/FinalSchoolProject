@@ -1,11 +1,21 @@
-﻿$(document).ready(function () {
+﻿
+//$(function () {
+//    $('[data-toggle="tooltip"]').tooltip()
+//})
+
+var DateTime = luxon.DateTime;
+
+$(document).ready(function () {
 
     clearLoginModal();
+    
+    $('.datepicker').datepicker({
+        autoclose: true
+    });
 
     $("#LogInConfirmButton").on("click", function (e) {
-
-        loginSubmit(e);
-
+        clearLoginWarning();
+        validateLogin(e);
     });
 
     $("#loginModal").on("hide.bs.modal", function (e) {
@@ -18,46 +28,46 @@
 
 });
 
-
-$(function () {
-    $('[data-toggle="tooltip"]').tooltip()
-})
-
-function loginSubmit(e) {
-    clearLoginWarning();
-    var valid = true;
-    var username = $("#loginInputUsername").val();
-    var password = $("#loginInputPassword").val();
+function validateLogin(e) {
+    e.preventDefault();
+    let valid = true;
+    let username = $("#loginInputUsername").val();
+    let password = $("#loginInputPassword").val();
 
     if (username === "") {
-        e.preventDefault();
         $("#loginInputUsername").addClass("border-danger");
         let username_warning = createWarning("Username required");
         $("#login_warning_space").append(username_warning);
         valid = false;
     }
     if (password === "") {
-        e.preventDefault();
         $("#loginInputPassword").addClass("border-danger");
         let password_warning = createWarning("Password required");
         $("#login_warning_space").append(password_warning);
         valid = false;
     }
+    else {
+        userExists(username, password, function (data) {
 
-    if (valid) {
-        let exists = userExists(username, password);
-        if (!exists) {
-            e.preventDefault();
-            $("#loginInputUsername").addClass("border-danger");
-            $("#loginInputPassword").addClass("border-danger");
-            let warning = createWarning("Username and password don't match");
-            $("#login_warning_space").append(warning);
-        }
+            let exists = data.d;
+            console.log(exists);
+            if (!exists) {
+                valid = false;
+                $("#loginInputUsername").addClass("border-danger");
+                $("#loginInputPassword").addClass("border-danger");
+                let warning = createWarning("Username and password don't match");
+                $("#login_warning_space").append(warning);
+            }
+            else {
+                console.log("valid!");
+                $("#LogInConfirmButton").unbind("click").trigger("click");
+            }
+
+        });
     }
-
 }
 
-function userExists(username, password) {
+function userExists(username, password, success_callback) {
 
     var data = { "username": username, "password": password };
 
@@ -71,12 +81,8 @@ function userExists(username, password) {
             console.log("error");
             console.log(r.responseText);
         },
-        success: function (r) {
-            console.log("success");
-            console.log(r.d);
-            return r.d
-        }
-    })
+        success: success_callback
+    });
 
 }
 
@@ -110,4 +116,8 @@ function createWarning(message) {
     warning.setAttribute("role", "alert");
     warning.innerText = message;
     return warning;
+}
+
+function createLoginWarning(message) {
+    let warning = createWarning(message);
 }

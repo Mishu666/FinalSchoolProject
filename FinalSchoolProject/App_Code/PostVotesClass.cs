@@ -55,12 +55,12 @@ public class PostVotesClass
             throw new Exception("already inserted");
         }
 
-        string sql_insert = "INSERT INTO [PostVotes] " +
+        string sql_str = "INSERT INTO [PostVotes] " +
             "([VoterID], [VotedPostID], [VoteValue]) " +
             "VALUES ({0}, {1}, {2}) ";
 
-        string.Format(sql_insert, this.VoterID, this.VotedPostID, this.VoteValue);
-        Dbase.ChangeTable(sql_insert);
+        sql_str = string.Format(sql_str, this.VoterID, this.VotedPostID, this.VoteValue);
+        Dbase.ChangeTable(sql_str);
 
         string get_id = "SELECT @@IDENTITY AS ID";
 
@@ -74,7 +74,7 @@ public class PostVotesClass
         string sql_str = "Update [PostVotes] " +
             "SET [VoterID] = {0}, [VotedPostID] = {1}, " +
             "[VoteValue] = {2}";
-        string.Format(sql_str, this.VoterID, this.VotedPostID, this.VoteValue);
+        sql_str = string.Format(sql_str, this.VoterID, this.VotedPostID, this.VoteValue);
         Dbase.ChangeTable(sql_str);
     }
 

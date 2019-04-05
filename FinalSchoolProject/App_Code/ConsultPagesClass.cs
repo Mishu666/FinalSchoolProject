@@ -55,12 +55,12 @@ public class ConsultPagesClass
             throw new Exception("already inserted");
         }
 
-        string sql_insert = "INSERT INTO [ConsultPages] " +
+        string sql_str = "INSERT INTO [ConsultPages] " +
             "([SubscriberCount], [PageName], [Status]) " +
             "VALUES ({0}, '{1}', '{2}') ";
 
-        string.Format(sql_insert, this.SubscriberCount, this.PageName, this.Status);
-        Dbase.ChangeTable(sql_insert);
+        sql_str = string.Format(sql_str, this.SubscriberCount, this.PageName, this.Status);
+        Dbase.ChangeTable(sql_str);
 
         string get_id = "SELECT @@IDENTITY AS ID";
 
@@ -73,7 +73,7 @@ public class ConsultPagesClass
     {
         string sql_str = "Update [ConsultPages] " +
             "SET [SubscriberCount] = {0}, [PageName] = '{1}', [Status] = '{2}'";
-        string.Format(sql_str, this.SubscriberCount, this.PageName, this.Status);
+        sql_str = string.Format(sql_str, this.SubscriberCount, this.PageName, this.Status);
         Dbase.ChangeTable(sql_str);
     }
 
