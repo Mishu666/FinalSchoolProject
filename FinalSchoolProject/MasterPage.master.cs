@@ -37,14 +37,15 @@ public partial class MasterPage : System.Web.UI.MasterPage
         Session["CurrentUserID"] = user["ID"];
     }
 
-    public void SignUpUser(string username, string password, string Email, DateTime DOB)
+    public void SignUpUser(string username, string password, DateTime DOB)
     {
-
+        UsersClass user = new UsersClass(username, password, DOB);
+        LogInUser(username, password);
     }
 
     #endregion
 
-    #region button click events
+    #region control events
 
     protected void AdminToolsImageButton_Click(object sender, ImageClickEventArgs e)
     {
@@ -70,6 +71,11 @@ public partial class MasterPage : System.Web.UI.MasterPage
 
     protected void SignupSubmitButton_Click(object sender, EventArgs e)
     {
+        string username = signupInputUsername.Text;
+        string password = signupInputPassword.Text;
+        DateTime DOB = DateTime.ParseExact(signupInputDOB.Text, "dd/mm/yyyy", null);
+
+        SignUpUser(username, password, DOB);
 
     }
 

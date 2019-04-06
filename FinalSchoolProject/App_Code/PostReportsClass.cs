@@ -11,7 +11,7 @@ public class PostReportsClass
 {
     public readonly int ID;
     public int ReporterID, ReportedPostID;
-    public string ReportBody;
+    public string Body;
     public DateTime CreationDate;
 
     #region constructors
@@ -22,12 +22,12 @@ public class PostReportsClass
     }
 
     private PostReportsClass(int ID, int ReporterID,
-        int ReportedPostID, string ReportBody, DateTime CreationDate)
+        int ReportedPostID, string Body, DateTime CreationDate)
     {
         this.ID = ID;
         this.ReporterID = ReporterID;
         this.ReportedPostID = ReportedPostID;
-        this.ReportBody = ReportBody;
+        this.Body = Body;
         this.CreationDate = CreationDate;
     }
 
@@ -36,15 +36,15 @@ public class PostReportsClass
         this.ID = Convert.ToInt32(dr["ID"]);
         this.ReporterID = Convert.ToInt32(dr["ReporterID"]);
         this.ReportedPostID = Convert.ToInt32(dr["ReportedPostID"]);
-        this.ReportBody = dr["ReportBody"].ToString();
+        this.Body = dr["Body"].ToString();
         this.CreationDate = Convert.ToDateTime(dr["CreationDate"]);
     }
 
-    public PostReportsClass(int ReporterID, int ReportedPostID, string ReportBody)
+    public PostReportsClass(int ReporterID, int ReportedPostID, string Body)
     {
         this.ReporterID = ReporterID;
         this.ReportedPostID = ReportedPostID;
-        this.ReportBody = ReportBody;
+        this.Body = Body;
         this.CreationDate = DateTime.Now;
         this.ID = this.Insert();
     }
@@ -61,10 +61,10 @@ public class PostReportsClass
         }
 
         string sql_str = "INSERT INTO [PostReports] " +
-            "([ReporterID], [ReportedPostID], [ReportBody], [CreationDate]) " +
+            "([ReporterID], [ReportedPostID], [Body], [CreationDate]) " +
             "VALUES ({0}, {1}, '{2}', #{3}#) ";
 
-        sql_str = string.Format(sql_str, this.ReporterID, this.ReportedPostID, this.ReportBody, this.CreationDate);
+        sql_str = string.Format(sql_str, this.ReporterID, this.ReportedPostID, this.Body, this.CreationDate);
         Dbase.ChangeTable(sql_str);
 
         string get_id = "SELECT @@IDENTITY AS ID";
@@ -78,8 +78,8 @@ public class PostReportsClass
     {
         string sql_str = "Update [PostReports] " +
             "SET [ReporterID] = {0}, [ReportedPostID] = {1}, " +
-            "[ReportBody] = '{2}', [CreationDate] = #{3}#";
-        sql_str = string.Format(sql_str, this.ReporterID, this.ReportedPostID, this.ReportBody, this.CreationDate);
+            "[Body] = '{2}', [CreationDate] = #{3}#";
+        sql_str = string.Format(sql_str, this.ReporterID, this.ReportedPostID, this.Body, this.CreationDate);
         Dbase.ChangeTable(sql_str);
     }
 

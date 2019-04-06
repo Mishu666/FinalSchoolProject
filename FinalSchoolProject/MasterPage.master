@@ -103,7 +103,8 @@
                         <!-- Topbar Search -->
                         <div class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                             <div class="input-group">
-                                <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
+                                <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." style="height: 38px;"
+                                    aria-label="Search" aria-describedby="basic-addon2">
                                 <div class="input-group-append">
                                     <button class="btn btn-dark" type="button">
                                         <i class="fas fa-search fa-sm"></i>
@@ -300,7 +301,7 @@
                         <br />
                         <div class="modal-footer">
                             <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                            <asp:Button runat="server" CssClass="btn btn-dark" ID="LogInConfirmButton" Text="Log In"
+                            <asp:Button runat="server" CssClass="btn btn-dark" ID="LogInSubmitButton" Text="Log In"
                                 OnClick="LoginSubmitButton_Click" />
                         </div>
                     </div>
@@ -322,25 +323,26 @@
                         </div>
                         <div class="modal-body">
                             <div class="form-group">
-                                <asp:TextBox runat="server" CssClass="form-control form-control-user" ID="signupInputUsername" placeholder="Username"></asp:TextBox>
+                                <asp:TextBox runat="server" CssClass="signup_textbox form-control form-control-user" ID="signupInputUsername" placeholder="Username"></asp:TextBox>
                             </div>
                             <div class="form-group">
-                                <asp:TextBox runat="server" TextMode="password" class="form-control form-control-user" ID="signupInputPassword" placeholder="Password"></asp:TextBox>
+                                <asp:TextBox runat="server" TextMode="password" class="signup_textbox form-control form-control-user" ID="signupInputPassword" placeholder="Password"></asp:TextBox>
                             </div>
                             <div class="form-group">
-                                <asp:TextBox runat="server" TextMode="password" class="form-control form-control-user" ID="signupInputPasswordConfirm" placeholder="Confirm password"></asp:TextBox>
+                                <asp:TextBox runat="server" TextMode="password" class="signup_textbox form-control form-control-user" ID="signupInputPasswordConfirm" placeholder="Confirm password"></asp:TextBox>
                             </div>
                             <div class="form-group">
-                                <asp:TextBox runat="server" CssClass="form-control form-control-user" data-provide="datepicker" ID="signupInputDOB" placeholder="Date of birth"></asp:TextBox>
+                                <asp:TextBox runat="server" CssClass="signup_textbox form-control form-control-user" data-provide="datepicker" ID="signupInputDOB" placeholder="Date of birth"></asp:TextBox>
                             </div>
                         </div>
+                        <div id="signup_warning_space"></div>
                         <div class="text-center">
                             <a class="small" href="#" data-dismiss="modal" data-toggle="modal" data-target="#loginModal">Already have an account? Log in!</a>
                         </div>
                         <br />
                         <div class="modal-footer">
                             <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                            <asp:Button runat="server" CssClass="btn btn-dark" ID="Button1" Text="Sign Up" OnClick="SignupSubmitButton_Click" />
+                            <asp:Button runat="server" CssClass="btn btn-dark" ID="SignUpSubmitButton" Text="Sign Up" OnClick="SignupSubmitButton_Click" />
                         </div>
                     </div>
                 </div>

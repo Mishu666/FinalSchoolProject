@@ -20,7 +20,7 @@ public class UsersService : System.Web.Services.WebService
 
     [WebMethod]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public bool UserNameTaken(string username)
+    public bool UsernameTaken(string username)
     {
         return UsersClass.UserNameTaken(username);
     }
