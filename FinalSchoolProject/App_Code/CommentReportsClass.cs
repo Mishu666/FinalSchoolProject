@@ -87,7 +87,7 @@ public class CommentReportsClass
 
     #region select functions
 
-    public DataTable GetAll()
+    public static DataTable GetAll()
     {
         string sql_str = "SELECT * FROM [CommentReports]";
         DataTable all = Dbase.SelectFromTable(sql_str);

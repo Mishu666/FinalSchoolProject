@@ -82,7 +82,7 @@ public class SubscribtionsClass
 
     #region select functions
 
-    public DataTable GetAll()
+    public static DataTable GetAll()
     {
         string sql_str = "SELECT * FROM [Subscribtions]";
         DataTable all = Dbase.SelectFromTable(sql_str);

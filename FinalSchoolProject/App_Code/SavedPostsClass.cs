@@ -82,7 +82,7 @@ public class SavedPostsClass
 
     #region select functions
 
-    public DataTable GetAll()
+    public static DataTable GetAll()
     {
         string sql_str = "SELECT * FROM [SavedPosts]";
         DataTable all = Dbase.SelectFromTable(sql_str);

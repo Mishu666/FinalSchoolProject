@@ -87,7 +87,7 @@ public class PostReportsClass
 
     #region select functions
 
-    public DataTable GetAll()
+    public static DataTable GetAll()
     {
         string sql_str = "SELECT * FROM [PostReports]";
         DataTable all = Dbase.SelectFromTable(sql_str);

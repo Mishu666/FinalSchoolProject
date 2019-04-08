@@ -81,7 +81,7 @@ public class ConsultPagesClass
 
     #region select functions
 
-    public DataTable GetAll()
+    public static DataTable GetAll()
     {
         string sql_str = "SELECT * FROM [ConsultPages]";
         DataTable all = Dbase.SelectFromTable(sql_str);

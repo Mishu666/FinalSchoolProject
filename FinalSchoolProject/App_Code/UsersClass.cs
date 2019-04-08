@@ -10,8 +10,7 @@ using System.Data;
 public class UsersClass
 {
     public readonly int ID = 0;
-    public int Flags;
-    public int MyFollowersCount, FollowingCount;
+    public int Flags, Points, MyFollowersCount, FollowingCount;
     public string Username, Password;
     public DateTime DOB, CreationDate;
     public bool IsAdmin, IsSuspended, IsPrivate, IsDeleted;
@@ -23,7 +22,7 @@ public class UsersClass
 
     }
 
-    private UsersClass(int ID, int MyFollowersCount, int FollowingCount, int Flags, 
+    private UsersClass(int ID, int MyFollowersCount, int FollowingCount, int Flags, int Points,
         string Username, string Password, 
         DateTime DOB, DateTime CreationDate, 
         bool IsAdmin, bool IsSuspended, bool IsPrivate, bool IsDeleted)
@@ -32,6 +31,7 @@ public class UsersClass
         this.MyFollowersCount = MyFollowersCount;
         this.FollowingCount = FollowingCount;
         this.Flags = Flags;
+        this.Points = Points;
         this.Username = Username;
         this.Password = Password;
         this.DOB = DOB;
@@ -48,6 +48,7 @@ public class UsersClass
         this.MyFollowersCount = Convert.ToInt32(dr["MyFollowersCount"]);
         this.FollowingCount = Convert.ToInt32(dr["FollowingCount"]);
         this.Flags = Convert.ToInt32(dr["Flags"]);
+        this.Points = Convert.ToInt32(dr["Points"]);
         this.Username = dr["Username"].ToString();
         this.Password = dr["Password"].ToString();
         this.DOB = Convert.ToDateTime(dr["DOB"]);
@@ -67,6 +68,7 @@ public class UsersClass
         this.MyFollowersCount = 0;
         this.FollowingCount = 0;
         this.Flags = 0;
+        this.Points = 0;
         this.CreationDate = DateTime.Now;
         this.IsAdmin = false;
         this.IsSuspended = false;
@@ -87,11 +89,11 @@ public class UsersClass
         }
 
         string sql_str = "INSERT INTO [Users] " +
-            "([Username], [Password], [MyFollowersCount], [FollowingCount],[Flags], " +
+            "([Username], [Password], [MyFollowersCount], [FollowingCount], [Flags], [Points], " +
             "[CreationDate], [DOB], [IsAdmin], [IsSuspended], [IsPrivate], [IsDeleted]) " +
-            "VALUES ('{0}','{1}', {2}, {3}, {4}, #{5}#, #{6}#, {7}, {8}, {9}, {10}) ";
+            "VALUES ('{0}','{1}', {2}, {3}, {4}, {5}, #{6}#, #{7}#, {8}, {9}, {10}, {11}) ";
 
-        sql_str = string.Format(sql_str, this.Username, this.Password, this.MyFollowersCount, this.FollowingCount,this.Flags,
+        sql_str = string.Format(sql_str, this.Username, this.Password, this.MyFollowersCount, this.FollowingCount,this.Flags, this.Points,
             this.CreationDate, this.DOB, this.IsAdmin, this.IsSuspended, this.IsPrivate, this.IsDeleted);
         Dbase.ChangeTable(sql_str);
 
@@ -106,10 +108,10 @@ public class UsersClass
     {
         string sql_str = "Update [Users] " +
             "SET [Username] = '{0}', [Password] = '{1}', " +
-            "[MyFollowersCount] = {2}, [FollowingCount] = {3} , [Flags] = {4}, " +
-            "[CreationDate] = #{5}#, [DOB] = #{6}#, [IsAdmin] = {7}, [IsSuspended] = {8}, " +
-            "[IsPrivate] = {9}, [IsDeleted] = {10}";
-        sql_str = string.Format(sql_str, this.Username, this.Password, this.MyFollowersCount, this.FollowingCount, this.Flags,
+            "[MyFollowersCount] = {2}, [FollowingCount] = {3} , [Flags] = {4}, [Points]= {5}, " +
+            "[CreationDate] = #{6}#, [DOB] = #{7}#, [IsAdmin] = {8}, [IsSuspended] = {9}, " +
+            "[IsPrivate] = {10}, [IsDeleted] = {11}";
+        sql_str = string.Format(sql_str, this.Username, this.Password, this.MyFollowersCount, this.FollowingCount, this.Flags, this.Points,
             this.CreationDate, this.DOB, this.IsAdmin, this.IsSuspended, this.IsPrivate, this.IsDeleted);
         Dbase.ChangeTable(sql_str);
     }
@@ -118,7 +120,7 @@ public class UsersClass
 
     #region select functions
 
-    public DataTable GetAll()
+    public static DataTable GetAll()
     {
         string sql_str = "SELECT * FROM [Users]";
         DataTable all = Dbase.SelectFromTable(sql_str);
