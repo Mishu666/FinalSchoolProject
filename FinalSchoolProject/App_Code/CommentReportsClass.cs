@@ -9,7 +9,7 @@ using System.Data;
 /// </summary>
 public class CommentReportsClass
 {
-    public readonly int ID;
+    public int ID { get; private set; }
     public int ReporterID, ReportedCommentID;
     public string Body;
     public DateTime CreationDate;
@@ -40,20 +40,25 @@ public class CommentReportsClass
         this.CreationDate = Convert.ToDateTime(dr["CreationDate"]);
     }
 
-    public CommentReportsClass(int ReporterID, int ReportedCommentID, string Body)
+    public static CommentReportsClass CreateNew(int ReporterID, int ReportedCommentID, string Body)
     {
-        this.ReporterID = ReporterID;
-        this.ReportedCommentID = ReportedCommentID;
-        this.Body = Body;
-        this.CreationDate = DateTime.Now;
-        this.ID = this.Insert();
+        CommentReportsClass commentreport = new CommentReportsClass
+        {
+            ReporterID = ReporterID,
+            ReportedCommentID = ReportedCommentID,
+            Body = Body,
+            CreationDate = DateTime.Now
+        };
+        
+        commentreport.Insert();
+        return commentreport;
     }
 
     #endregion
 
     #region sql functions
 
-    private int Insert()
+    private void Insert()
     {
         if (ID != 0)
         {
@@ -71,7 +76,7 @@ public class CommentReportsClass
 
         DataTable dt = Dbase.SelectFromTable(get_id);
 
-        return Convert.ToInt32(dt.Rows[0]["ID"]);
+        this.ID = Convert.ToInt32(dt.Rows[0]["ID"]);
     }
 
     public void Update()
@@ -95,14 +100,25 @@ public class CommentReportsClass
         return all;
     }
 
-    public static DataTable GetByProperty(string property, object val)
+    public static DataTable GetByProperty(params KeyValuePair<string, object>[] pairs)
     {
-        string surround = "";
-        if (val is string) surround = "'";
-        if (val is DateTime) surround = "#";
+        string sql_str = "SELECT * FROM [CommentReports]";
+        string surround;
 
-        string sql_str = "SELECT * FROM [CommentReports] WHERE [" + property + "] = {0}{1}{0}";
-        DataTable user_dt = Dbase.SelectFromTable(surround, sql_str);
+        if (pairs.Length > 0) sql_str += " WHERE ";
+
+        for (int i = 0; i < pairs.Length; i++)
+        {
+            surround = "";
+            if (pairs[i].Value is string) surround = "'";
+            if (pairs[i].Value is DateTime) surround = "#";
+            sql_str += "[{1}] = {0}{2}{0}";
+            if (i < pairs.Length - 1) sql_str += " AND ";
+
+            sql_str = string.Format(sql_str, surround, pairs[i].Key, pairs[i].Value);
+
+        }
+        DataTable user_dt = Dbase.SelectFromTable(sql_str);
         return user_dt;
     }
 

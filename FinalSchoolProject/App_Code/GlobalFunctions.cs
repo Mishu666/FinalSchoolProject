@@ -11,6 +11,25 @@ using System.Web.UI.WebControls;
 /// </summary>
 public static class GlobalFunctions
 {
+    public static string FormatNumber(int number)
+    {
+        double final = number;
+        if (final < 1000) return number.ToString();
+        if (final < 1000000)
+        {
+            return Math.Round((final / 1000), 1).ToString() + " K";
+        }
+        if (final < 1000000000)
+        {
+            return Math.Round((final / 1000000), 1).ToString() + " M";
+        }
+        if (final < 1000000000000)
+        {
+            return Math.Round((final / 1000000000), 1).ToString() + " B";
+        }
+        else return "a heckuva lot";
+    }
+
     public static void AddCssClass(WebControl control, string classname)
     {
         if (string.IsNullOrWhiteSpace(classname)) return;

@@ -9,7 +9,7 @@ using System.Data;
 /// </summary>
 public class CommentsClass
 {
-    public readonly int ID;
+    public int ID { get; private set; }
     public int CommentorID, ParentPostID, ParentCommentID;
     public string Title, Body;
     public DateTime CreationDate;
@@ -51,25 +51,30 @@ public class CommentsClass
         this.IsDeleted = Convert.ToBoolean(dr["IsDeleted"]);
     }
 
-    public CommentsClass(string Title, string Body,
+    public static CommentsClass CreateNew(string Title, string Body,
         int CommentorID, int ParentPostID, int ParentCommentID)
     {
-        this.Title = Title;
-        this.Body = Body;
-        this.CommentorID = CommentorID;
-        this.ParentPostID = ParentPostID;
-        this.ParentCommentID = ParentCommentID;
-        this.CreationDate = DateTime.Now;
-        this.IsRemoved = false;
-        this.IsDeleted = false;
-        this.ID = this.Insert();
+        CommentsClass comment = new CommentsClass
+        {
+            Title = Title,
+        Body = Body,
+        CommentorID = CommentorID,
+        ParentPostID = ParentPostID,
+        ParentCommentID = ParentCommentID,
+        CreationDate = DateTime.Now,
+        IsRemoved = false,
+        IsDeleted = false
+        };
+        
+        comment.Insert();
+        return comment;
     }
 
     #endregion
 
     #region sql functions
 
-    private int Insert()
+    private void Insert()
     {
         if (ID != 0)
         {
@@ -89,7 +94,7 @@ public class CommentsClass
 
         DataTable dt = Dbase.SelectFromTable(get_id);
 
-        return Convert.ToInt32(dt.Rows[0]["ID"]);
+        this.ID = Convert.ToInt32(dt.Rows[0]["ID"]);
     }
 
     public void Update()
@@ -115,14 +120,25 @@ public class CommentsClass
         return all;
     }
 
-    public static DataTable GetByProperty(string property, object val)
+    public static DataTable GetByProperty(params KeyValuePair<string, object>[] pairs)
     {
-        string surround = "";
-        if (val is string) surround = "'";
-        if (val is DateTime) surround = "#";
+        string sql_str = "SELECT * FROM [Comments]";
+        string surround;
 
-        string sql_str = "SELECT * FROM [Comments] WHERE [" + property + "] = {0}{1}{0}";
-        DataTable user_dt = Dbase.SelectFromTable(surround, sql_str);
+        if (pairs.Length > 0) sql_str += " WHERE ";
+
+        for (int i = 0; i < pairs.Length; i++)
+        {
+            surround = "";
+            if (pairs[i].Value is string) surround = "'";
+            if (pairs[i].Value is DateTime) surround = "#";
+            sql_str += "[{1}] = {0}{2}{0}";
+            if (i < pairs.Length - 1) sql_str += " AND ";
+
+            sql_str = string.Format(sql_str, surround, pairs[i].Key, pairs[i].Value);
+
+        }
+        DataTable user_dt = Dbase.SelectFromTable(sql_str);
         return user_dt;
     }
     #endregion

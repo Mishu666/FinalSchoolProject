@@ -15,9 +15,7 @@ using System.Web.Script.Services;
 [ScriptService]
 public class UsersService : System.Web.Services.WebService
 {
-
-    #region utility functions
-
+   
     [WebMethod]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     public bool UsernameTaken(string username)
@@ -32,6 +30,21 @@ public class UsersService : System.Web.Services.WebService
         return UsersClass.UserExists(username, password);
 
     }
-    #endregion
+
+    [WebMethod]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public void Upvote(int PostID)
+    {
+        int userID = Convert.ToInt32(Session["CurrentUserID"]);
+        PostVotesClass upvote = PostVotesClass.CreateNew(userID, PostID, 1);
+    }
+
+    [WebMethod]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public void Downvote(int PostID)
+    {
+        int userID = Convert.ToInt32(Session["CurrentUserID"]);
+        PostVotesClass upvote = PostVotesClass.CreateNew(userID, PostID, -1);
+    }
 
 }

@@ -9,7 +9,7 @@ using System.Data;
 /// </summary>
 public class SubscribtionsClass
 {
-    public readonly int ID;
+    public int ID { get; private set; }
     public int SubscriberID, SubscribedPageID;
     public DateTime SubscribtionDate;
 
@@ -21,7 +21,7 @@ public class SubscribtionsClass
     }
 
     private SubscribtionsClass(int ID, int SubscriberID,
-        int SubscribedPageID , DateTime SubscribtionDate)
+        int SubscribedPageID, DateTime SubscribtionDate)
     {
         this.ID = ID;
         this.SubscriberID = SubscriberID;
@@ -37,19 +37,23 @@ public class SubscribtionsClass
         this.SubscribtionDate = Convert.ToDateTime(dr["SubscribtionDate"]);
     }
 
-    public SubscribtionsClass(int SubscriberID, int SubscribedPageID)
+    public static SubscribtionsClass CreateNew(int SubscriberID, int SubscribedPageID)
     {
-        this.SubscriberID = SubscriberID;
-        this.SubscribedPageID = SubscribedPageID;
-        this.SubscribtionDate = DateTime.Now;
-        this.ID = this.Insert();
+        SubscribtionsClass sub = new SubscribtionsClass
+        {
+            SubscriberID = SubscriberID,
+            SubscribedPageID = SubscribedPageID,
+            SubscribtionDate = DateTime.Now
+        };
+        sub.Insert();
+        return sub;
     }
 
     #endregion
 
     #region sql functions
 
-    private int Insert()
+    private void Insert()
     {
         if (ID != 0)
         {
@@ -67,7 +71,7 @@ public class SubscribtionsClass
 
         DataTable dt = Dbase.SelectFromTable(get_id);
 
-        return Convert.ToInt32(dt.Rows[0]["ID"]);
+        this.ID = Convert.ToInt32(dt.Rows[0]["ID"]);
     }
 
     public void Update()
@@ -90,14 +94,25 @@ public class SubscribtionsClass
         return all;
     }
 
-    public static DataTable GetByProperty(string property, object val)
+    public static DataTable GetByProperty(params KeyValuePair<string, object>[] pairs)
     {
-        string surround = "";
-        if (val is string) surround = "'";
-        if (val is DateTime) surround = "#";
+        string sql_str = "SELECT * FROM [Subscribtions]";
+        string surround;
 
-        string sql_str = "SELECT * FROM [Subscribtions] WHERE [" + property + "] = {0}{1}{0}";
-        DataTable user_dt = Dbase.SelectFromTable(surround, sql_str);
+        if (pairs.Length > 0) sql_str += " WHERE ";
+
+        for (int i = 0; i < pairs.Length; i++)
+        {
+            surround = "";
+            if (pairs[i].Value is string) surround = "'";
+            if (pairs[i].Value is DateTime) surround = "#";
+            sql_str += "[{1}] = {0}{2}{0}";
+            if (i < pairs.Length - 1) sql_str += " AND ";
+
+            sql_str = string.Format(sql_str, surround, pairs[i].Key, pairs[i].Value);
+
+        }
+        DataTable user_dt = Dbase.SelectFromTable(sql_str);
         return user_dt;
     }
 

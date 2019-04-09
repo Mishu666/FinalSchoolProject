@@ -9,7 +9,8 @@ using System.Data;
 /// </summary>
 public class UsersClass
 {
-    public readonly int ID = 0;
+    public int ID { get; private set; }
+
     public int Flags, Points, MyFollowersCount, FollowingCount;
     public string Username, Password;
     public DateTime DOB, CreationDate;
@@ -23,11 +24,11 @@ public class UsersClass
     }
 
     private UsersClass(int ID, int MyFollowersCount, int FollowingCount, int Flags, int Points,
-        string Username, string Password, 
-        DateTime DOB, DateTime CreationDate, 
+        string Username, string Password,
+        DateTime DOB, DateTime CreationDate,
         bool IsAdmin, bool IsSuspended, bool IsPrivate, bool IsDeleted)
     {
-        this.ID = ID;
+        this.Id = ID;
         this.MyFollowersCount = MyFollowersCount;
         this.FollowingCount = FollowingCount;
         this.Flags = Flags;
@@ -44,7 +45,7 @@ public class UsersClass
 
     private UsersClass(DataRow dr)
     {
-        this.ID = Convert.ToInt32(dr["ID"]);
+        this.Id = Convert.ToInt32(dr["ID"]);
         this.MyFollowersCount = Convert.ToInt32(dr["MyFollowersCount"]);
         this.FollowingCount = Convert.ToInt32(dr["FollowingCount"]);
         this.Flags = Convert.ToInt32(dr["Flags"]);
@@ -59,31 +60,35 @@ public class UsersClass
         this.IsDeleted = Convert.ToBoolean(dr["IsDeleted"]);
     }
 
-    public UsersClass(string Username, string Password, DateTime DOB)
+    public static UsersClass CreateNew(string Username, string Password, DateTime DOB)
     {
-        this.Username = Username;
-        this.Password = Password;
-        this.DOB = DOB;
-        this.IsAdmin = false;
-        this.MyFollowersCount = 0;
-        this.FollowingCount = 0;
-        this.Flags = 0;
-        this.Points = 0;
-        this.CreationDate = DateTime.Now;
-        this.IsAdmin = false;
-        this.IsSuspended = false;
-        this.IsPrivate = false;
-        this.IsDeleted = false;
-        this.ID = this.Insert();
+        UsersClass user = new UsersClass
+        {
+            Username = Username,
+            Password = Password,
+            DOB = DOB,
+            IsAdmin = false,
+            MyFollowersCount = 0,
+            FollowingCount = 0,
+            Flags = 0,
+            Points = 0,
+            CreationDate = DateTime.Now,
+            IsSuspended = false,
+            IsPrivate = false,
+            IsDeleted = false
+        };
+        user.Insert();
+        return user;
+
     }
 
     #endregion
 
     #region sql functions
 
-    private int Insert()
+    private void Insert()
     {
-        if (ID != 0)
+        if (Id != 0)
         {
             throw new Exception("user already inserted");
         }
@@ -93,7 +98,7 @@ public class UsersClass
             "[CreationDate], [DOB], [IsAdmin], [IsSuspended], [IsPrivate], [IsDeleted]) " +
             "VALUES ('{0}','{1}', {2}, {3}, {4}, {5}, #{6}#, #{7}#, {8}, {9}, {10}, {11}) ";
 
-        sql_str = string.Format(sql_str, this.Username, this.Password, this.MyFollowersCount, this.FollowingCount,this.Flags, this.Points,
+        sql_str = string.Format(sql_str, this.Username, this.Password, this.MyFollowersCount, this.FollowingCount, this.Flags, this.Points,
             this.CreationDate, this.DOB, this.IsAdmin, this.IsSuspended, this.IsPrivate, this.IsDeleted);
         Dbase.ChangeTable(sql_str);
 
@@ -101,7 +106,7 @@ public class UsersClass
 
         DataTable dt = Dbase.SelectFromTable(get_id);
 
-        return Convert.ToInt32(dt.Rows[0]["ID"]);
+        this.ID = Convert.ToInt32(dt.Rows[0]["ID"]);
     }
 
     public void Update()
@@ -128,20 +133,29 @@ public class UsersClass
         return all;
 
     }
-    
-    public static DataTable GetByProperty(string property, object val)
+
+    public static DataTable GetByProperty(params KeyValuePair<string, object>[] pairs)
     {
+        string sql_str = "SELECT * FROM [Users]";
+        string surround;
 
-        string surround = "";
-        if (val is string) surround = "'";
-        if (val is DateTime) surround = "#";
+        if (pairs.Length > 0) sql_str += " WHERE ";
 
-        string sql_str = "SELECT * FROM [Users] WHERE [{0}] = {1}{2}{1}";
-        sql_str = string.Format(sql_str, property, surround, val);
+        for (int i = 0; i < pairs.Length; i++)
+        {
+            surround = "";
+            if (pairs[i].Value is string) surround = "'";
+            if (pairs[i].Value is DateTime) surround = "#";
+            sql_str += "[{1}] = {0}{2}{0}";
+            if (i < pairs.Length - 1) sql_str += " AND ";
+
+            sql_str = string.Format(sql_str, surround, pairs[i].Key, pairs[i].Value);
+
+        }
         DataTable user_dt = Dbase.SelectFromTable(sql_str);
         return user_dt;
     }
-    
+
     public static DataRow GetByCredentials(string username, string password)
     {
         string sql_str = "SELECT * FROM [Users] WHERE [Username]='{0}' AND [Password]='{1}'";
@@ -163,7 +177,7 @@ public class UsersClass
         DataTable user_dt = Dbase.SelectFromTable(sql_str);
         return user_dt.Rows.Count > 0;
     }
-    
+
     public static bool UserExists(string username, string password)
     {
         DataRow user = GetByCredentials(username, password);
@@ -174,11 +188,12 @@ public class UsersClass
     public static string GetUserUsername(int id)
     {
         string username;
-        DataTable user = GetByProperty("id", id);
+        KeyValuePair<string, object> id_pair = new KeyValuePair<string, object>("ID", id);
+        DataTable user = GetByProperty(id_pair);
         if (user == null) username = "null";
         else username = user.Rows[0]["Username"].ToString();
         return username;
-        
+
     }
     #endregion
 

@@ -9,7 +9,7 @@ using System.Data;
 /// </summary>
 public class FollowersClass
 {
-    public readonly int ID;
+    public int ID { get; private set; }
     public int FollowerID, FollowedID;
     public DateTime FollowDate;
 
@@ -36,19 +36,23 @@ public class FollowersClass
         this.FollowDate = Convert.ToDateTime(dr["FollowDate"]);
     }
 
-    public FollowersClass(int FollowerID, int FollowedID)
+    public static FollowersClass CreateNew(int FollowerID, int FollowedID)
     {
-        this.FollowerID = FollowerID;
-        this.FollowedID = FollowedID;
-        this.FollowDate = DateTime.Now;
-        this.ID = this.Insert();
+        FollowersClass follower = new FollowersClass
+        {
+            FollowerID = FollowerID,
+            FollowedID = FollowedID,
+            FollowDate = DateTime.Now
+        };
+        follower.Insert();
+        return follower;
     }
 
     #endregion
 
     #region sql functions
 
-    private int Insert()
+    private void Insert()
     {
         if (ID != 0)
         {
@@ -66,7 +70,7 @@ public class FollowersClass
 
         DataTable dt = Dbase.SelectFromTable(get_id);
 
-        return Convert.ToInt32(dt.Rows[0]["ID"]);
+        this.ID = Convert.ToInt32(dt.Rows[0]["ID"]);
     }
 
     public void Update()
@@ -89,14 +93,25 @@ public class FollowersClass
         return all;
     }
 
-    public static DataTable GetByProperty(string property, object val)
+    public static DataTable GetByProperty(params KeyValuePair<string, object>[] pairs)
     {
-        string surround = "";
-        if (val is string) surround = "'";
-        if (val is DateTime) surround = "#";
+        string sql_str = "SELECT * FROM [Followers]";
+        string surround;
 
-        string sql_str = "SELECT * FROM [Followers] WHERE [" + property + "] = {0}{1}{0}";
-        DataTable user_dt = Dbase.SelectFromTable(surround, sql_str);
+        if (pairs.Length > 0) sql_str += " WHERE ";
+
+        for (int i = 0; i < pairs.Length; i++)
+        {
+            surround = "";
+            if (pairs[i].Value is string) surround = "'";
+            if (pairs[i].Value is DateTime) surround = "#";
+            sql_str += "[{1}] = {0}{2}{0}";
+            if (i < pairs.Length - 1) sql_str += " AND ";
+
+            sql_str = string.Format(sql_str, surround, pairs[i].Key, pairs[i].Value);
+
+        }
+        DataTable user_dt = Dbase.SelectFromTable(sql_str);
         return user_dt;
     }
 

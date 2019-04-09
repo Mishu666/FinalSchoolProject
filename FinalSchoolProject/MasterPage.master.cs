@@ -26,7 +26,7 @@ public partial class MasterPage : System.Web.UI.MasterPage
     public void LogOutUser()
     {
         Session["Logged"] = false;
-        Session["current_user_id"] = null;
+        Session["CurrentUserID"] = null;
 
     }
 
