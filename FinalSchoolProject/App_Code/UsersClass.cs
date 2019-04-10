@@ -28,7 +28,7 @@ public class UsersClass
         DateTime DOB, DateTime CreationDate,
         bool IsAdmin, bool IsSuspended, bool IsPrivate, bool IsDeleted)
     {
-        this.Id = ID;
+        this.ID = ID;
         this.MyFollowersCount = MyFollowersCount;
         this.FollowingCount = FollowingCount;
         this.Flags = Flags;
@@ -45,7 +45,7 @@ public class UsersClass
 
     private UsersClass(DataRow dr)
     {
-        this.Id = Convert.ToInt32(dr["ID"]);
+        this.ID = Convert.ToInt32(dr["ID"]);
         this.MyFollowersCount = Convert.ToInt32(dr["MyFollowersCount"]);
         this.FollowingCount = Convert.ToInt32(dr["FollowingCount"]);
         this.Flags = Convert.ToInt32(dr["Flags"]);
@@ -88,7 +88,7 @@ public class UsersClass
 
     private void Insert()
     {
-        if (Id != 0)
+        if (ID != 0)
         {
             throw new Exception("user already inserted");
         }

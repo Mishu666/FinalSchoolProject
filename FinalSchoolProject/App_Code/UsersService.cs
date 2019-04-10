@@ -31,18 +31,30 @@ public class UsersService : System.Web.Services.WebService
 
     }
 
-    [WebMethod]
-    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]    
     public void Upvote(int PostID)
     {
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
         PostVotesClass upvote = PostVotesClass.CreateNew(userID, PostID, 1);
     }
 
-    [WebMethod]
+    [WebMethod(EnableSession = true)]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     public void Downvote(int PostID)
     {
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
         PostVotesClass upvote = PostVotesClass.CreateNew(userID, PostID, -1);
     }

@@ -30,7 +30,7 @@ public partial class Home : System.Web.UI.Page
         KeyValuePair<string, object> PostID = new KeyValuePair<string, object>("VotedPostID", drv["ID"]);
 
         DataTable user_votes = PostVotesClass.GetByProperty(PostID,voterID);
-        if (user_votes != null)
+        if (user_votes != null && user_votes.Rows.Count > 0)
         {
             int vote_val = Convert.ToInt32(user_votes.Rows[0]["VoteValue"]);
             WebControl upvote = (WebControl)FindControl("upvote_button");
