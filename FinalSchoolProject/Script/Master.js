@@ -89,7 +89,6 @@ function validateSignup() {
         valid = false;
     } else {
         var validate_DOB = DateTime.fromFormat(DOB, "dd/MM/yyyy");
-        console.log()
         if (!validate_DOB.isValid || validate_DOB > DateTime.local()) {
             $("#signupInputDOB").addClass("border-danger");
             let password_warning = createWarning("Invalid date");
@@ -179,6 +178,24 @@ function userExists(username, password, success_callback) {
         success: success_callback
     });
 
+}
+
+function userLoggedIn(success_callback) {
+
+    data = {};
+
+    $.ajax({
+        method: "POST",
+        data: JSON.stringify(data),
+        dataType: "json",
+        contentType: "application/json; charset=utf-8 ",
+        url: "UsersService.asmx/UserLoggedIn",
+        error: function (r) {
+            console.log("error");
+            console.log(r.responseText);
+        },
+        success: success_callback
+    });
 }
 
 function clearLoginWarnings() {

@@ -29,12 +29,17 @@ public class SavedPostsClass
         this.SaveDate = SaveDate;
     }
 
-    private SavedPostsClass(DataRow dr)
+    public static SavedPostsClass FromDataRow(DataRow dr)
     {
-        this.ID = Convert.ToInt32(dr["ID"]);
-        this.SaverID = Convert.ToInt32(dr["SaverID"]);
-        this.SavedPostID = Convert.ToInt32(dr["SavedPostID"]);
-        this.SaveDate = Convert.ToDateTime(dr["SaveDate"]);
+        if (dr == null) return null;
+        SavedPostsClass obj = new SavedPostsClass
+        {
+            ID = Convert.ToInt32(dr["ID"]),
+            SaverID = Convert.ToInt32(dr["SaverID"]),
+            SavedPostID = Convert.ToInt32(dr["SavedPostID"]),
+            SaveDate = Convert.ToDateTime(dr["SaveDate"])
+        };
+        return obj;
     }
 
     public static SavedPostsClass CreateNew(int SaverID, int SavedPostID)
@@ -77,12 +82,18 @@ public class SavedPostsClass
 
     public void Update()
     {
-        string sql_str = "Update [SavedPosts] " +
+        string sql_str = "UPDATE [SavedPosts] " +
             "SET [SaverID] = {0}, [SavedPostID] = {1}, [SaveDate] = #{3}#";
+        sql_str += " WHERE [ID]=" + this.ID;
         sql_str = string.Format(sql_str, this.SaverID, this.SavedPostID, this.SaveDate);
         Dbase.ChangeTable(sql_str);
     }
 
+    public void Delete()
+    {
+        string sql_str = "DELETE FROM [SavedPosts] WHERE [ID]=" + this.ID;
+        Dbase.ChangeTable(sql_str);
+    }
     #endregion
 
     #region select functions
@@ -95,7 +106,7 @@ public class SavedPostsClass
         return all;
     }
 
-    public static DataTable GetByProperty(params KeyValuePair<string, object>[] pairs)
+    public static DataTable GetByProperties(params KeyValuePair<string, object>[] pairs)
     {
         string sql_str = "SELECT * FROM [SavedPosts]";
         string surround;

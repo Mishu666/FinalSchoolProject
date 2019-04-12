@@ -26,11 +26,16 @@ public class ModeratorsClass
         this.ModeratorID = ModeratorID;
     }
 
-    private ModeratorsClass(DataRow dr)
+    public static ModeratorsClass FromDataRow(DataRow dr)
     {
-        this.ID = Convert.ToInt32(dr["ID"]);
-        this.PageID = Convert.ToInt32(dr["PageID"]);
-        this.ModeratorID = Convert.ToInt32(dr["ModeratorID"]);
+        if (dr == null) return null;
+        ModeratorsClass obj = new ModeratorsClass
+        {
+            ID = Convert.ToInt32(dr["ID"]),
+            PageID = Convert.ToInt32(dr["PageID"]),
+            ModeratorID = Convert.ToInt32(dr["ModeratorID"])
+        };
+        return obj;
     }
 
     public static ModeratorsClass CreateNew(int PageID, int ModeratorID)
@@ -71,12 +76,18 @@ public class ModeratorsClass
 
     public void Update()
     {
-        string sql_str = "Update [Moderators] " +
+        string sql_str = "UPDATE [Moderators] " +
             "SET [PageID] = {0}, [ModeratorID] = {1}";
+        sql_str += " WHERE [ID]=" + this.ID;
         sql_str = string.Format(sql_str, this.PageID, this.ModeratorID);
         Dbase.ChangeTable(sql_str);
     }
 
+    public void Delete()
+    {
+        string sql_str = "DELETE FROM [Moderators] WHERE [ID]=" + this.ID;
+        Dbase.ChangeTable(sql_str);
+    }
     #endregion
 
     #region select functions
@@ -89,7 +100,7 @@ public class ModeratorsClass
         return all;
     }
 
-    public static DataTable GetByProperty(params KeyValuePair<string, object>[] pairs)
+    public static DataTable GetByProperties(params KeyValuePair<string, object>[] pairs)
     {
         string sql_str = "SELECT * FROM [CommentVotes]";
         string surround;

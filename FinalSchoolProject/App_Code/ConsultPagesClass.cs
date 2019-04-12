@@ -28,12 +28,17 @@ public class ConsultPagesClass
         this.Status = Status;
     }
 
-    private ConsultPagesClass(DataRow dr)
+    public static ConsultPagesClass FromDataRow(DataRow dr)
     {
-        this.ID = Convert.ToInt32(dr["ID"]);
-        this.SubscriberCount = Convert.ToInt32(dr["SubscriberCount"]);
-        this.PageName = dr["PageName"].ToString();
-        this.Status = dr["Status"].ToString();
+        if (dr == null) return null;
+        ConsultPagesClass obj = new ConsultPagesClass
+        {
+            ID = Convert.ToInt32(dr["ID"]),
+            SubscriberCount = Convert.ToInt32(dr["SubscriberCount"]),
+            PageName = dr["PageName"].ToString(),
+            Status = dr["Status"].ToString()
+        };
+        return obj;
     }
 
     public static ConsultPagesClass CreateNew(string PageName)
@@ -75,9 +80,16 @@ public class ConsultPagesClass
 
     public void Update()
     {
-        string sql_str = "Update [ConsultPages] " +
+        string sql_str = "UPDATE [ConsultPages] " +
             "SET [SubscriberCount] = {0}, [PageName] = '{1}', [Status] = '{2}'";
+        sql_str += " WHERE [ID]=" + this.ID;
         sql_str = string.Format(sql_str, this.SubscriberCount, this.PageName, this.Status);
+        Dbase.ChangeTable(sql_str);
+    }
+
+    public void Delete()
+    {
+        string sql_str = "DELETE FROM [ConsultPages] WHERE [ID]=" + this.ID;
         Dbase.ChangeTable(sql_str);
     }
 
@@ -93,7 +105,7 @@ public class ConsultPagesClass
         return all;
     }
 
-    public static DataTable GetByProperty(params KeyValuePair<string, object>[] pairs)
+    public static DataTable GetByProperties(params KeyValuePair<string, object>[] pairs)
     {
         string sql_str = "SELECT * FROM [CommentVotes]";
         string surround;

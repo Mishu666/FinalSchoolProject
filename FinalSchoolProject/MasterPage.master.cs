@@ -39,7 +39,7 @@ public partial class MasterPage : System.Web.UI.MasterPage
 
     public void SignUpUser(string username, string password, DateTime DOB)
     {
-        UsersClass user = UsersClass.CreateNew(username, password, DOB);
+        UsersClass.CreateNew(username, password, DOB);
         LogInUser(username, password);
     }
 

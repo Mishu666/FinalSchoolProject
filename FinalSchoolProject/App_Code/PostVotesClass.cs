@@ -28,12 +28,17 @@ public class PostVotesClass
         this.VoteValue = VoteValue;
     }
 
-    private PostVotesClass(DataRow dr)
+    public static PostVotesClass FromDataRow(DataRow dr)
     {
-        this.ID = Convert.ToInt32(dr["ID"]);
-        this.VoterID = Convert.ToInt32(dr["VoterID"]);
-        this.VotedPostID = Convert.ToInt32(dr["VotedPostID"]);
-        this.VoteValue = Convert.ToInt32(dr["VoteValue"]);
+        if (dr == null) return null;
+        PostVotesClass obj = new PostVotesClass
+        {
+            ID = Convert.ToInt32(dr["ID"]),
+            VoterID = Convert.ToInt32(dr["VoterID"]),
+            VotedPostID = Convert.ToInt32(dr["VotedPostID"]),
+            VoteValue = Convert.ToInt32(dr["VoteValue"])
+        };
+        return obj;
     }
 
     public static PostVotesClass CreateNew(int VoterID, int VotedPostID, int VoteValue)
@@ -76,13 +81,19 @@ public class PostVotesClass
 
     public void Update()
     {
-        string sql_str = "Update [PostVotes] " +
+        string sql_str = "UPDATE [PostVotes] " +
             "SET [VoterID] = {0}, [VotedPostID] = {1}, " +
             "[VoteValue] = {2}";
+        sql_str += " WHERE [ID]=" + this.ID;
         sql_str = string.Format(sql_str, this.VoterID, this.VotedPostID, this.VoteValue);
         Dbase.ChangeTable(sql_str);
     }
 
+    public void Delete()
+    {
+        string sql_str = "DELETE FROM [PostVotes] WHERE [ID]=" + this.ID;
+        Dbase.ChangeTable(sql_str);
+    }
     #endregion
 
     #region select functions
@@ -95,7 +106,7 @@ public class PostVotesClass
         return all;
     }
 
-    public static DataTable GetByProperty(params KeyValuePair<string, object>[] pairs)
+    public static DataTable GetByProperties(params KeyValuePair<string, object>[] pairs)
     {
         string sql_str = "SELECT * FROM [PostVotes]";
         string surround;

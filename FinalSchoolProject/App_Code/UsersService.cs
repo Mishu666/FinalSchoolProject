@@ -15,7 +15,7 @@ using System.Web.Script.Services;
 [ScriptService]
 public class UsersService : System.Web.Services.WebService
 {
-   
+
     [WebMethod]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     public bool UsernameTaken(string username)
@@ -32,22 +32,16 @@ public class UsersService : System.Web.Services.WebService
     }
 
     [WebMethod(EnableSession = true)]
-    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]    
-    public void Upvote(int PostID)
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public bool UserLoggedIn()
     {
-        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
-        {
-            HttpContext current = HttpContext.Current;
-            current.Response.StatusCode = 401;
-            current.Response.End();
-        }
-        int userID = Convert.ToInt32(Session["CurrentUserID"]);
-        PostVotesClass upvote = PostVotesClass.CreateNew(userID, PostID, 1);
+        if (Session["Logged"] != null && (bool)Session["Logged"] == true) return true;
+        return false;
     }
 
     [WebMethod(EnableSession = true)]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public void Downvote(int PostID)
+    public int Upvote(int PostID)
     {
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
@@ -56,7 +50,92 @@ public class UsersService : System.Web.Services.WebService
             current.Response.End();
         }
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
-        PostVotesClass upvote = PostVotesClass.CreateNew(userID, PostID, -1);
+
+        DataTable post_dt = PostsClass.GetByProperties(new KeyValuePair<string, object>("ID", PostID));
+        PostsClass post = PostsClass.FromDataRow(post_dt.Rows[0]);
+
+        DataTable vote_dt = PostVotesClass.GetByProperties(
+                new KeyValuePair<string, object>("VotedPostID", PostID),
+                new KeyValuePair<string, object>("VoterID", userID)
+            );
+
+        if (vote_dt == null || vote_dt.Rows.Count == 0)
+        {
+            PostVotesClass.CreateNew(userID, PostID, 1);
+            post.VoteCount += 1;
+            post.Update();
+            return post.VoteCount;
+        }
+
+        PostVotesClass vote = PostVotesClass.FromDataRow(vote_dt.Rows[0]);
+
+        
+        if (vote.VoteValue == 1)
+        {
+            vote.Delete();
+            post.VoteCount -= 1;
+            post.Update();
+
+        }
+        else if (vote.VoteValue == -1)
+        {
+            vote.VoteValue = 1;
+            vote.Update();
+            post.VoteCount += 2;
+            post.Update();
+
+        }
+
+        return post.VoteCount;
+    }
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public int Downvote(int PostID)
+    {
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+        int userID = Convert.ToInt32(Session["CurrentUserID"]);
+
+        DataTable post_dt = PostsClass.GetByProperties(new KeyValuePair<string, object>("ID", PostID));
+        PostsClass post = PostsClass.FromDataRow(post_dt.Rows[0]);
+
+        DataTable vote_dt = PostVotesClass.GetByProperties(
+                new KeyValuePair<string, object>("VotedPostID", PostID),
+                new KeyValuePair<string, object>("VoterID", userID)
+            );
+
+        if(vote_dt == null || vote_dt.Rows.Count == 0)
+        {
+            PostVotesClass.CreateNew(userID, PostID, -1);
+            post.VoteCount -= 1;
+            post.Update();
+            return post.VoteCount;
+        }
+
+        PostVotesClass vote = PostVotesClass.FromDataRow(vote_dt.Rows[0]);
+
+        if (vote.VoteValue == -1)
+        {
+            vote.Delete();
+            post.VoteCount += 1;
+            post.Update();
+
+        }
+        else if (vote.VoteValue == 1)
+        {
+            vote.VoteValue = -1;
+            vote.Update();
+            post.VoteCount -= 2;
+            post.Update();
+
+        }
+        return post.VoteCount;
+
     }
 
 }

@@ -38,17 +38,22 @@ public class CommentsClass
         this.IsDeleted = IsDeleted;
     }
 
-    private CommentsClass(DataRow dr)
+    public static CommentsClass FromDataRow(DataRow dr)
     {
-        this.ID = Convert.ToInt32(dr["ID"]);
-        this.CommentorID = Convert.ToInt32(dr["CommentorID"]);
-        this.ParentPostID = Convert.ToInt32(dr["ParentPostID"]);
-        this.ParentCommentID = Convert.ToInt32(dr["ParentCommentID"]);
-        this.Title = dr["Title"].ToString();
-        this.Body = dr["Body"].ToString();
-        this.CreationDate = Convert.ToDateTime(dr["CreationDate"]);
-        this.IsRemoved = Convert.ToBoolean(dr["IsRemoved"]);
-        this.IsDeleted = Convert.ToBoolean(dr["IsDeleted"]);
+        if (dr == null) return null;
+        CommentsClass obj = new CommentsClass
+        {
+            ID = Convert.ToInt32(dr["ID"]),
+            CommentorID = Convert.ToInt32(dr["CommentorID"]),
+            ParentPostID = Convert.ToInt32(dr["ParentPostID"]),
+            ParentCommentID = Convert.ToInt32(dr["ParentCommentID"]),
+            Title = dr["Title"].ToString(),
+            Body = dr["Body"].ToString(),
+            CreationDate = Convert.ToDateTime(dr["CreationDate"]),
+            IsRemoved = Convert.ToBoolean(dr["IsRemoved"]),
+            IsDeleted = Convert.ToBoolean(dr["IsDeleted"])
+        };
+        return obj;
     }
 
     public static CommentsClass CreateNew(string Title, string Body,
@@ -99,15 +104,21 @@ public class CommentsClass
 
     public void Update()
     {
-        string sql_str = "Update [Comments] " +
+        string sql_str = "UPDATE [Comments] " +
             "SET [Title] = '{0}', [Body] = '{1}', [CommentorID] = {2}, " +
             "[ParentPostID] = {3}, [ParentCommentID] = {4}, [CreationDate] = #{5}#," +
             "[IsRemoved = {6}, [IsDeleted] = {7}";
+        sql_str += " WHERE [ID]=" + this.ID;
         sql_str = string.Format(sql_str, this.Title, this.Body, this.CommentorID, this.ParentPostID,
             this.ParentCommentID, this.CreationDate, this.IsRemoved, this.IsDeleted);
         Dbase.ChangeTable(sql_str);
     }
 
+    public void Delete()
+    {
+        string sql_str = "DELETE FROM [Comments] WHERE [ID]=" + this.ID;
+        Dbase.ChangeTable(sql_str);
+    }
     #endregion
 
     #region select functions
@@ -120,7 +131,7 @@ public class CommentsClass
         return all;
     }
 
-    public static DataTable GetByProperty(params KeyValuePair<string, object>[] pairs)
+    public static DataTable GetByProperties(params KeyValuePair<string, object>[] pairs)
     {
         string sql_str = "SELECT * FROM [Comments]";
         string surround;

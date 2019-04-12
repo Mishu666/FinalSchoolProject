@@ -28,12 +28,17 @@ public class FollowersClass
         this.FollowDate = FollowDate;
     }
 
-    private FollowersClass(DataRow dr)
+    public static FollowersClass FromDataRow(DataRow dr)
     {
-        this.ID = Convert.ToInt32(dr["ID"]);
-        this.FollowerID = Convert.ToInt32(dr["FollowerID"]);
-        this.FollowedID = Convert.ToInt32(dr["FollowedID"]);
-        this.FollowDate = Convert.ToDateTime(dr["FollowDate"]);
+        if (dr == null) return null;
+        FollowersClass obj = new FollowersClass
+        {
+            ID = Convert.ToInt32(dr["ID"]),
+            FollowerID = Convert.ToInt32(dr["FollowerID"]),
+            FollowedID = Convert.ToInt32(dr["FollowedID"]),
+            FollowDate = Convert.ToDateTime(dr["FollowDate"])
+        };
+        return obj;
     }
 
     public static FollowersClass CreateNew(int FollowerID, int FollowedID)
@@ -75,12 +80,18 @@ public class FollowersClass
 
     public void Update()
     {
-        string sql_str = "Update [Followers] " +
+        string sql_str = "UPDATE [Followers] " +
             "SET [FollowerID] = {0}, [FollowedID] = {1}, [FollowDate] = {2}";
+        sql_str += " WHERE [ID]=" + this.ID;
         sql_str = string.Format(sql_str, this.FollowerID, this.FollowedID, this.FollowDate);
         Dbase.ChangeTable(sql_str);
     }
 
+    public void Delete()
+    {
+        string sql_str = "DELETE FROM [Followers] WHERE [ID]=" + this.ID;
+        Dbase.ChangeTable(sql_str);
+    }
     #endregion
 
     #region select functions
@@ -93,7 +104,7 @@ public class FollowersClass
         return all;
     }
 
-    public static DataTable GetByProperty(params KeyValuePair<string, object>[] pairs)
+    public static DataTable GetByProperties(params KeyValuePair<string, object>[] pairs)
     {
         string sql_str = "SELECT * FROM [Followers]";
         string surround;

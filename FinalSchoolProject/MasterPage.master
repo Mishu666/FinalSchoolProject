@@ -48,10 +48,10 @@
 
 </head>
 
-<body id="page-top">
-    <form runat="server">
+<body id="page-top" class="overflow-hidden" style="width: 100vw; height: 100vh;">
+    <form runat="server" class="h-100">
         <!-- Page Wrapper -->
-        <div id="wrapper">
+        <div id="wrapper" class="h-100">
 
             <!-- Sidebar -->
             <ul class="navbar-nav bg-white sidebar sidebar-light accordion" id="accordionSidebar">
@@ -108,10 +108,9 @@
             <!-- End of Sidebar -->
 
             <!-- Content Wrapper -->
-            <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content-wrapper" class="d-flex flex-column h-100">
 
                 <!-- Main Content -->
-                <div id="content">
 
                     <!-- Topbar -->
                     <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
@@ -253,14 +252,13 @@
                     <!-- End of Topbar -->
 
                     <!-- Begin Page Content -->
-                    <div class="container-fluid">
+                    <div id="content_space" class="container-fluid overflow-auto">
 
                         <asp:ContentPlaceHolder ID="main_content" runat="server"></asp:ContentPlaceHolder>
 
                     </div>
                     <!-- /.container-fluid -->
-
-                </div>
+                
                 <!-- End of Main Content -->
 
             </div>

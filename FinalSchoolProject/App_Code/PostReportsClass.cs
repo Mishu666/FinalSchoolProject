@@ -31,13 +31,18 @@ public class PostReportsClass
         this.CreationDate = CreationDate;
     }
 
-    private PostReportsClass(DataRow dr)
+    public static PostReportsClass FromDataRow(DataRow dr)
     {
-        this.ID = Convert.ToInt32(dr["ID"]);
-        this.ReporterID = Convert.ToInt32(dr["ReporterID"]);
-        this.ReportedPostID = Convert.ToInt32(dr["ReportedPostID"]);
-        this.Body = dr["Body"].ToString();
-        this.CreationDate = Convert.ToDateTime(dr["CreationDate"]);
+        if (dr == null) return null;
+        PostReportsClass obj = new PostReportsClass
+        {
+            ID = Convert.ToInt32(dr["ID"]),
+            ReporterID = Convert.ToInt32(dr["ReporterID"]),
+            ReportedPostID = Convert.ToInt32(dr["ReportedPostID"]),
+            Body = dr["Body"].ToString(),
+            CreationDate = Convert.ToDateTime(dr["CreationDate"])
+        };
+        return obj;
     }
 
     public static PostReportsClass CreateNew(int ReporterID, int ReportedPostID, string Body)
@@ -80,10 +85,17 @@ public class PostReportsClass
 
     public void Update()
     {
-        string sql_str = "Update [PostReports] " +
+        string sql_str = "UPDATE [PostReports] " +
             "SET [ReporterID] = {0}, [ReportedPostID] = {1}, " +
             "[Body] = '{2}', [CreationDate] = #{3}#";
+        sql_str += " WHERE [ID]=" + this.ID;
         sql_str = string.Format(sql_str, this.ReporterID, this.ReportedPostID, this.Body, this.CreationDate);
+        Dbase.ChangeTable(sql_str);
+    }
+
+    public void Delete()
+    {
+        string sql_str = "DELETE FROM [PostReports] WHERE [ID]=" + this.ID;
         Dbase.ChangeTable(sql_str);
     }
 
@@ -99,7 +111,7 @@ public class PostReportsClass
         return all;
     }
 
-    public static DataTable GetByProperty(params KeyValuePair<string, object>[] pairs)
+    public static DataTable GetByProperties(params KeyValuePair<string, object>[] pairs)
     {
         string sql_str = "SELECT * FROM [CommentVotes]";
         string surround;

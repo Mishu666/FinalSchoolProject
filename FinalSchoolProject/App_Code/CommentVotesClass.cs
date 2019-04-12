@@ -28,12 +28,17 @@ public class CommentVotesClass
         this.VoteValue = VoteValue;
     }
 
-    private CommentVotesClass(DataRow dr)
+    public static CommentVotesClass FromDataRow(DataRow dr)
     {
-        this.ID = Convert.ToInt32(dr["ID"]);
-        this.VoterID = Convert.ToInt32(dr["VoterID"]);
-        this.VotedCommentID = Convert.ToInt32(dr["VotedCommentID"]);
-        this.VoteValue = Convert.ToInt32(dr["VoteValue"]);
+        if (dr == null) return null;
+        CommentVotesClass obj = new CommentVotesClass
+        {
+            ID = Convert.ToInt32(dr["ID"]),
+            VoterID = Convert.ToInt32(dr["VoterID"]),
+            VotedCommentID = Convert.ToInt32(dr["VotedCommentID"]),
+            VoteValue = Convert.ToInt32(dr["VoteValue"])
+        };
+        return obj;
     }
 
     public static CommentVotesClass CreateNew(int VoterID, int VotedCommentID, int VoteValue)
@@ -75,10 +80,17 @@ public class CommentVotesClass
 
     public void Update()
     {
-        string sql_str = "Update [CommentVotes] " +
+        string sql_str = "UPDATE [CommentVotes] " +
             "SET [VoterID] = {0}, [VotedCommentID] = {1}, " +
             "[VoteValue] = {2}";
+        sql_str += " WHERE [ID]=" + this.ID;
         sql_str = string.Format(sql_str, this.VoterID, this.VotedCommentID, this.VoteValue);
+        Dbase.ChangeTable(sql_str);
+    }
+
+    public void Delete()
+    {
+        string sql_str = "DELETE FROM [CommentVotes] WHERE [ID]=" + this.ID;
         Dbase.ChangeTable(sql_str);
     }
 
@@ -94,7 +106,7 @@ public class CommentVotesClass
         return all;
     }
 
-    public static DataTable GetByProperty(params KeyValuePair<string, object>[] pairs)
+    public static DataTable GetByProperties(params KeyValuePair<string, object>[] pairs)
     {
         string sql_str = "SELECT * FROM [CommentVotes]";
         string surround;

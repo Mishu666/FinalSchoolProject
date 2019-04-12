@@ -1,27 +1,102 @@
 ﻿$(document).ready(function () {
 
-    $(".upvote").on("click", function (e) {
+    userLoggedIn(userLoggedInSuccessCallback);
 
-        e.preventDefault();
-        var post_id = $(this).data("id");
-        Upvote(post_id);
+    function userLoggedInSuccessCallback(data) {
+        console.log(data.d);
+        if (data.d === true) {
 
-    });
+            $(".upvote").on("click", function (e) {
 
-    $(".downvote").on("click", function (e) {
+                e.preventDefault();
+                var post_id = $(this).data("post-id");
+                var upvote_btn = $(this);
+                var downvote_btn = $(".downvote[data-post-id='" + upvote_btn.data("post-id") + "']");
+                var vote_counter = $("#vote_counter[data-post-id='" + post_id + "']");
 
-        e.preventDefault();
-        var post_id = $(this).data("id");
-        Downvote(post_id);
+                if (upvote_btn.hasClass("active")) {
+                    upvote_btn.removeClass("active");
+                    vote_counter.text(parseInt(vote_counter.text()) - 1);
+                }
+                else {
+                    if (downvote_btn.hasClass("active")) {
+                        downvote_btn.removeClass("active");
+                        upvote_btn.addClass("active");
+                        vote_counter.text(parseInt(vote_counter.text()) + 2);
 
-    });
+                    }
+                    else {
+                        upvote_btn.addClass("active");
+                        vote_counter.text(parseInt(vote_counter.text()) + 1);
+                    }
+                }
+
+                function upvoteSuccess(data) {
+                }
+
+                Upvote(post_id, upvoteSuccess);
+
+            });
+
+            $(".downvote").on("click", function (e) {
+
+                e.preventDefault();
+                var post_id = $(this).data("post-id");
+                var downvote_btn = $(this);
+                var upvote_btn = $(".upvote[data-post-id='" + downvote_btn.data("post-id") + "']");
+                var vote_counter = $("#vote_counter[data-post-id='" + post_id + "']");
+
+                if (downvote_btn.hasClass("active")) {
+                    downvote_btn.removeClass("active");
+                    vote_counter.text(parseInt(vote_counter.text()) + 1);
+                }
+                else {
+                    if (upvote_btn.hasClass("active")) {
+                        upvote_btn.removeClass("active");
+                        downvote_btn.addClass("active");
+                        vote_counter.text(parseInt(vote_counter.text()) - 2);
+
+                    }
+                    else {
+                        downvote_btn.addClass("active");
+                        vote_counter.text(parseInt(vote_counter.text()) - 1);
+                    }
+                }
+
+                function downvoteSuccess(data) {
+                }
+
+                Downvote(post_id, downvoteSuccess);
+
+            });
+        }
+        else {
+
+            $('[data-toggle="popover"]').popover();
+
+            $(".upvote").on("click", function (e) {
+                console.log("oops");
+                e.preventDefault();
+                $(this).popover();
+
+            });
+
+            $(".downvote").on("click", function (e) {
+
+                e.preventDefault();
+                $(this).popover();
+
+            });
+
+        }
+    }
 
 });
 
 function Upvote(postID, success_callback) {
 
     var data = { "PostID": postID };
-    alert(this);
+
     $.ajax({
 
         method: "POST",
@@ -31,18 +106,12 @@ function Upvote(postID, success_callback) {
         url: "UsersService.asmx/Upvote",
         error: function (r) {
             console.log("error");
-            console.log(r.responseText);
+            console.log(r.status);
         },
         success: success_callback
 
     });
 
-}
-
-function colorVoteButton(buttonID, voteType) {
-    if (voteType == "upvote") {
-        $("#" + buttonID).addClass(""); //CONTINUE HERE
-    }
 }
 
 function Downvote(postID, success_callback) {

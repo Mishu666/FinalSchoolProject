@@ -32,14 +32,19 @@ public class MessagesClass
         this.SendDate = SendDate;
     }
 
-    private MessagesClass(DataRow dr)
+    public static MessagesClass FromDataRow(DataRow dr)
     {
-        this.ID = Convert.ToInt32(dr["ID"]);
-        this.SenderID = Convert.ToInt32(dr["SenderID"]);
-        this.RecipientID = Convert.ToInt32(dr["RecipientID"]);
-        this.Body = dr["Body"].ToString();
-        this.Title = dr["Title"].ToString();
-        this.SendDate = Convert.ToDateTime(dr["SendDate"]);
+        if (dr == null) return null;
+        MessagesClass obj = new MessagesClass
+        {
+            ID = Convert.ToInt32(dr["ID"]),
+            SenderID = Convert.ToInt32(dr["SenderID"]),
+            RecipientID = Convert.ToInt32(dr["RecipientID"]),
+            Body = dr["Body"].ToString(),
+            Title = dr["Title"].ToString(),
+            SendDate = Convert.ToDateTime(dr["SendDate"])
+        };
+        return obj;
     }
 
     public static MessagesClass CreateNew(int SenderID, int RecipientID, string Title, string Body)
@@ -83,10 +88,17 @@ public class MessagesClass
 
     public void Update()
     {
-        string sql_str = "Update [Messages] " +
+        string sql_str = "UPDATE [Messages] " +
             "SET [SenderID] = {0}, [RecipientID] = {1}, " +
             "[Title] = '{2}',[Body] = '{3}', [SendDate] = #{4}#";
+        sql_str += " WHERE [ID]=" + this.ID;
         sql_str = string.Format(sql_str, this.SenderID, this.RecipientID, this.Title, this.Body, this.SendDate);
+        Dbase.ChangeTable(sql_str);
+    }
+
+    public void Delete()
+    {
+        string sql_str = "DELETE FROM [Messages] WHERE [ID]=" + this.ID;
         Dbase.ChangeTable(sql_str);
     }
 
@@ -102,7 +114,7 @@ public class MessagesClass
         return all;
     }
 
-    public static DataTable GetByProperty(params KeyValuePair<string, object>[] pairs)
+    public static DataTable GetByProperties(params KeyValuePair<string, object>[] pairs)
     {
         string sql_str = "SELECT * FROM [Messages]";
         string surround;

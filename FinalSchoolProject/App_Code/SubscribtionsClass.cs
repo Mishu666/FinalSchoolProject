@@ -29,12 +29,17 @@ public class SubscribtionsClass
         this.SubscribtionDate = SubscribtionDate;
     }
 
-    private SubscribtionsClass(DataRow dr)
+    public static SubscribtionsClass FromDataRow(DataRow dr)
     {
-        this.ID = Convert.ToInt32(dr["ID"]);
-        this.SubscriberID = Convert.ToInt32(dr["SubscriberID"]);
-        this.SubscribedPageID = Convert.ToInt32(dr["SubscribedPageID"]);
-        this.SubscribtionDate = Convert.ToDateTime(dr["SubscribtionDate"]);
+        if (dr == null) return null;
+        SubscribtionsClass obj = new SubscribtionsClass
+        {
+            ID = Convert.ToInt32(dr["ID"]),
+            SubscriberID = Convert.ToInt32(dr["SubscriberID"]),
+            SubscribedPageID = Convert.ToInt32(dr["SubscribedPageID"]),
+            SubscribtionDate = Convert.ToDateTime(dr["SubscribtionDate"])
+        };
+        return obj;
     }
 
     public static SubscribtionsClass CreateNew(int SubscriberID, int SubscribedPageID)
@@ -76,12 +81,18 @@ public class SubscribtionsClass
 
     public void Update()
     {
-        string sql_str = "Update [Subscribtions] " +
+        string sql_str = "UPDATE [Subscribtions] " +
             "SET [SubscriberID] = {0}, [SubscribedPageID] = {1}, [SubscribtionDate] = #{3}#";
+        sql_str += " WHERE [ID]=" + this.ID;
         sql_str = string.Format(sql_str, this.SubscriberID, this.SubscribedPageID, this.SubscribtionDate);
         Dbase.ChangeTable(sql_str);
     }
 
+    public void Delete()
+    {
+        string sql_str = "DELETE FROM [Subscribtions] WHERE [ID]=" + this.ID;
+        Dbase.ChangeTable(sql_str);
+    }
     #endregion
 
     #region select functions
@@ -94,7 +105,7 @@ public class SubscribtionsClass
         return all;
     }
 
-    public static DataTable GetByProperty(params KeyValuePair<string, object>[] pairs)
+    public static DataTable GetByProperties(params KeyValuePair<string, object>[] pairs)
     {
         string sql_str = "SELECT * FROM [Subscribtions]";
         string surround;

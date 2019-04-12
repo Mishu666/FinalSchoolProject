@@ -38,18 +38,23 @@ public class PostsClass
         this.CreationDate = CreationDate;
     }
 
-    private PostsClass(DataRow dr)
+    public static PostsClass FromDataRow(DataRow dr)
     {
-        this.ID = Convert.ToInt32(dr["ID"]);
-        this.ConsultPageID = Convert.ToInt32(dr["ConsultPageID"]);
-        this.AuthorID = Convert.ToInt32(dr["AuthorID"]);
-        this.VoteCount = Convert.ToInt32(dr["VoteCount"]);
-        this.CommentCount = Convert.ToInt32(dr["CommentCount"]);
-        this.Title = dr["Title"].ToString();
-        this.Body = dr["Body"].ToString();
-        this.IsDeleted = Convert.ToBoolean(dr["IsDeleted"]);
-        this.IsRemoved = Convert.ToBoolean(dr["IsRemoved"]); ;
-        this.CreationDate = Convert.ToDateTime(dr["CreationDate"]); ;
+        if (dr == null) return null;
+        PostsClass obj = new PostsClass
+        {
+            ID = Convert.ToInt32(dr["ID"]),
+            ConsultPageID = Convert.ToInt32(dr["ConsultPageID"]),
+            AuthorID = Convert.ToInt32(dr["AuthorID"]),
+            VoteCount = Convert.ToInt32(dr["VoteCount"]),
+            CommentCount = Convert.ToInt32(dr["CommentCount"]),
+            Title = dr["Title"].ToString(),
+            Body = dr["Body"].ToString(),
+            IsDeleted = Convert.ToBoolean(dr["IsDeleted"]),
+            IsRemoved = Convert.ToBoolean(dr["IsRemoved"]),
+            CreationDate = Convert.ToDateTime(dr["CreationDate"])
+        };
+        return obj;
     }
 
     public static PostsClass CreateNew(int ConsultPageID, int AuthorID, string Title, string Body)
@@ -100,16 +105,22 @@ public class PostsClass
 
     public void Update()
     {
-        string sql_str = "Update [Posts] " +
+        string sql_str = "UPDATE [Posts] " +
             "SET [ConsultPageID] = {0}, [AuthorID] = {1}, " +
             "[VoteCount] = {2}, [CommentCount] = {3}, [Title] = '{4}', [Body] = '{5}', " +
             "[IsDeleted] = {6}, [IsRemoved] = {7}, [CreationDate] = #{8}#";
+        sql_str += " WHERE [ID]=" + this.ID;
         sql_str = string.Format(sql_str, this.ConsultPageID, this.AuthorID,
             this.VoteCount, this.CommentCount, this.Title, this.Body, this.IsDeleted,
             this.IsRemoved, this.CreationDate);
         Dbase.ChangeTable(sql_str);
     }
 
+    public void Delete()
+    {
+        string sql_str = "DELETE FROM [Posts] WHERE [ID]=" + this.ID;
+        Dbase.ChangeTable(sql_str);
+    }
     #endregion
 
     #region select functions
@@ -122,7 +133,7 @@ public class PostsClass
         return all;
     }
 
-    public static DataTable GetByProperty(params KeyValuePair<string, object>[] pairs)
+    public static DataTable GetByProperties(params KeyValuePair<string, object>[] pairs)
     {
         string sql_str = "SELECT * FROM [Posts]";
         string surround;
@@ -144,5 +155,10 @@ public class PostsClass
         return user_dt;
     }
 
+    #endregion
+
+    #region utility functions
+    
+    
     #endregion
 }

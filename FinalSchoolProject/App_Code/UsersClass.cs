@@ -43,21 +43,26 @@ public class UsersClass
         this.IsDeleted = IsDeleted;
     }
 
-    private UsersClass(DataRow dr)
+    public static UsersClass FromDataRow(DataRow dr)
     {
-        this.ID = Convert.ToInt32(dr["ID"]);
-        this.MyFollowersCount = Convert.ToInt32(dr["MyFollowersCount"]);
-        this.FollowingCount = Convert.ToInt32(dr["FollowingCount"]);
-        this.Flags = Convert.ToInt32(dr["Flags"]);
-        this.Points = Convert.ToInt32(dr["Points"]);
-        this.Username = dr["Username"].ToString();
-        this.Password = dr["Password"].ToString();
-        this.DOB = Convert.ToDateTime(dr["DOB"]);
-        this.CreationDate = Convert.ToDateTime(dr["CreationDate"]);
-        this.IsAdmin = Convert.ToBoolean(dr["IsAdmin"]);
-        this.IsSuspended = Convert.ToBoolean(dr["IsSuspended"]);
-        this.IsPrivate = Convert.ToBoolean(dr["IsPrivate"]);
-        this.IsDeleted = Convert.ToBoolean(dr["IsDeleted"]);
+        if (dr == null) return null;
+        UsersClass obj = new UsersClass
+        {
+            ID = Convert.ToInt32(dr["ID"]),
+            MyFollowersCount = Convert.ToInt32(dr["MyFollowersCount"]),
+            FollowingCount = Convert.ToInt32(dr["FollowingCount"]),
+            Flags = Convert.ToInt32(dr["Flags"]),
+            Points = Convert.ToInt32(dr["Points"]),
+            Username = dr["Username"].ToString(),
+            Password = dr["Password"].ToString(),
+            DOB = Convert.ToDateTime(dr["DOB"]),
+            CreationDate = Convert.ToDateTime(dr["CreationDate"]),
+            IsAdmin = Convert.ToBoolean(dr["IsAdmin"]),
+            IsSuspended = Convert.ToBoolean(dr["IsSuspended"]),
+            IsPrivate = Convert.ToBoolean(dr["IsPrivate"]),
+            IsDeleted = Convert.ToBoolean(dr["IsDeleted"])
+        };
+        return obj;
     }
 
     public static UsersClass CreateNew(string Username, string Password, DateTime DOB)
@@ -111,13 +116,20 @@ public class UsersClass
 
     public void Update()
     {
-        string sql_str = "Update [Users] " +
+        string sql_str = "UPDATE [Users] " +
             "SET [Username] = '{0}', [Password] = '{1}', " +
             "[MyFollowersCount] = {2}, [FollowingCount] = {3} , [Flags] = {4}, [Points]= {5}, " +
             "[CreationDate] = #{6}#, [DOB] = #{7}#, [IsAdmin] = {8}, [IsSuspended] = {9}, " +
             "[IsPrivate] = {10}, [IsDeleted] = {11}";
+        sql_str += " WHERE [ID]=" + this.ID;
         sql_str = string.Format(sql_str, this.Username, this.Password, this.MyFollowersCount, this.FollowingCount, this.Flags, this.Points,
             this.CreationDate, this.DOB, this.IsAdmin, this.IsSuspended, this.IsPrivate, this.IsDeleted);
+        Dbase.ChangeTable(sql_str);
+    }
+
+    public void Delete()
+    {
+        string sql_str = "DELETE FROM [Users] WHERE [ID]=" + this.ID;
         Dbase.ChangeTable(sql_str);
     }
 
@@ -134,7 +146,7 @@ public class UsersClass
 
     }
 
-    public static DataTable GetByProperty(params KeyValuePair<string, object>[] pairs)
+    public static DataTable GetByProperties(params KeyValuePair<string, object>[] pairs)
     {
         string sql_str = "SELECT * FROM [Users]";
         string surround;
@@ -189,7 +201,7 @@ public class UsersClass
     {
         string username;
         KeyValuePair<string, object> id_pair = new KeyValuePair<string, object>("ID", id);
-        DataTable user = GetByProperty(id_pair);
+        DataTable user = GetByProperties(id_pair);
         if (user == null) username = "null";
         else username = user.Rows[0]["Username"].ToString();
         return username;

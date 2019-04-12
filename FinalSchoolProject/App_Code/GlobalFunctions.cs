@@ -14,16 +14,16 @@ public static class GlobalFunctions
     public static string FormatNumber(int number)
     {
         double final = number;
-        if (final < 1000) return number.ToString();
-        if (final < 1000000)
+        if (final < 1000 && final > -1000) return number.ToString();
+        if (final < 1000000 && final > -1000000)
         {
             return Math.Round((final / 1000), 1).ToString() + " K";
         }
-        if (final < 1000000000)
+        if (final < 1000000000 && final > -1000000000)
         {
             return Math.Round((final / 1000000), 1).ToString() + " M";
         }
-        if (final < 1000000000000)
+        if (final < 1000000000000 && final > -1000000000000)
         {
             return Math.Round((final / 1000000000), 1).ToString() + " B";
         }
@@ -55,5 +55,33 @@ public static class GlobalFunctions
                .Except(new string[] { "", classname })
                .ToArray()
        );
+    }
+
+    public static void AddCssClass(HtmlControl control, string classname)
+    {
+        if (string.IsNullOrWhiteSpace(classname)) return;
+
+        // Add a class
+        control.Attributes.Add("class", String.Join(" ", control
+                   .Attributes["class"]
+                   .Split(' ')
+                   .Except(new string[] { "", classname })
+                   .Concat(new string[] { classname })
+                   .ToArray()
+           ));
+        
+    }
+
+    public static void RemoveCssClass(HtmlControl control, string classname)
+    {
+        if (string.IsNullOrWhiteSpace(classname)) return;
+
+        // Remove a class
+        control.Attributes.Add("class", String.Join(" ", control
+                  .Attributes["class"]
+                  .Split(' ')
+                  .Except(new string[] { "", classname })
+                  .ToArray()
+          ));
     }
 }
