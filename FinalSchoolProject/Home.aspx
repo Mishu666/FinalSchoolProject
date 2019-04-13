@@ -13,7 +13,7 @@
             <div class="card w-100 mb-3">
                 <div class="card-body">
                     <h5 class="card-title text-gray-900"><%# Eval("Title") %></h5>
-                    <p class="card-text">
+                    <p class="card-text ">
                         <%# Eval("Body") %>
                     </p>
                     <div class="d-flex flex-row justify-content-between align-items-end text-gray-700">
@@ -24,16 +24,19 @@
                             </span>
                         </div>
                         <div class="vote-block d-flex flex-row">
-                            <a tabindex="-1" role="button" id="upvote_button" runat="server" class="btn mr-3 p-0 text-gray-500 upvote mr-2" data-post-id='<%# Convert.ToInt32(Eval("ID")) %>'
+                            <a role="button" id="upvote_button" runat="server" class="btn mr-1 p-0  text-gray-500 upvote" data-post-id='<%# Convert.ToInt32(Eval("ID")) %>'
                                 data-toggle="popover" data-placement="top" data-content="you must log in to vote" data-trigger="focus">
                                 <i tabindex="-1" class="fas fa-arrow-up"></i>
                             </a>
-                            <a tabindex="-1" role="button" id="downvote_button" runat="server" class="btn mr-1 p-0 text-gray-500 downvote mr-2" data-post-id='<%# Convert.ToInt32(Eval("ID")) %>'
+                            <span id="upvote_counter" data-post-id='<%# Convert.ToInt32(Eval("ID")) %>' class="d-flex flex-row justify-content-center align-items-center mx-auto"  style="width: 4rem;">
+                                <%# GlobalFunctions.FormatNumber(Convert.ToInt32(Eval("UpvoteCount"))) %>
+                            </span>
+                            <a role="button" id="downvote_button" runat="server" class="btn mr-1 p-0 text-gray-500 downvote" data-post-id='<%# Convert.ToInt32(Eval("ID")) %>'
                                 data-toggle="popover" data-placement="top" data-content="you must log in to vote" data-trigger="focus">
                                 <i tabindex="-1" class="fas fa-arrow-down"></i>
                             </a>
-                            <span id="vote_counter" data-post-id='<%# Convert.ToInt32(Eval("ID")) %>' class="d-flex flex-row justify-content-center align-items-center mx-auto"  style="width: 4rem;">
-                                <%# GlobalFunctions.FormatNumber(Convert.ToInt32(Eval("VoteCount"))) %>
+                            <span id="downvote_counter" data-post-id='<%# Convert.ToInt32(Eval("ID")) %>' class="d-flex flex-row justify-content-center align-items-center mx-auto"  style="width: 4rem;">
+                                <%# GlobalFunctions.FormatNumber(Convert.ToInt32(Eval("DownvoteCount"))) %>
                             </span>
                         </div>
                     </div>

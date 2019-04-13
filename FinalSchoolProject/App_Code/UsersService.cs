@@ -15,6 +15,31 @@ using System.Web.Script.Services;
 [ScriptService]
 public class UsersService : System.Web.Services.WebService
 {
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public void LogOutUser()
+    {
+        Session["Logged"] = false;
+        Session["CurrentUserID"] = null;
+
+    }
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public void LogInUser(string username, string password)
+    {
+        UsersClass user = UsersClass.GetByCredentials(username, password);
+        Session["Logged"] = true;
+        Session["CurrentUserID"] = user.ID;
+    }
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public void SignUpUser(string username, string password, DateTime DOB)
+    {
+        UsersClass.CreateNew(username, password, DOB);
+        LogInUser(username, password);
+    }
 
     [WebMethod]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
@@ -62,9 +87,9 @@ public class UsersService : System.Web.Services.WebService
         if (vote_dt == null || vote_dt.Rows.Count == 0)
         {
             PostVotesClass.CreateNew(userID, PostID, 1);
-            post.VoteCount += 1;
+            post.UpvoteCount += 1;
             post.Update();
-            return post.VoteCount;
+            return post.UpvoteCount;
         }
 
         PostVotesClass vote = PostVotesClass.FromDataRow(vote_dt.Rows[0]);
@@ -73,7 +98,7 @@ public class UsersService : System.Web.Services.WebService
         if (vote.VoteValue == 1)
         {
             vote.Delete();
-            post.VoteCount -= 1;
+            post.UpvoteCount -= 1;
             post.Update();
 
         }
@@ -81,12 +106,13 @@ public class UsersService : System.Web.Services.WebService
         {
             vote.VoteValue = 1;
             vote.Update();
-            post.VoteCount += 2;
+            post.UpvoteCount += 1;
+            post.DownvoteCount -= 1;
             post.Update();
 
         }
 
-        return post.VoteCount;
+        return post.UpvoteCount;
     }
 
     [WebMethod(EnableSession = true)]
@@ -112,9 +138,9 @@ public class UsersService : System.Web.Services.WebService
         if(vote_dt == null || vote_dt.Rows.Count == 0)
         {
             PostVotesClass.CreateNew(userID, PostID, -1);
-            post.VoteCount -= 1;
+            post.DownvoteCount += 1;
             post.Update();
-            return post.VoteCount;
+            return post.DownvoteCount;
         }
 
         PostVotesClass vote = PostVotesClass.FromDataRow(vote_dt.Rows[0]);
@@ -122,7 +148,7 @@ public class UsersService : System.Web.Services.WebService
         if (vote.VoteValue == -1)
         {
             vote.Delete();
-            post.VoteCount += 1;
+            post.DownvoteCount -= 1;
             post.Update();
 
         }
@@ -130,11 +156,12 @@ public class UsersService : System.Web.Services.WebService
         {
             vote.VoteValue = -1;
             vote.Update();
-            post.VoteCount -= 2;
+            post.DownvoteCount += 1;
+            post.UpvoteCount   -= 1;
             post.Update();
 
         }
-        return post.VoteCount;
+        return post.DownvoteCount;
 
     }
 

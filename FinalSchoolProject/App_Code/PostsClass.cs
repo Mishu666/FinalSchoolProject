@@ -10,7 +10,7 @@ using System.Data;
 public class PostsClass
 {
     public int ID { get; private set; }
-    public int ConsultPageID, AuthorID, VoteCount, CommentCount;
+    public int ConsultPageID, AuthorID, UpvoteCount, DownvoteCount, CommentCount;
     public string Title, Body;
     public bool IsDeleted, IsRemoved;
     public DateTime CreationDate;
@@ -23,13 +23,14 @@ public class PostsClass
 
     }
 
-    private PostsClass(int ID, int ConsultPageID, int AuthorID, int VoteCount, int CommentCount,
+    private PostsClass(int ID, int ConsultPageID, int AuthorID, int UpvoteCount, int DownvoteCount, int CommentCount,
         string Title, string Body, bool IsDeleted, bool IsRemoved, DateTime CreationDate)
     {
         this.ID = ID;
         this.ConsultPageID = ConsultPageID;
         this.AuthorID = AuthorID;
-        this.VoteCount = VoteCount;
+        this.UpvoteCount = UpvoteCount;
+        this.DownvoteCount = DownvoteCount;
         this.CommentCount = CommentCount;
         this.Title = Title;
         this.Body = Body;
@@ -46,7 +47,8 @@ public class PostsClass
             ID = Convert.ToInt32(dr["ID"]),
             ConsultPageID = Convert.ToInt32(dr["ConsultPageID"]),
             AuthorID = Convert.ToInt32(dr["AuthorID"]),
-            VoteCount = Convert.ToInt32(dr["VoteCount"]),
+            UpvoteCount = Convert.ToInt32(dr["UpvoteCount"]),
+            DownvoteCount = Convert.ToInt32(dr["DownvoteCount"]),
             CommentCount = Convert.ToInt32(dr["CommentCount"]),
             Title = dr["Title"].ToString(),
             Body = dr["Body"].ToString(),
@@ -63,7 +65,8 @@ public class PostsClass
         {
             ConsultPageID = ConsultPageID,
             AuthorID = AuthorID,
-            VoteCount = 0,
+            UpvoteCount = 0,
+            DownvoteCount = 0,
             CommentCount = 0,
             Title = Title,
             Body = Body,
@@ -87,12 +90,12 @@ public class PostsClass
         }
 
         string sql_str = "INSERT INTO [Posts] " +
-            "([ConsultPageID], [AuthorID], [VoteCount], [CommentCount], [Title], [Body], " +
+            "([ConsultPageID], [AuthorID], [UpvoteCount], [DownvoteCount], [CommentCount], [Title], [Body], " +
             "[IsDeleted], [IsRemoved], [CreationDate]) " +
-            "VALUES ({0}, {1}, {2}, {3}, '{4}', '{5}', {6}, {7}, #{8}#) ";
+            "VALUES ({0}, {1}, {2}, {3}, {4}, '{5}', '{6}', {7}, {8}, #{9}#) ";
 
         sql_str = string.Format(sql_str, this.ConsultPageID, this.AuthorID,
-            this.VoteCount, this.CommentCount, this.Title, this.Body, this.IsDeleted,
+            this.UpvoteCount, this.DownvoteCount, this.CommentCount, this.Title, this.Body, this.IsDeleted,
             this.IsRemoved, this.CreationDate);
         Dbase.ChangeTable(sql_str);
 
@@ -107,11 +110,11 @@ public class PostsClass
     {
         string sql_str = "UPDATE [Posts] " +
             "SET [ConsultPageID] = {0}, [AuthorID] = {1}, " +
-            "[VoteCount] = {2}, [CommentCount] = {3}, [Title] = '{4}', [Body] = '{5}', " +
-            "[IsDeleted] = {6}, [IsRemoved] = {7}, [CreationDate] = #{8}#";
+            "[UpvoteCount] = {2}, [DownvoteCount] = {3}, [CommentCount] = {4}, [Title] = '{5}', [Body] = '{6}', " +
+            "[IsDeleted] = {7}, [IsRemoved] = {8}, [CreationDate] = #{9}#";
         sql_str += " WHERE [ID]=" + this.ID;
         sql_str = string.Format(sql_str, this.ConsultPageID, this.AuthorID,
-            this.VoteCount, this.CommentCount, this.Title, this.Body, this.IsDeleted,
+            this.UpvoteCount, this.DownvoteCount, this.CommentCount, this.Title, this.Body, this.IsDeleted,
             this.IsRemoved, this.CreationDate);
         Dbase.ChangeTable(sql_str);
     }
@@ -133,6 +136,13 @@ public class PostsClass
         return all;
     }
 
+    public static PostsClass GetByID(int ID)
+    {
+        KeyValuePair<string, object> id_pair = new KeyValuePair<string, object>("ID", ID);
+        DataTable obj = GetByProperties(id_pair);
+        if (obj == null || obj.Rows.Count == 0) return null;
+        else return FromDataRow(obj.Rows[0]);
+    }
     public static DataTable GetByProperties(params KeyValuePair<string, object>[] pairs)
     {
         string sql_str = "SELECT * FROM [Posts]";

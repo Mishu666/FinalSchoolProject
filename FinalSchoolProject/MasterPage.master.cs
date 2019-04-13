@@ -27,14 +27,13 @@ public partial class MasterPage : System.Web.UI.MasterPage
     {
         Session["Logged"] = false;
         Session["CurrentUserID"] = null;
-
     }
 
     public void LogInUser(string username, string password)
     {
-        DataRow user = UsersClass.GetByCredentials(username, password);
+        UsersClass user = UsersClass.GetByCredentials(username, password);
         Session["Logged"] = true;
-        Session["CurrentUserID"] = user["ID"];
+        Session["CurrentUserID"] = user.ID;
     }
 
     public void SignUpUser(string username, string password, DateTime DOB)
@@ -66,7 +65,8 @@ public partial class MasterPage : System.Web.UI.MasterPage
     {
         string username = loginInputUsername.Text;
         string password = loginInputPassword.Text;
-        LogInUser(username, password);
+        if(!string.IsNullOrWhiteSpace(username) && !string.IsNullOrWhiteSpace(password) && UsersClass.UserExists(username, password))
+            LogInUser(username, password);
     }
 
     protected void SignupSubmitButton_Click(object sender, EventArgs e)
@@ -75,7 +75,8 @@ public partial class MasterPage : System.Web.UI.MasterPage
         string password = signupInputPassword.Text;
         DateTime DOB = DateTime.ParseExact(signupInputDOB.Text, "dd/mm/yyyy", null);
 
-        SignUpUser(username, password, DOB);
+        if (!string.IsNullOrWhiteSpace(username) && !string.IsNullOrWhiteSpace(password) && !UsersClass.UserNameTaken(username) && DOB.CompareTo(DateTime.Today) <= 0)
+            SignUpUser(username, password, DOB);
 
     }
 

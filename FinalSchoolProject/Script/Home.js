@@ -1,5 +1,6 @@
 ﻿$(document).ready(function () {
 
+    $('[data-toggle="popover"]').popover();
     userLoggedIn(userLoggedInSuccessCallback);
 
     function userLoggedInSuccessCallback(data) {
@@ -12,22 +13,24 @@
                 var post_id = $(this).data("post-id");
                 var upvote_btn = $(this);
                 var downvote_btn = $(".downvote[data-post-id='" + upvote_btn.data("post-id") + "']");
-                var vote_counter = $("#vote_counter[data-post-id='" + post_id + "']");
+                var upvote_counter = $("#upvote_counter[data-post-id='" + post_id + "']");
+                var downvote_counter = $("#downvote_counter[data-post-id='" + post_id + "']");
 
                 if (upvote_btn.hasClass("active")) {
                     upvote_btn.removeClass("active");
-                    vote_counter.text(parseInt(vote_counter.text()) - 1);
+                    upvote_counter.text(parseInt(upvote_counter.text()) - 1);
                 }
                 else {
                     if (downvote_btn.hasClass("active")) {
                         downvote_btn.removeClass("active");
                         upvote_btn.addClass("active");
-                        vote_counter.text(parseInt(vote_counter.text()) + 2);
+                        upvote_counter.text(parseInt(upvote_counter.text()) + 1);
+                        downvote_counter.text(parseInt(downvote_counter.text()) - 1);
 
                     }
                     else {
                         upvote_btn.addClass("active");
-                        vote_counter.text(parseInt(vote_counter.text()) + 1);
+                        upvote_counter.text(parseInt(upvote_counter.text()) + 1);
                     }
                 }
 
@@ -44,22 +47,24 @@
                 var post_id = $(this).data("post-id");
                 var downvote_btn = $(this);
                 var upvote_btn = $(".upvote[data-post-id='" + downvote_btn.data("post-id") + "']");
-                var vote_counter = $("#vote_counter[data-post-id='" + post_id + "']");
+                var downvote_counter = $("#downvote_counter[data-post-id='" + post_id + "']");
+                var upvote_counter = $("#upvote_counter[data-post-id='" + post_id + "']");
 
                 if (downvote_btn.hasClass("active")) {
                     downvote_btn.removeClass("active");
-                    vote_counter.text(parseInt(vote_counter.text()) + 1);
+                    downvote_counter.text(parseInt(downvote_counter.text()) - 1);
                 }
                 else {
                     if (upvote_btn.hasClass("active")) {
                         upvote_btn.removeClass("active");
                         downvote_btn.addClass("active");
-                        vote_counter.text(parseInt(vote_counter.text()) - 2);
+                        downvote_counter.text(parseInt(downvote_counter.text()) + 1);
+                        upvote_counter.text(parseInt(upvote_counter.text()) - 1);
 
                     }
                     else {
                         downvote_btn.addClass("active");
-                        vote_counter.text(parseInt(vote_counter.text()) - 1);
+                        downvote_counter.text(parseInt(downvote_counter.text()) + 1);
                     }
                 }
 
@@ -71,8 +76,6 @@
             });
         }
         else {
-
-            $('[data-toggle="popover"]').popover();
 
             $(".upvote").on("click", function (e) {
                 console.log("oops");

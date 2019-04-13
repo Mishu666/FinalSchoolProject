@@ -12,7 +12,7 @@ public class UsersClass
     public int ID { get; private set; }
 
     public int Flags, Points, MyFollowersCount, FollowingCount;
-    public string Username, Password;
+    public string Username, Password, ProfilePictureDir;
     public DateTime DOB, CreationDate;
     public bool IsAdmin, IsSuspended, IsPrivate, IsDeleted;
 
@@ -24,7 +24,7 @@ public class UsersClass
     }
 
     private UsersClass(int ID, int MyFollowersCount, int FollowingCount, int Flags, int Points,
-        string Username, string Password,
+        string Username, string Password, string ProfilePictureDir,
         DateTime DOB, DateTime CreationDate,
         bool IsAdmin, bool IsSuspended, bool IsPrivate, bool IsDeleted)
     {
@@ -41,6 +41,7 @@ public class UsersClass
         this.IsSuspended = IsSuspended;
         this.IsPrivate = IsPrivate;
         this.IsDeleted = IsDeleted;
+        this.ProfilePictureDir = ProfilePictureDir;
     }
 
     public static UsersClass FromDataRow(DataRow dr)
@@ -55,6 +56,7 @@ public class UsersClass
             Points = Convert.ToInt32(dr["Points"]),
             Username = dr["Username"].ToString(),
             Password = dr["Password"].ToString(),
+            ProfilePictureDir = dr["ProfilePictureDir"].ToString(),
             DOB = Convert.ToDateTime(dr["DOB"]),
             CreationDate = Convert.ToDateTime(dr["CreationDate"]),
             IsAdmin = Convert.ToBoolean(dr["IsAdmin"]),
@@ -77,6 +79,7 @@ public class UsersClass
             FollowingCount = 0,
             Flags = 0,
             Points = 0,
+            ProfilePictureDir = "",
             CreationDate = DateTime.Now,
             IsSuspended = false,
             IsPrivate = false,
@@ -100,11 +103,11 @@ public class UsersClass
 
         string sql_str = "INSERT INTO [Users] " +
             "([Username], [Password], [MyFollowersCount], [FollowingCount], [Flags], [Points], " +
-            "[CreationDate], [DOB], [IsAdmin], [IsSuspended], [IsPrivate], [IsDeleted]) " +
-            "VALUES ('{0}','{1}', {2}, {3}, {4}, {5}, #{6}#, #{7}#, {8}, {9}, {10}, {11}) ";
+            "[CreationDate], [DOB], [IsAdmin], [IsSuspended], [IsPrivate], [IsDeleted]. [ProfilePictureDir]) " +
+            "VALUES ('{0}','{1}', {2}, {3}, {4}, {5}, #{6}#, #{7}#, {8}, {9}, {10}, {11}, '{12}') ";
 
         sql_str = string.Format(sql_str, this.Username, this.Password, this.MyFollowersCount, this.FollowingCount, this.Flags, this.Points,
-            this.CreationDate, this.DOB, this.IsAdmin, this.IsSuspended, this.IsPrivate, this.IsDeleted);
+            this.CreationDate, this.DOB, this.IsAdmin, this.IsSuspended, this.IsPrivate, this.IsDeleted, this.ProfilePictureDir);
         Dbase.ChangeTable(sql_str);
 
         string get_id = "SELECT @@IDENTITY AS ID";
@@ -120,10 +123,10 @@ public class UsersClass
             "SET [Username] = '{0}', [Password] = '{1}', " +
             "[MyFollowersCount] = {2}, [FollowingCount] = {3} , [Flags] = {4}, [Points]= {5}, " +
             "[CreationDate] = #{6}#, [DOB] = #{7}#, [IsAdmin] = {8}, [IsSuspended] = {9}, " +
-            "[IsPrivate] = {10}, [IsDeleted] = {11}";
+            "[IsPrivate] = {10}, [IsDeleted] = {11}, [ProfilePictureDir] = '{12}'";
         sql_str += " WHERE [ID]=" + this.ID;
         sql_str = string.Format(sql_str, this.Username, this.Password, this.MyFollowersCount, this.FollowingCount, this.Flags, this.Points,
-            this.CreationDate, this.DOB, this.IsAdmin, this.IsSuspended, this.IsPrivate, this.IsDeleted);
+            this.CreationDate, this.DOB, this.IsAdmin, this.IsSuspended, this.IsPrivate, this.IsDeleted, this.ProfilePictureDir);
         Dbase.ChangeTable(sql_str);
     }
 
@@ -144,6 +147,14 @@ public class UsersClass
 
         return all;
 
+    }
+
+    public static UsersClass GetByID(int ID)
+    {
+        KeyValuePair<string, object> id_pair = new KeyValuePair<string, object>("ID", ID);
+        DataTable obj = GetByProperties(id_pair);
+        if (obj == null || obj.Rows.Count == 0) return null;
+        else return FromDataRow(obj.Rows[0]);
     }
 
     public static DataTable GetByProperties(params KeyValuePair<string, object>[] pairs)
@@ -168,14 +179,15 @@ public class UsersClass
         return user_dt;
     }
 
-    public static DataRow GetByCredentials(string username, string password)
+    public static UsersClass GetByCredentials(string username, string password)
     {
-        string sql_str = "SELECT * FROM [Users] WHERE [Username]='{0}' AND [Password]='{1}'";
-        sql_str = sql_str = string.Format(sql_str, username, password);
-        DataTable user_dt = Dbase.SelectFromTable(sql_str);
-        if (user_dt.Rows.Count == 0) return null;
+        DataTable user_dt = GetByProperties(
+            new KeyValuePair<string, object>("Username", username),
+            new KeyValuePair<string, object>("Password", password)
+            );
 
-        return user_dt.Rows[0];
+        if (user_dt == null || user_dt.Rows.Count == 0) return null;
+        return FromDataRow(user_dt.Rows[0]);
     }
 
     #endregion
@@ -192,21 +204,9 @@ public class UsersClass
 
     public static bool UserExists(string username, string password)
     {
-        DataRow user = GetByCredentials(username, password);
+        UsersClass user = GetByCredentials(username, password);
         return user != null;
 
     }
-
-    public static string GetUserUsername(int id)
-    {
-        string username;
-        KeyValuePair<string, object> id_pair = new KeyValuePair<string, object>("ID", id);
-        DataTable user = GetByProperties(id_pair);
-        if (user == null) username = "null";
-        else username = user.Rows[0]["Username"].ToString();
-        return username;
-
-    }
     #endregion
-
 }

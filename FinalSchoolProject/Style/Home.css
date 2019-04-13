@@ -1,3 +1,7 @@
-﻿.upvote:focus, .downvote:focus {
+﻿/*.upvote:focus, .downvote:focus {
     outline: none;
+}*/
+
+.upvote:hover, .downvote:hover {
+    cursor: pointer;
 }

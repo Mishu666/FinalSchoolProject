@@ -10,7 +10,7 @@ using System.Data;
 public class CommentsClass
 {
     public int ID { get; private set; }
-    public int CommentorID, ParentPostID, ParentCommentID;
+    public int CommentorID, ParentPostID, ParentCommentID, UpvoteCount, DownvoteCount;
     public string Title, Body;
     public DateTime CreationDate;
     public bool IsRemoved, IsDeleted;
@@ -88,11 +88,11 @@ public class CommentsClass
 
         string sql_str = "INSERT INTO [Comments] " +
             "([Title], [Body], [CommentorID], [ParentPostID], [ParentCommentID], " +
-            "[CreationDate]. [IsRemoved], [IsDeleted]) " +
-            "VALUES ('{0}','{1}',{2}, {3}, {4}, #{5}#, {6}, {7}) ";
+            "[UpvoteCount], [DownvoteCount], [CreationDate]. [IsRemoved], [IsDeleted]) " +
+            "VALUES ('{0}','{1}',{2}, {3}, {4}, {5} {6}, #{7}#, {8}, {9}) ";
 
         sql_str = string.Format(sql_str, this.Title, this.Body, this.CommentorID, this.ParentPostID,
-            this.ParentCommentID, this.CreationDate, this.IsRemoved, this.IsDeleted);
+            this.ParentCommentID,this.UpvoteCount, this.DownvoteCount, this.CreationDate, this.IsRemoved, this.IsDeleted);
         Dbase.ChangeTable(sql_str);
 
         string get_id = "SELECT @@IDENTITY AS ID";
@@ -105,12 +105,12 @@ public class CommentsClass
     public void Update()
     {
         string sql_str = "UPDATE [Comments] " +
-            "SET [Title] = '{0}', [Body] = '{1}', [CommentorID] = {2}, " +
-            "[ParentPostID] = {3}, [ParentCommentID] = {4}, [CreationDate] = #{5}#," +
-            "[IsRemoved = {6}, [IsDeleted] = {7}";
+            "SET [Title] = '{0}', [Body] = '{1}', [CommentorID] = {2}, [UpvoteCount] = {3}, [DownvoteCount] = {4}," +
+            "[ParentPostID] = {5}, [ParentCommentID] = {6}, [CreationDate] = #{7}#," +
+            "[IsRemoved = {8}, [IsDeleted] = {9}";
         sql_str += " WHERE [ID]=" + this.ID;
-        sql_str = string.Format(sql_str, this.Title, this.Body, this.CommentorID, this.ParentPostID,
-            this.ParentCommentID, this.CreationDate, this.IsRemoved, this.IsDeleted);
+        sql_str = string.Format(sql_str, this.Title, this.Body, this.CommentorID, this.UpvoteCount, this.DownvoteCount,
+            this.ParentPostID, this.ParentCommentID, this.CreationDate, this.IsRemoved, this.IsDeleted);
         Dbase.ChangeTable(sql_str);
     }
 
@@ -130,7 +130,13 @@ public class CommentsClass
 
         return all;
     }
-
+    public static CommentsClass GetByID(int ID)
+    {
+        KeyValuePair<string, object> id_pair = new KeyValuePair<string, object>("ID", ID);
+        DataTable obj = GetByProperties(id_pair);
+        if (obj == null || obj.Rows.Count == 0) return null;
+        else return FromDataRow(obj.Rows[0]);
+    }
     public static DataTable GetByProperties(params KeyValuePair<string, object>[] pairs)
     {
         string sql_str = "SELECT * FROM [Comments]";

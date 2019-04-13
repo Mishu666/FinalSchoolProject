@@ -111,6 +111,13 @@ public class PostReportsClass
         return all;
     }
 
+    public static PostReportsClass GetByID(int ID)
+    {
+        KeyValuePair<string, object> id_pair = new KeyValuePair<string, object>("ID", ID);
+        DataTable obj = GetByProperties(id_pair);
+        if (obj == null || obj.Rows.Count == 0) return null;
+        else return FromDataRow(obj.Rows[0]);
+    }
     public static DataTable GetByProperties(params KeyValuePair<string, object>[] pairs)
     {
         string sql_str = "SELECT * FROM [CommentVotes]";
