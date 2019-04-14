@@ -15,8 +15,8 @@ using System.Web.Script.Services;
 [ScriptService]
 public class UsersService : System.Web.Services.WebService
 {
+
     [WebMethod(EnableSession = true)]
-    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     public void LogOutUser()
     {
         Session["Logged"] = false;
@@ -25,8 +25,7 @@ public class UsersService : System.Web.Services.WebService
     }
 
     [WebMethod(EnableSession = true)]
-    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public void LogInUser(string username, string password)
+    private void LogInUser(string username, string password)
     {
         UsersClass user = UsersClass.GetByCredentials(username, password);
         Session["Logged"] = true;
@@ -35,10 +34,83 @@ public class UsersService : System.Web.Services.WebService
 
     [WebMethod(EnableSession = true)]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public void SignUpUser(string username, string password, DateTime DOB)
+    private void SignUpUser(string username, string password, DateTime DOB)
     {
         UsersClass.CreateNew(username, password, DOB);
-        LogInUser(username, password);
+        LogInUser(username, password);        
+    }
+    
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public List<string> ValidateAndLogin(string username, string password)
+    {
+
+        List<string> warnings = new List<string>();
+        bool valid = true;
+
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            warnings.Add("username cannot be empty");
+            valid = false;
+        }
+        if(string.IsNullOrWhiteSpace(password))
+        {
+            warnings.Add("password cannot be empty");
+            valid = false;
+        }
+        if(valid)
+        {
+            if(!UsersClass.UserExists(username, password))
+            {
+                warnings.Add("username and password do not match");
+                valid = false;
+            }
+            else
+            {
+                LogInUser(username, password);
+            }
+        }
+
+        return warnings;
+    }
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public List<string> ValidateAndSignup(string username, string password, DateTime DOB)
+    {
+        List<string> warnings = new List<string>();
+        bool valid = true;
+
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            warnings.Add("username cannot be empty");
+            valid = false;
+        }
+        if (string.IsNullOrWhiteSpace(password))
+        {
+            warnings.Add("password cannot be empty");
+            valid = false;
+        }
+        if (string.IsNullOrWhiteSpace(DOB.ToString()))
+        {
+            warnings.Add("birth date cannot be empty");
+            valid = false;
+        }
+
+        if (valid)
+        {
+            if (DOB.CompareTo(DateTime.Today) > 0)
+            {
+                warnings.Add("invalid date of birth");
+                valid = false;
+            }
+            else
+            {
+                SignUpUser(username, password, DOB);
+            }
+        }
+
+        return warnings;
     }
 
     [WebMethod]
@@ -71,6 +143,7 @@ public class UsersService : System.Web.Services.WebService
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
             HttpContext current = HttpContext.Current;
+            current.Response.Status = "invalid login information";
             current.Response.StatusCode = 401;
             current.Response.End();
         }

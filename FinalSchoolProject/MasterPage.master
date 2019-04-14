@@ -136,6 +136,28 @@
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
 
+                        <!-- Nav Item - Sort Direction-->
+                        
+                        <li class="nav-item dropdown no-arrow mx-1" runat="server" visible="true">
+                            <a class="nav-link dropdown-toggle" href="#" id="sortDirectionDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-arrow-up fa-fw"></i>
+                            </a>
+                        </li>
+
+                        <!-- Nav Item - Sort -->
+                        
+                        <li class="nav-item dropdown no-arrow mx-1" runat="server" visible="true">
+                            <a class="nav-link dropdown-toggle" href="#" id="sortDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-sort-amount-down fa-fw"></i>
+                            </a>
+                            <!-- Dropdown - Sort Options -->
+                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="sortOptionsDropdown">
+                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                    hi
+                                </a>
+                            </div>
+                        </li>
+
                         <!-- Nav Item - Search Dropdown (Visible Only XS) -->
                         <li class="nav-item dropdown no-arrow d-sm-none">
                             <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -211,13 +233,15 @@
                         <div class="topbar-divider d-none d-sm-block"></div>
 
                         <!-- Nav Item - User Information -->
-                        <%  UsersClass user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
-                            if (Session["Logged"] != null && (bool)Session["Logged"] == true)
-                            { %>
+                    <%= Session["Logged"] %>
+                    <% UsersClass user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
+                       if (Session["Logged"] != null && (bool)Session["Logged"] == true)
+                       { %>
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small"><%= user.Username %></span>
-                                <img id="profile_picture" class="img-profile rounded-circle" src="<%= user.ProfilePictureDir %>" />
+                                <%--<img id="profile_picture" class="img-profile rounded-circle" src="<%= user.ProfilePictureDir %>" />--%>
+                                <i class="fas fa-user"></i>
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
@@ -236,17 +260,16 @@
                                 </a>
                             </div>
                         </li>
-                        <% }
-                            else
-                            { %>
+                    <% }
+                       else
+                       { %>
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="noUserButton" role="button" data-toggle="modal" data-target="#loginModal" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">Log In / Sign Up</span>
                                 <i class="fas fa-user"></i>
                             </a>
-                            <!-- Dropdown - User Information -->
                         </li>
-                        <% } %>
+                    <% } %>
                     </ul>
 
                 </nav>
