@@ -22,9 +22,9 @@
     <!-- Date picker js -->
     <script type="text/javascript" src="Script/bootstrap-datepicker.js"></script>
 
-    <!-- luxon datetime manipulation -->
+    <!-- moment datetime manipulation -->
 
-    <script type="text/javascript" src="Script/luxon.js"></script>
+    <script type="text/javascript" src="Script/moment.js"></script>
 
     <!-- Custom scripts for all pages-->
     <script src="Script/sb-admin-2.js"></script>
@@ -137,7 +137,7 @@
                     <ul class="navbar-nav ml-auto">
 
                         <!-- Nav Item - Sort Direction-->
-                        
+
                         <li class="nav-item dropdown no-arrow mx-1" runat="server" visible="true">
                             <a class="nav-link dropdown-toggle" href="#" id="sortDirectionDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-arrow-up fa-fw"></i>
@@ -145,18 +145,27 @@
                         </li>
 
                         <!-- Nav Item - Sort -->
-                        
+
                         <li class="nav-item dropdown no-arrow mx-1" runat="server" visible="true">
-                            <a class="nav-link dropdown-toggle" href="#" id="sortDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" id="sortDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-sort-amount-down fa-fw"></i>
                             </a>
                             <!-- Dropdown - Sort Options -->
-                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="sortOptionsDropdown">
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    hi
+                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in w-auto" aria-labelledby="sortOptionsDropdown" id="sortOptions">
+                                <a class="dropdown-item d-flex align-items-center" id="sortByNew">New
+                                </a>
+                                <a class="dropdown-item d-flex align-items-center" id="sortByRating">Top
                                 </a>
                             </div>
                         </li>
+
+                        <li class="nav-item dropdown no-arrow mx-1" runat="server" visible="true">
+                            <div class="nav-link" id="sort_option_text">
+                                New
+                            </div>
+                        </li>
+
+
 
                         <!-- Nav Item - Search Dropdown (Visible Only XS) -->
                         <li class="nav-item dropdown no-arrow d-sm-none">
@@ -233,10 +242,10 @@
                         <div class="topbar-divider d-none d-sm-block"></div>
 
                         <!-- Nav Item - User Information -->
-                    <%= Session["Logged"] %>
-                    <% UsersClass user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
-                       if (Session["Logged"] != null && (bool)Session["Logged"] == true)
-                       { %>
+
+                        <% UsersClass user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
+                            if (Session["Logged"] != null && (bool)Session["Logged"] == true)
+                            { %>
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small"><%= user.Username %></span>
@@ -260,16 +269,16 @@
                                 </a>
                             </div>
                         </li>
-                    <% }
-                       else
-                       { %>
+                        <% }
+                            else
+                            { %>
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="noUserButton" role="button" data-toggle="modal" data-target="#loginModal" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">Log In / Sign Up</span>
                                 <i class="fas fa-user"></i>
                             </a>
                         </li>
-                    <% } %>
+                        <% } %>
                     </ul>
 
                 </nav>

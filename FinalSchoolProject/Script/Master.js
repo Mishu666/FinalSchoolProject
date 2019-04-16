@@ -1,7 +1,4 @@
-﻿
-let DateTime = luxon.DateTime;
-
-$(document).ready(function () {
+﻿$(document).ready(function () {
 
     clearLoginModal();
     clearSignupModal();
@@ -9,11 +6,6 @@ $(document).ready(function () {
     $('#signupInputDOB').datepicker({
         autoclose: true,
         format: "dd/mm/yyyy"
-    });
-
-    $("#sortDirectionDropdown").on("click", function (e) {
-        $(this).children(["i"]).toggleClass("fa-arrow-up");
-        $(this).children(["i"]).toggleClass("fa-arrow-down");
     });
 
     $("#LogInSubmitButton").on("click", function (e) {
@@ -43,7 +35,7 @@ $(document).ready(function () {
         clearSignupModal();
     });
 
-    $("img#profile_picture").on("error", function () {
+    $("#profile_picture").on("error", function () {
         $(this).replaceWith("<i class='fas fa-user-circle'></i>");
     });
 

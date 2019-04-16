@@ -10,7 +10,7 @@
 
         <ItemTemplate>
 
-            <div class="card w-100 mb-3">
+            <div class="card w-100 mb-3 post" data-date="<%# Eval("CreationDate") %>" data-rating="<%# Convert.ToInt32(Eval("UpvoteCount")) - Convert.ToInt32(Eval("DownvoteCount")) %>">
                 <div class="card-body">
                     <h5 class="card-title text-gray-900"><%# Eval("Title") %></h5>
                     <p class="card-text ">
