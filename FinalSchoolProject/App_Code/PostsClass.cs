@@ -169,6 +169,18 @@ public class PostsClass
 
     #region utility functions
     
-    
+    public static string GetAuthorUsername(int ID)
+    {
+        PostsClass post = GetByID(ID);
+        UsersClass author = UsersClass.GetByID(post.AuthorID);
+        return author.Username;
+    }
+
+    public static DateTime GetCreationDate(int ID)
+    {
+        PostsClass post = GetByID(ID);
+        return post.CreationDate;
+    }
+
     #endregion
 }

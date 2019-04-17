@@ -1,4 +1,5 @@
-﻿$(document).ready(function () {
+﻿
+$(document).ready(function () {
 
     clearLoginModal();
     clearSignupModal();
@@ -98,7 +99,8 @@ function validateAndSignupSuccess(data) {
         if (w === "invalid date of birth") {
             $("#signupInputDOB").addClass("border-danger");
         }
-    }}
+    }
+}
 
 //----------------------------------------------------------------------------------------------------------
 

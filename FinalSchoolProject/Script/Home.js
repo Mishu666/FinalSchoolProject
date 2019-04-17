@@ -1,17 +1,29 @@
-﻿
-$(document).ready(function () {
+﻿$(document).ready(function () {
 
-    userLoggedIn(userLoggedInSuccessCallback);  
+    var calendarEl = document.getElementById('user_calendar');
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        plugins: ['dayGrid', 'bootstrap'],
+        themeSystem: 'bootstrap',
+    });
+    calendar.render();
+
+    userLoggedIn(userLoggedInSuccessCallback);
 
     let sort_dir = window.sessionStorage.getItem("sort_direction");
     if (sort_dir === null) {
-        setSortDirection("ascending");
+        sort_dir = "ascending";
     }
 
     let sort_option = window.sessionStorage.getItem("sort_option");
     if (sort_option === null) {
-        setSortOption("new");
+        sort_option = "new";
     }
+
+    setSortDirection(sort_dir);
+
+    setSortOption(sort_option);
+
 
     updateSort();
 

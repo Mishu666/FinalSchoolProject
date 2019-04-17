@@ -16,22 +16,29 @@
     <script src="vendor/jquery/jquery.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.js"></script>
 
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.css" />
+
     <!-- Core plugin JavaScript-->
     <script src="vendor/jquery-easing/jquery.easing.js"></script>
+
+    <!-- Full Calendar -->
+    <link rel="stylesheet" href="vendor/fullcalendar/core/main.css" />
+    <link rel="stylesheet" href="vendor/fullcalendar/daygrid/main.css" />
+    <link rel="stylesheet" href="vendor/fullcalendar/list/main.css" />
+    <link rel="stylesheet" href="vendor/fullcalendar/timegrid/main.css" />
+
+    <script type="text/javascript" src="vendor/fullcalendar/core/main.js"></script>
+    <script type="text/javascript" src="vendor/fullcalendar/daygrid/main.js"></script>
+    <script type="text/javascript" src="vendor/fullcalendar/list/main.js"></script>
+    <script type="text/javascript" src="vendor/fullcalendar/timegrid/main.js"></script>
 
     <!-- Date picker js -->
     <script type="text/javascript" src="Script/bootstrap-datepicker.js"></script>
 
-    <!-- moment datetime manipulation -->
-
-    <script type="text/javascript" src="Script/moment.js"></script>
-
     <!-- Custom scripts for all pages-->
     <script src="Script/sb-admin-2.js"></script>
     <script type="text/javascript" src="Script/Master.js"></script>
-
-    <asp:ContentPlaceHolder ID="head" runat="server">
-    </asp:ContentPlaceHolder>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -45,6 +52,9 @@
     <link rel="stylesheet" href="Style/bootstrap-datepicker.css" />
 
     <link rel="icon" href="Images/logo.png" />
+
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
 
 </head>
 
@@ -113,7 +123,7 @@
                 <!-- Main Content -->
 
                 <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                <nav class="navbar navbar-expand navbar-light bg-white topbar static-top shadow">
 
                     <!-- Sidebar Toggle (Topbar) -->
                     <button id="sidebarToggleTop" onclick="return false;" class="btn btn-link d-md-none rounded-circle mr-3 text-gray-700">
@@ -140,7 +150,7 @@
 
                         <li class="nav-item dropdown no-arrow mx-1" runat="server" visible="true">
                             <a class="nav-link dropdown-toggle" href="#" id="sortDirectionDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-arrow-up fa-fw"></i>
+                                <i class="fas fa-fw"></i>
                             </a>
                         </li>
 
@@ -243,53 +253,58 @@
 
                         <!-- Nav Item - User Information -->
 
-                        <% UsersClass user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
-                            if (Session["Logged"] != null && (bool)Session["Logged"] == true)
-                            { %>
-                        <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><%= user.Username %></span>
-                                <%--<img id="profile_picture" class="img-profile rounded-circle" src="<%= user.ProfilePictureDir %>" />--%>
-                                <i class="fas fa-user"></i>
-                            </a>
-                            <!-- Dropdown - User Information -->
-                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Profile
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Settings
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Logout
-                                </a>
-                            </div>
-                        </li>
-                        <% }
+                        <%  if (Session["Logged"] != null && (bool)Session["Logged"] == true)
+                            {
+                                UsersClass user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
+                        %>
+                                <li class="nav-item dropdown no-arrow">
+                                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <span class="mr-2 d-none d-lg-inline text-gray-600 small"><%= user.Username %></span>
+                                        <%--<img id="profile_picture" class="img-profile rounded-circle" src="<%= user.ProfilePictureDir %>" />--%>
+                                        <i class="fas fa-user"></i>
+                                    </a>
+                                    <!-- Dropdown - User Information -->
+                                    <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                                        <a class="dropdown-item" href="#">
+                                            <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                            Profile
+                                        </a>
+                                        <a class="dropdown-item" href="#">
+                                            <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                                            Settings
+                                        </a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                            <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                            Logout
+                                        </a>
+                                    </div>
+                                </li>
+                        <%  }
                             else
-                            { %>
-                        <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" id="noUserButton" role="button" data-toggle="modal" data-target="#loginModal" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Log In / Sign Up</span>
-                                <i class="fas fa-user"></i>
-                            </a>
-                        </li>
-                        <% } %>
+                            { 
+                        %>
+                                <li class="nav-item dropdown no-arrow">
+                                    <a class="nav-link dropdown-toggle" href="#" id="noUserButton" role="button" data-toggle="modal" data-target="#loginModal" aria-haspopup="true" aria-expanded="false">
+                                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">Log In / Sign Up</span>
+                                        <i class="fas fa-user"></i>
+                                    </a>
+                                </li>
+
+                        <%  } %>
                     </ul>
 
                 </nav>
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
-                <div id="content_space" class="container-fluid overflow-auto">
+                <div id="content_space" class="overflow-hidden d-flex flex-row h-100 p-3">
 
                     <asp:ContentPlaceHolder ID="main_content" runat="server"></asp:ContentPlaceHolder>
 
                 </div>
+
+
                 <!-- /.container-fluid -->
 
                 <!-- End of Main Content -->
