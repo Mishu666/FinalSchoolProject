@@ -182,5 +182,13 @@ public class PostsClass
         return post.CreationDate;
     }
 
+    public static string GetPageName(int ID)
+    {
+
+        PostsClass post = GetByID(ID);
+        ConsultPagesClass page = ConsultPagesClass.GetByID(post.ConsultPageID);
+        return page.PageName;
+    }
+
     #endregion
 }

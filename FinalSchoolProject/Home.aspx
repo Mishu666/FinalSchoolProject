@@ -2,6 +2,9 @@
 
 <asp:Content ID="home_head" ContentPlaceHolderID="head" runat="Server">
 
+    <script type="text/javascript" src="Script/post_actions.js"></script>
+    <link rel="stylesheet" href="Style/post_actions.css" />
+
     <script type="text/javascript" src="Script/Home.js"></script>
     <link rel="stylesheet" href="Style/Home.css" />
 
@@ -19,15 +22,49 @@
     <script type="text/javascript" src="vendor/fullcalendar/bootstrap/main.js"></script>
 
 </asp:Content>
+
+<asp:Content ID="hom_nav_items" ContentPlaceHolderID="nav_items_cph" runat="server">
+
+    <!-- Nav Item - Sort Direction-->
+
+    <li class="nav-item dropdown no-arrow mx-1" runat="server" visible="true">
+        <a class="nav-link dropdown-toggle" href="#" id="sortDirectionDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-fw"></i>
+        </a>
+    </li>
+
+    <!-- Nav Item - Sort -->
+
+    <li class="nav-item dropdown no-arrow mx-1" runat="server" visible="true">
+        <a class="nav-link dropdown-toggle" id="sortDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-sort-amount-down fa-fw"></i>
+        </a>
+        <!-- Dropdown - Sort Options -->
+        <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in w-auto" aria-labelledby="sortOptionsDropdown" id="sortOptions">
+            <a class="dropdown-item d-flex align-items-center" id="sortByNew">New
+            </a>
+            <a class="dropdown-item d-flex align-items-center" id="sortByRating">Top
+            </a>
+        </div>
+    </li>
+
+    <li class="nav-item dropdown no-arrow mx-1" runat="server" visible="true">
+        <div class="nav-link" id="sort_option_text">
+            New
+        </div>
+    </li>
+
+</asp:Content>
+
 <asp:Content ID="home_main_content" ContentPlaceHolderID="main_content" runat="Server">
 
-    <div class="page_content overflow-auto px-3 w-75">
+    <div class="page_content overflow-auto px-5 w-75">
 
         <asp:Repeater ID="HomePostsRepeater" runat="server" OnItemDataBound="HomePostsRepeater_ItemDataBound">
 
             <ItemTemplate>
 
-                <div class="card w-100 mb-3 post" data-date="<%# Eval("CreationDate") %>" data-rating="<%# Convert.ToInt32(Eval("UpvoteCount")) - Convert.ToInt32(Eval("DownvoteCount")) %>">
+                <div class="card shadow w-100 mb-3 post" data-date="<%# Eval("CreationDate") %>" data-rating="<%# Convert.ToInt32(Eval("UpvoteCount")) - Convert.ToInt32(Eval("DownvoteCount")) %>">
                     <div class="card-body">
                         <h5 class="card-title text-gray-900"><%# Eval("Title") %></h5>
                         <p class="card-text ">
@@ -40,7 +77,7 @@
                                     <%# GlobalFunctions.FormatNumber(Convert.ToInt32(Eval("CommentCount"))) %>
                                 </span>
                             </div>
-                            <div>
+                            <div class="mr-auto">
                                 potsed by <a href="#"><%# PostsClass.GetAuthorUsername(Convert.ToInt32(Eval("ID"))) %></a> on <%# PostsClass.GetCreationDate(Convert.ToInt32(Eval("ID"))).ToShortDateString() %>
                             </div>
                             <div class="vote-block d-flex flex-row">
@@ -69,9 +106,9 @@
 
     </div>
 
-    <div id="calendar_container" class="d-flex flex-column w-50 h-100 px-3">
-        <div id="user_calendar" class=""></div>
-        <div class="w-100 flex-grow-1 bg-danger"></div>
+    <div id="calendar_container" class="d-flex flex-column w-50 h-100 px-5">
+        <div id="user_calendar" class="mb-3"></div>
+        <div class="w-100 flex-grow-1 border"></div>
     </div>
 
 </asp:Content>
