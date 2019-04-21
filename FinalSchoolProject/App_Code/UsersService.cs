@@ -5,6 +5,7 @@ using System.Web;
 using System.Data;
 using System.Web.Services;
 using System.Web.Script.Services;
+using System.Globalization;
 
 /// <summary>
 /// Summary description for UsersService
@@ -76,20 +77,38 @@ public class UsersService : System.Web.Services.WebService
 
     [WebMethod(EnableSession = true)]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public List<string> ValidateAndSignup(string username, string password, DateTime DOB)
+    public List<string> ValidateAndSignup(string username, string password, string pass_confirm, string DOBstr)
     {
         List<string> warnings = new List<string>();
         bool valid = true;
+        DateTime DOB;
+        bool DOB_parsed = DateTime.TryParseExact(DOBstr, "dd/MM/yyyy", null, DateTimeStyles.None, out DOB);
 
         if (string.IsNullOrWhiteSpace(username))
         {
             warnings.Add("username cannot be empty");
             valid = false;
         }
+        else
+        {
+            if(UsersClass.UserNameTaken(username))
+            {
+                warnings.Add("username taken");
+                valid = false;
+            }
+        }
         if (string.IsNullOrWhiteSpace(password))
         {
             warnings.Add("password cannot be empty");
             valid = false;
+        }
+        else
+        {
+            if (!password.Equals(pass_confirm))
+            {
+                warnings.Add("passwords do not match");
+                valid = false;
+            }
         }
         if (string.IsNullOrWhiteSpace(DOB.ToString()))
         {
@@ -99,7 +118,7 @@ public class UsersService : System.Web.Services.WebService
 
         if (valid)
         {
-            if (DOB.CompareTo(DateTime.Today) > 0)
+            if (!DOB_parsed || DOB.CompareTo(DateTime.Today) > 0)
             {
                 warnings.Add("invalid date of birth");
                 valid = false;

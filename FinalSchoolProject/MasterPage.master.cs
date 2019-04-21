@@ -51,10 +51,11 @@ public partial class MasterPage : System.Web.UI.MasterPage
     {
         string username = signupInputUsername.Text;
         string password = signupInputPassword.Text;
-        DateTime DOB = DateTime.ParseExact(signupInputDOB.Text, "dd/mm/yyyy", null);
+        string pass_confirm = signupInputPasswordConfirm.Text;
+        string DOB = signupInputDOB.Text;
 
         UsersService us = new UsersService();
-        us.ValidateAndSignup(username, password, DOB);
+        us.ValidateAndSignup(username, password, pass_confirm, DOB);
 
     }
 

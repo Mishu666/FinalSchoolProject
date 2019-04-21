@@ -11,7 +11,7 @@ public class SubscribtionsClass
 {
     public int ID { get; private set; }
     public int SubscriberID, SubscribedPageID;
-    public DateTime SubscribtionDate;
+    public string SubscribtionDate;
 
     #region constructors
 
@@ -21,7 +21,7 @@ public class SubscribtionsClass
     }
 
     private SubscribtionsClass(int ID, int SubscriberID,
-        int SubscribedPageID, DateTime SubscribtionDate)
+        int SubscribedPageID, string SubscribtionDate)
     {
         this.ID = ID;
         this.SubscriberID = SubscriberID;
@@ -37,7 +37,7 @@ public class SubscribtionsClass
             ID = Convert.ToInt32(dr["ID"]),
             SubscriberID = Convert.ToInt32(dr["SubscriberID"]),
             SubscribedPageID = Convert.ToInt32(dr["SubscribedPageID"]),
-            SubscribtionDate = Convert.ToDateTime(dr["SubscribtionDate"])
+            SubscribtionDate = Convert.ToString(dr["SubscribtionDate"])
         };
         return obj;
     }
@@ -48,7 +48,7 @@ public class SubscribtionsClass
         {
             SubscriberID = SubscriberID,
             SubscribedPageID = SubscribedPageID,
-            SubscribtionDate = DateTime.Now
+            SubscribtionDate = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")
         };
         sub.Insert();
         return sub;
@@ -67,12 +67,12 @@ public class SubscribtionsClass
 
         string sql_str = "INSERT INTO [Subscribtions] " +
             "([SubscriberID], [SubscribedPageID], [SubscribtionDate]) " +
-            "VALUES ({0}, {1}, #{3}#) ";
+            "VALUES ({0}, {1}, '{3}') ";
 
         sql_str = string.Format(sql_str, this.SubscriberID, this.SubscribedPageID, this.SubscribtionDate);
         Dbase.ChangeTable(sql_str);
 
-        string get_id = "SELECT @@IDENTITY AS ID";
+        string get_id = "SELECT last_insert_rowid() AS ID";
 
         DataTable dt = Dbase.SelectFromTable(get_id);
 
@@ -82,7 +82,7 @@ public class SubscribtionsClass
     public void Update()
     {
         string sql_str = "UPDATE [Subscribtions] " +
-            "SET [SubscriberID] = {0}, [SubscribedPageID] = {1}, [SubscribtionDate] = #{3}#";
+            "SET [SubscriberID] = {0}, [SubscribedPageID] = {1}, [SubscribtionDate] = '{3}'";
         sql_str += " WHERE [ID]=" + this.ID;
         sql_str = string.Format(sql_str, this.SubscriberID, this.SubscribedPageID, this.SubscribtionDate);
         Dbase.ChangeTable(sql_str);
@@ -115,19 +115,28 @@ public class SubscribtionsClass
     public static DataTable GetByProperties(params KeyValuePair<string, object>[] pairs)
     {
         string sql_str = "SELECT * FROM [Subscribtions]";
-        string surround;
+        string prepend, append;
 
         if (pairs.Length > 0) sql_str += " WHERE ";
 
         for (int i = 0; i < pairs.Length; i++)
         {
-            surround = "";
-            if (pairs[i].Value is string) surround = "'";
-            if (pairs[i].Value is DateTime) surround = "#";
-            sql_str += "[{1}] = {0}{2}{0}";
+            prepend = "";
+            append = "";
+            if (pairs[i].Value is string)
+            {
+                prepend = "'";
+                append = "'";
+            }
+            if (pairs[i].Value is DateTime)
+            {
+                prepend = "date('";
+                append = "')";
+            }
+            sql_str += "[{0}] = {1}{2}{3}";
             if (i < pairs.Length - 1) sql_str += " AND ";
 
-            sql_str = string.Format(sql_str, surround, pairs[i].Key, pairs[i].Value);
+            sql_str = string.Format(sql_str, pairs[i].Key, prepend, pairs[i].Value, append);
 
         }
         DataTable user_dt = Dbase.SelectFromTable(sql_str);

@@ -28,7 +28,7 @@
                                 </span>
                             </div>
                             <div class="mr-auto">
-                                potsed by <a href="#"><%# PostsClass.GetAuthorUsername(Convert.ToInt32(Eval("ID"))) %></a> on  <%# PostsClass.GetCreationDate(Convert.ToInt32(Eval("ID"))).ToShortDateString() %>
+                                potsed by <a href="#"><%# PostsClass.GetAuthorUsername(Convert.ToInt32(Eval("ID"))) %></a> on  <%# PostsClass.GetCreationDate(Convert.ToInt32(Eval("ID"))) %>
                             </div>
                             <div class="vote-block d-flex flex-row">
                                 <a role="button" id="upvote_button" runat="server" class="btn mr-1 p-0  text-gray-500 upvote" data-post-id='<%# Convert.ToInt32(Eval("ID")) %>'

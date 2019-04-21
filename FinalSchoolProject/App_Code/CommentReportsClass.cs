@@ -12,7 +12,7 @@ public class CommentReportsClass
     public int ID { get; private set; }
     public int ReporterID, ReportedCommentID;
     public string Body;
-    public DateTime CreationDate;
+    public string CreationDate;
 
     #region constructors
 
@@ -22,7 +22,7 @@ public class CommentReportsClass
     }
 
     private CommentReportsClass(int ID, int ReporterID,
-        int ReportedCommentID, string Body, DateTime CreationDate)
+        int ReportedCommentID, string Body, string CreationDate)
     {
         this.ID = ID;
         this.ReporterID = ReporterID;
@@ -40,7 +40,7 @@ public class CommentReportsClass
             ReporterID = Convert.ToInt32(dr["ReporterID"]),
             ReportedCommentID = Convert.ToInt32(dr["ReportedCommentID"]),
             Body = dr["Body"].ToString(),
-            CreationDate = Convert.ToDateTime(dr["CreationDate"])
+            CreationDate = Convert.ToString(dr["CreationDate"])
         };
         return obj;
     }
@@ -52,7 +52,7 @@ public class CommentReportsClass
             ReporterID = ReporterID,
             ReportedCommentID = ReportedCommentID,
             Body = Body,
-            CreationDate = DateTime.Now
+            CreationDate = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")
         };
         
         commentreport.Insert();
@@ -72,12 +72,12 @@ public class CommentReportsClass
 
         string sql_str = "INSERT INTO [CommentReports] " +
             "([ReporterID], [ReportedCommentID], [Body], [CreationDate]) " +
-            "VALUES ({0}, {1}, '{2}', #{3}#) ";
+            "VALUES ({0}, {1}, '{2}', '{3}') ";
 
         sql_str = string.Format(sql_str, this.ReporterID, this.ReportedCommentID, this.Body, this.CreationDate);
         Dbase.ChangeTable(sql_str);
 
-        string get_id = "SELECT @@IDENTITY AS ID";
+        string get_id = "SELECT last_insert_rowid() AS ID";
 
         DataTable dt = Dbase.SelectFromTable(get_id);
 
@@ -88,7 +88,7 @@ public class CommentReportsClass
     {
         string sql_str = "UPDATE [CommentReports] " +
             "SET [ReporterID] = {0}, [ReportedCommentID] = {1}, " +
-            "[Body] = '{2}', [CreationDate] = #{3}#";
+            "[Body] = '{2}', [CreationDate] = '{3}'";
         sql_str += " WHERE [ID]=" + this.ID;
         sql_str = string.Format(sql_str, this.ReporterID, this.ReportedCommentID, this.Body, this.CreationDate);
         Dbase.ChangeTable(sql_str);
@@ -122,19 +122,28 @@ public class CommentReportsClass
     public static DataTable GetByProperties(params KeyValuePair<string, object>[] pairs)
     {
         string sql_str = "SELECT * FROM [CommentReports]";
-        string surround;
+        string prepend, append;
 
         if (pairs.Length > 0) sql_str += " WHERE ";
 
         for (int i = 0; i < pairs.Length; i++)
         {
-            surround = "";
-            if (pairs[i].Value is string) surround = "'";
-            if (pairs[i].Value is DateTime) surround = "#";
-            sql_str += "[{1}] = {0}{2}{0}";
+            prepend = "";
+            append = "";
+            if (pairs[i].Value is string)
+            {
+                prepend = "'";
+                append = "'";
+            }
+            if (pairs[i].Value is DateTime)
+            {
+                prepend = "date('";
+                append = "')";
+            }
+            sql_str += "[{0}] = {1}{2}{3}";
             if (i < pairs.Length - 1) sql_str += " AND ";
 
-            sql_str = string.Format(sql_str, surround, pairs[i].Key, pairs[i].Value);
+            sql_str = string.Format(sql_str, pairs[i].Key, prepend, pairs[i].Value, append);
 
         }
         DataTable user_dt = Dbase.SelectFromTable(sql_str);

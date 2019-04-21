@@ -72,7 +72,7 @@ public class PostVotesClass
         sql_str = string.Format(sql_str, this.VoterID, this.VotedPostID, this.VoteValue);
         Dbase.ChangeTable(sql_str);
 
-        string get_id = "SELECT @@IDENTITY AS ID";
+        string get_id = "SELECT last_insert_rowid() AS ID";
 
         DataTable dt = Dbase.SelectFromTable(get_id);
 
@@ -116,19 +116,28 @@ public class PostVotesClass
     public static DataTable GetByProperties(params KeyValuePair<string, object>[] pairs)
     {
         string sql_str = "SELECT * FROM [PostVotes]";
-        string surround;
+        string prepend, append;
 
         if (pairs.Length > 0) sql_str += " WHERE ";
 
         for (int i = 0; i < pairs.Length; i++)
         {
-            surround = "";
-            if (pairs[i].Value is string) surround = "'";
-            if (pairs[i].Value is DateTime) surround = "#";
-            sql_str += "[{1}] = {0}{2}{0}";
+            prepend = "";
+            append = "";
+            if (pairs[i].Value is string)
+            {
+                prepend = "'";
+                append = "'";
+            }
+            if (pairs[i].Value is DateTime)
+            {
+                prepend = "date('";
+                append = "')";
+            }
+            sql_str += "[{0}] = {1}{2}{3}";
             if (i < pairs.Length - 1) sql_str += " AND ";
 
-            sql_str = string.Format(sql_str, surround, pairs[i].Key, pairs[i].Value);
+            sql_str = string.Format(sql_str, pairs[i].Key, prepend, pairs[i].Value, append);
 
         }
         DataTable user_dt = Dbase.SelectFromTable(sql_str);

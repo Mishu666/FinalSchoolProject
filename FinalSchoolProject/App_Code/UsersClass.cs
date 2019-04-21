@@ -13,7 +13,7 @@ public class UsersClass
 
     public int Flags, Points, MyFollowersCount, FollowingCount;
     public string Username, Password, ProfilePictureDir;
-    public DateTime DOB, CreationDate;
+    string DOB, CreationDate;
     public bool IsAdmin, IsSuspended, IsPrivate, IsDeleted;
 
     #region constructors
@@ -25,7 +25,7 @@ public class UsersClass
 
     private UsersClass(int ID, int MyFollowersCount, int FollowingCount, int Flags, int Points,
         string Username, string Password, string ProfilePictureDir,
-        DateTime DOB, DateTime CreationDate,
+        string DOB, string CreationDate,
         bool IsAdmin, bool IsSuspended, bool IsPrivate, bool IsDeleted)
     {
         this.ID = ID;
@@ -57,8 +57,8 @@ public class UsersClass
             Username = dr["Username"].ToString(),
             Password = dr["Password"].ToString(),
             ProfilePictureDir = dr["ProfilePictureDir"].ToString(),
-            DOB = Convert.ToDateTime(dr["DOB"]),
-            CreationDate = Convert.ToDateTime(dr["CreationDate"]),
+            DOB = Convert.ToString(dr["DOB"]),
+            CreationDate = Convert.ToString(dr["CreationDate"]),
             IsAdmin = Convert.ToBoolean(dr["IsAdmin"]),
             IsSuspended = Convert.ToBoolean(dr["IsSuspended"]),
             IsPrivate = Convert.ToBoolean(dr["IsPrivate"]),
@@ -73,14 +73,14 @@ public class UsersClass
         {
             Username = Username,
             Password = Password,
-            DOB = DOB,
+            DOB = DOB.ToString("dd/MM/yyyy HH:mm:ss"),
             IsAdmin = false,
             MyFollowersCount = 0,
             FollowingCount = 0,
             Flags = 0,
             Points = 0,
             ProfilePictureDir = "",
-            CreationDate = DateTime.Now,
+            CreationDate = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"),
             IsSuspended = false,
             IsPrivate = false,
             IsDeleted = false
@@ -103,14 +103,14 @@ public class UsersClass
 
         string sql_str = "INSERT INTO [Users] " +
             "([Username], [Password], [MyFollowersCount], [FollowingCount], [Flags], [Points], " +
-            "[CreationDate], [DOB], [IsAdmin], [IsSuspended], [IsPrivate], [IsDeleted]. [ProfilePictureDir]) " +
-            "VALUES ('{0}','{1}', {2}, {3}, {4}, {5}, #{6}#, #{7}#, {8}, {9}, {10}, {11}, '{12}') ";
+            "[CreationDate], [DOB], [IsAdmin], [IsSuspended], [IsPrivate], [IsDeleted], [ProfilePictureDir]) " +
+            "VALUES ('{0}','{1}', {2}, {3}, {4}, {5}, '{6}', '{7}', {8}, {9}, {10}, {11}, '{12}') ";
 
         sql_str = string.Format(sql_str, this.Username, this.Password, this.MyFollowersCount, this.FollowingCount, this.Flags, this.Points,
             this.CreationDate, this.DOB, this.IsAdmin, this.IsSuspended, this.IsPrivate, this.IsDeleted, this.ProfilePictureDir);
         Dbase.ChangeTable(sql_str);
 
-        string get_id = "SELECT @@IDENTITY AS ID";
+        string get_id = "SELECT last_insert_rowid() AS ID";
 
         DataTable dt = Dbase.SelectFromTable(get_id);
 
@@ -122,7 +122,7 @@ public class UsersClass
         string sql_str = "UPDATE [Users] " +
             "SET [Username] = '{0}', [Password] = '{1}', " +
             "[MyFollowersCount] = {2}, [FollowingCount] = {3} , [Flags] = {4}, [Points]= {5}, " +
-            "[CreationDate] = #{6}#, [DOB] = #{7}#, [IsAdmin] = {8}, [IsSuspended] = {9}, " +
+            "[CreationDate] = '{6}', [DOB] = '{7}', [IsAdmin] = {8}, [IsSuspended] = {9}, " +
             "[IsPrivate] = {10}, [IsDeleted] = {11}, [ProfilePictureDir] = '{12}'";
         sql_str += " WHERE [ID]=" + this.ID;
         sql_str = string.Format(sql_str, this.Username, this.Password, this.MyFollowersCount, this.FollowingCount, this.Flags, this.Points,
@@ -160,19 +160,28 @@ public class UsersClass
     public static DataTable GetByProperties(params KeyValuePair<string, object>[] pairs)
     {
         string sql_str = "SELECT * FROM [Users]";
-        string surround;
+        string prepend, append;
 
         if (pairs.Length > 0) sql_str += " WHERE ";
 
         for (int i = 0; i < pairs.Length; i++)
         {
-            surround = "";
-            if (pairs[i].Value is string) surround = "'";
-            if (pairs[i].Value is DateTime) surround = "#";
-            sql_str += "[{1}] = {0}{2}{0}";
+            prepend = "";
+            append = "";
+            if (pairs[i].Value is string)
+            {
+                prepend = "'";
+                append = "'";
+            }
+            if (pairs[i].Value is DateTime)
+            {
+                prepend = "date('";
+                append = "')";
+            }
+            sql_str += "[{0}] = {1}{2}{3}";
             if (i < pairs.Length - 1) sql_str += " AND ";
 
-            sql_str = string.Format(sql_str, surround, pairs[i].Key, pairs[i].Value);
+            sql_str = string.Format(sql_str, pairs[i].Key, prepend, pairs[i].Value, append);
 
         }
         DataTable user_dt = Dbase.SelectFromTable(sql_str);

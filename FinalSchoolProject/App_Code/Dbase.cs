@@ -1,18 +1,8 @@
 ﻿using System;
 using System.Data;
-using System.Configuration; 
-
 using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.HtmlControls;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Data.OleDb;
+using System.Data.SQLite;
 
-/// <summary>
-/// Summary description for Dbase
-/// </summary>
 public class Dbase
 {
     public Dbase()
@@ -20,37 +10,34 @@ public class Dbase
 
     }
 
-    public static OleDbConnection MakeConnection(string dbFile = "DB.accdb")
+    public static SQLiteConnection MakeConnection(string dbFile = "SQLiteDB.db")
     {
-        OleDbConnection c = new OleDbConnection();
-        if (dbFile.Contains(".accdb"))
-            // MS Access >=2007
-            c.ConnectionString = "Provider=Microsoft.ACE.OLEDB.12.0; Data Source=" + HttpContext.Current.Server.MapPath("~/App_Data/" + dbFile);
-        else
-            // MS Access 2003
-            c.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0; Data Source=" + HttpContext.Current.Server.MapPath("~/App_Data/" + dbFile);
-        c.Open();
+        SQLiteConnection c = new SQLiteConnection();
+        c.ConnectionString = "Data Source=" +
+            HttpContext.Current.Server.MapPath("~/App_Data/" + dbFile) +
+            ";Version=3;";
+             c.Open();
         return c;
     }
 
-    public static DataTable SelectFromTable(string strSql, string FileName = "DB.accdb")
+    public static DataTable SelectFromTable(string strSQLite, string FileName = "SQLiteDB.db")
     {
-        OleDbConnection c = MakeConnection(FileName);
-        OleDbCommand comm = new OleDbCommand();
-        comm.CommandText = strSql;
+        SQLiteConnection c = MakeConnection(FileName);
+        SQLiteCommand comm = new SQLiteCommand();
+        comm.CommandText = strSQLite;
         comm.Connection = c;
         DataTable dt = new DataTable();
-        OleDbDataAdapter da = new OleDbDataAdapter(comm);
+        SQLiteDataAdapter da = new SQLiteDataAdapter(comm);
         da.Fill(dt);
         c.Close();
         return dt;
     }
 
-    public static void ChangeTable(string strSql, string FileName = "DB.accdb")
+    public static void ChangeTable(string strSQLite, string FileName = "SQLiteDB.db")
     {
-        OleDbConnection c = MakeConnection(FileName);
-        OleDbCommand comm = new OleDbCommand();
-        comm.CommandText = strSql;
+        SQLiteConnection c = MakeConnection(FileName);
+        SQLiteCommand comm = new SQLiteCommand();
+        comm.CommandText = strSQLite;
         comm.Connection = c;
         comm.ExecuteNonQuery();
         c.Close();

@@ -12,7 +12,7 @@ public class MessagesClass
     public int ID { get; private set; }
     public int SenderID, RecipientID;
     public string Title, Body;
-    public DateTime SendDate;
+    public string SendDate;
 
     #region constructors
 
@@ -22,7 +22,7 @@ public class MessagesClass
     }
 
     private MessagesClass(int ID, int SenderID,
-        int RecipientID, string Body, string Title, DateTime SendDate)
+        int RecipientID, string Body, string Title, string SendDate)
     {
         this.ID = ID;
         this.SenderID = SenderID;
@@ -42,7 +42,7 @@ public class MessagesClass
             RecipientID = Convert.ToInt32(dr["RecipientID"]),
             Body = dr["Body"].ToString(),
             Title = dr["Title"].ToString(),
-            SendDate = Convert.ToDateTime(dr["SendDate"])
+            SendDate = Convert.ToString(dr["SendDate"])
         };
         return obj;
     }
@@ -55,7 +55,7 @@ public class MessagesClass
             RecipientID = RecipientID,
             Body = Body,
             Title = Title,
-            SendDate = DateTime.Now
+            SendDate = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")
         };
         message.Insert();
         return message;
@@ -74,12 +74,12 @@ public class MessagesClass
 
         string sql_str = "INSERT INTO [Messages] " +
             "([SenderID], [RecipientID], [Title], [Body], [SendDate]) " +
-            "VALUES ({0}, {1}, '{2}' , '{3}', #{4}#) ";
+            "VALUES ({0}, {1}, '{2}' , '{3}', '{4}') ";
 
         sql_str = string.Format(sql_str, this.SenderID, this.RecipientID, this.Title, this.Body, this.SendDate);
         Dbase.ChangeTable(sql_str);
 
-        string get_id = "SELECT @@IDENTITY AS ID";
+        string get_id = "SELECT last_insert_rowid() AS ID";
 
         DataTable dt = Dbase.SelectFromTable(get_id);
 
@@ -90,7 +90,7 @@ public class MessagesClass
     {
         string sql_str = "UPDATE [Messages] " +
             "SET [SenderID] = {0}, [RecipientID] = {1}, " +
-            "[Title] = '{2}',[Body] = '{3}', [SendDate] = #{4}#";
+            "[Title] = '{2}',[Body] = '{3}', [SendDate] = '{4}'";
         sql_str += " WHERE [ID]=" + this.ID;
         sql_str = string.Format(sql_str, this.SenderID, this.RecipientID, this.Title, this.Body, this.SendDate);
         Dbase.ChangeTable(sql_str);
@@ -124,19 +124,28 @@ public class MessagesClass
     public static DataTable GetByProperties(params KeyValuePair<string, object>[] pairs)
     {
         string sql_str = "SELECT * FROM [Messages]";
-        string surround;
+        string prepend, append;
 
         if (pairs.Length > 0) sql_str += " WHERE ";
 
         for (int i = 0; i < pairs.Length; i++)
         {
-            surround = "";
-            if (pairs[i].Value is string) surround = "'";
-            if (pairs[i].Value is DateTime) surround = "#";
-            sql_str += "[{1}] = {0}{2}{0}";
+            prepend = "";
+            append = "";
+            if (pairs[i].Value is string)
+            {
+                prepend = "'";
+                append = "'";
+            }
+            if (pairs[i].Value is DateTime)
+            {
+                prepend = "date('";
+                append = "')";
+            }
+            sql_str += "[{0}] = {1}{2}{3}";
             if (i < pairs.Length - 1) sql_str += " AND ";
 
-            sql_str = string.Format(sql_str, surround, pairs[i].Key, pairs[i].Value);
+            sql_str = string.Format(sql_str, pairs[i].Key, prepend, pairs[i].Value, append);
 
         }
         DataTable user_dt = Dbase.SelectFromTable(sql_str);

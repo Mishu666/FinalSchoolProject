@@ -11,7 +11,7 @@ public class SavedPostsClass
 {
     public int ID { get; private set; }
     public int SaverID, SavedPostID;
-    public DateTime SaveDate;
+    public string SaveDate;
 
     #region constructors
 
@@ -21,7 +21,7 @@ public class SavedPostsClass
     }
 
     private SavedPostsClass(int ID, int SaverID,
-        int SavedPostID, DateTime SaveDate)
+        int SavedPostID, string SaveDate)
     {
         this.ID = ID;
         this.SaverID = SaverID;
@@ -37,7 +37,7 @@ public class SavedPostsClass
             ID = Convert.ToInt32(dr["ID"]),
             SaverID = Convert.ToInt32(dr["SaverID"]),
             SavedPostID = Convert.ToInt32(dr["SavedPostID"]),
-            SaveDate = Convert.ToDateTime(dr["SaveDate"])
+            SaveDate = Convert.ToString(dr["SaveDate"])
         };
         return obj;
     }
@@ -48,7 +48,7 @@ public class SavedPostsClass
         {
             SaverID = SaverID,
             SavedPostID = SavedPostID,
-            SaveDate = DateTime.Now
+            SaveDate = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")
         };
 
         post.Insert();
@@ -68,12 +68,12 @@ public class SavedPostsClass
 
         string sql_str = "INSERT INTO [SavedPosts] " +
             "([SaverID], [SavedPostID], [SaveDate]) " +
-            "VALUES ({0}, {1}, #{3}#) ";
+            "VALUES ({0}, {1}, '{3}')";
 
         sql_str = string.Format(sql_str, this.SaverID, this.SavedPostID, this.SaveDate);
         Dbase.ChangeTable(sql_str);
 
-        string get_id = "SELECT @@IDENTITY AS ID";
+        string get_id = "SELECT last_insert_rowid() AS ID";
 
         DataTable dt = Dbase.SelectFromTable(get_id);
 
@@ -83,7 +83,7 @@ public class SavedPostsClass
     public void Update()
     {
         string sql_str = "UPDATE [SavedPosts] " +
-            "SET [SaverID] = {0}, [SavedPostID] = {1}, [SaveDate] = #{3}#";
+            "SET [SaverID] = {0}, [SavedPostID] = {1}, [SaveDate] = '{3}'";
         sql_str += " WHERE [ID]=" + this.ID;
         sql_str = string.Format(sql_str, this.SaverID, this.SavedPostID, this.SaveDate);
         Dbase.ChangeTable(sql_str);
@@ -116,19 +116,28 @@ public class SavedPostsClass
     public static DataTable GetByProperties(params KeyValuePair<string, object>[] pairs)
     {
         string sql_str = "SELECT * FROM [SavedPosts]";
-        string surround;
+        string prepend, append;
 
         if (pairs.Length > 0) sql_str += " WHERE ";
 
         for (int i = 0; i < pairs.Length; i++)
         {
-            surround = "";
-            if (pairs[i].Value is string) surround = "'";
-            if (pairs[i].Value is DateTime) surround = "#";
-            sql_str += "[{1}] = {0}{2}{0}";
+            prepend = "";
+            append = "";
+            if (pairs[i].Value is string)
+            {
+                prepend = "'";
+                append = "'";
+            }
+            if (pairs[i].Value is DateTime)
+            {
+                prepend = "date('";
+                append = "')";
+            }
+            sql_str += "[{0}] = {1}{2}{3}";
             if (i < pairs.Length - 1) sql_str += " AND ";
 
-            sql_str = string.Format(sql_str, surround, pairs[i].Key, pairs[i].Value);
+            sql_str = string.Format(sql_str, pairs[i].Key, prepend, pairs[i].Value, append);
 
         }
         DataTable user_dt = Dbase.SelectFromTable(sql_str);

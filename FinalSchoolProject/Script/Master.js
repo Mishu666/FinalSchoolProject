@@ -29,12 +29,10 @@ $(document).ready(function () {
     });
 
     $("#loginModal").on("hidden.bs.modal", function (e) {
-        console.log("login hidden hidden");
         clearLoginModal();
     });
 
     $("#signupModal").on("hidden.bs.modal", function (e) {
-        console.log("signup hidden");
         clearSignupModal();
     });
 
@@ -46,23 +44,15 @@ $(document).ready(function () {
 
 //----------------------------------------------------------------------------------------------------------
 
-function loginUserSuccess(data) {
-    console.log("login success");
-    //window.location.reload();
-}
-
-function signupUserSuccess(data) {
-    window.location.reload();
-}
-
 function logoutUserSuccess(data) {
-    window.location.reload();
+    window.location.reload(false);
 }
 
 function validateAndLoginSuccess(data) {
     let warnings = data.d;
 
     for (let w of warnings) {
+        console.log(w);
         let warning = createWarning(w);
         $("#login_warning_space").append(warning);
         if (w === "username cannot be empty") {
@@ -78,6 +68,7 @@ function validateAndLoginSuccess(data) {
     }
 
     if (warnings.length === 0) {
+        console.log("login success");
         window.location.reload();
     }
 }
@@ -88,12 +79,20 @@ function validateAndSignupSuccess(data) {
 
     for (let w of warnings) {
         let warning = createWarning(w);
+        console.log(w);
         $("#signup_warning_space").append(warning);
         if (w === "username cannot be empty") {
             $("#signupInputUsername").addClass("border-danger");
         }
+        if (w === "username taken") {
+            $("#signupInputUsername").addClass("border-danger");
+        }
         if (w === "password cannot be empty") {
             $("#signupInputPassword").addClass("border-danger");
+        }
+        if (w === "passwords do not match") {
+            $("#signupInputPassword").addClass("border-danger");
+            $("#signupInputPasswordConfirm").addClass("border-danger");
         }
         if (w === "birth date cannot be empty") {
             $("#signupInputDOB").addClass("border-danger");
@@ -102,17 +101,24 @@ function validateAndSignupSuccess(data) {
             $("#signupInputDOB").addClass("border-danger");
         }
     }
+
+    if (warnings.length === 0) {
+        console.log("signup success");
+        window.location.reload();
+    }
+
 }
 
 //----------------------------------------------------------------------------------------------------------
 
-function validateAndSignup() {
+function validateAndSignup(success_callback) {
 
     let username = $("#signupInputUsername").val().trim();
     let password = $("#signupInputPassword").val().trim();
+    let password_confirm = $("#signupInputPasswordConfirm").val().trim();
     let DOB = $("#signupInputDOB").val().trim();
 
-    let data = { "username": username, "password": password, "DOB": DOB };
+    let data = { "username": username, "password": password,"pass_confirm":password_confirm, "DOBstr": DOB };
 
     $.ajax({
         method: "POST",

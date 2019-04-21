@@ -11,7 +11,7 @@ public class FollowersClass
 {
     public int ID { get; private set; }
     public int FollowerID, FollowedID;
-    public DateTime FollowDate;
+    public string FollowDate;
 
     #region constructors
 
@@ -20,7 +20,7 @@ public class FollowersClass
 
     }
 
-    private FollowersClass(int ID, int FollowerID, int FollowedID, DateTime FollowDate)
+    private FollowersClass(int ID, int FollowerID, int FollowedID, string FollowDate)
     {
         this.ID = ID;
         this.FollowerID = FollowerID;
@@ -36,7 +36,7 @@ public class FollowersClass
             ID = Convert.ToInt32(dr["ID"]),
             FollowerID = Convert.ToInt32(dr["FollowerID"]),
             FollowedID = Convert.ToInt32(dr["FollowedID"]),
-            FollowDate = Convert.ToDateTime(dr["FollowDate"])
+            FollowDate = Convert.ToString(dr["FollowDate"])
         };
         return obj;
     }
@@ -47,7 +47,7 @@ public class FollowersClass
         {
             FollowerID = FollowerID,
             FollowedID = FollowedID,
-            FollowDate = DateTime.Now
+            FollowDate = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")
         };
         follower.Insert();
         return follower;
@@ -66,12 +66,12 @@ public class FollowersClass
 
         string sql_str = "INSERT INTO [Followers] " +
             "([FollowerID], [FollowedID], [FollowDate]) " +
-            "VALUES ({0}, {1}, #{2}#) ";
+            "VALUES ({0}, {1}, '{2}') ";
 
         sql_str = string.Format(sql_str, this.FollowerID, this.FollowedID, this.FollowDate);
         Dbase.ChangeTable(sql_str);
 
-        string get_id = "SELECT @@IDENTITY AS ID";
+        string get_id = "SELECT last_insert_rowid() AS ID";
 
         DataTable dt = Dbase.SelectFromTable(get_id);
 
@@ -114,19 +114,28 @@ public class FollowersClass
     public static DataTable GetByProperties(params KeyValuePair<string, object>[] pairs)
     {
         string sql_str = "SELECT * FROM [Followers]";
-        string surround;
+        string prepend, append;
 
         if (pairs.Length > 0) sql_str += " WHERE ";
 
         for (int i = 0; i < pairs.Length; i++)
         {
-            surround = "";
-            if (pairs[i].Value is string) surround = "'";
-            if (pairs[i].Value is DateTime) surround = "#";
-            sql_str += "[{1}] = {0}{2}{0}";
+            prepend = "";
+            append = "";
+            if (pairs[i].Value is string)
+            {
+                prepend = "'";
+                append = "'";
+            }
+            if (pairs[i].Value is DateTime)
+            {
+                prepend = "date('";
+                append = "')";
+            }
+            sql_str += "[{0}] = {1}{2}{3}";
             if (i < pairs.Length - 1) sql_str += " AND ";
 
-            sql_str = string.Format(sql_str, surround, pairs[i].Key, pairs[i].Value);
+            sql_str = string.Format(sql_str, pairs[i].Key, prepend, pairs[i].Value, append);
 
         }
         DataTable user_dt = Dbase.SelectFromTable(sql_str);
