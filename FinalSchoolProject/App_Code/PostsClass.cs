@@ -13,7 +13,7 @@ public class PostsClass
     public int ConsultPageID, AuthorID, UpvoteCount, DownvoteCount, CommentCount;
     public string Title, Body;
     public bool IsDeleted, IsRemoved;
-    public string CreationDate;
+    public DateTime CreationDate;
 
 
     #region constructors
@@ -24,7 +24,7 @@ public class PostsClass
     }
 
     private PostsClass(int ID, int ConsultPageID, int AuthorID, int UpvoteCount, int DownvoteCount, int CommentCount,
-        string Title, string Body, bool IsDeleted, bool IsRemoved, string CreationDate)
+        string Title, string Body, bool IsDeleted, bool IsRemoved, DateTime CreationDate)
     {
         this.ID = ID;
         this.ConsultPageID = ConsultPageID;
@@ -54,7 +54,7 @@ public class PostsClass
             Body = dr["Body"].ToString(),
             IsDeleted = Convert.ToBoolean(dr["IsDeleted"]),
             IsRemoved = Convert.ToBoolean(dr["IsRemoved"]),
-            CreationDate = Convert.ToString(dr["CreationDate"])
+            CreationDate = Convert.ToDateTime(dr["CreationDate"])
         };
         return obj;
     }
@@ -72,7 +72,7 @@ public class PostsClass
             Body = Body,
             IsDeleted = false,
             IsRemoved = false,
-            CreationDate = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")
+            CreationDate = DateTime.Now
         };
         post.Insert();
         return post;
@@ -99,7 +99,7 @@ public class PostsClass
             this.IsRemoved, this.CreationDate);
         Dbase.ChangeTable(sql_str);
 
-        string get_id = "SELECT last_insert_rowid() AS ID";
+        string get_id = "SELECT @@IDENTITY AS ID";
 
         DataTable dt = Dbase.SelectFromTable(get_id);
 
@@ -161,8 +161,8 @@ public class PostsClass
             }
             if (pairs[i].Value is DateTime)
             {
-                prepend = "date('";
-                append = "')";
+                prepend = "#";
+                append = "#";
             }
             sql_str += "[{0}] = {1}{2}{3}";
             if (i < pairs.Length - 1) sql_str += " AND ";
@@ -183,12 +183,6 @@ public class PostsClass
         PostsClass post = GetByID(ID);
         UsersClass author = UsersClass.GetByID(post.AuthorID);
         return author.Username;
-    }
-
-    public static string GetCreationDate(int ID)
-    {
-        PostsClass post = GetByID(ID);
-        return post.CreationDate;
     }
 
     public static string GetPageName(int ID)

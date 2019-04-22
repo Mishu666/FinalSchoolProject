@@ -12,7 +12,7 @@ public class MessagesClass
     public int ID { get; private set; }
     public int SenderID, RecipientID;
     public string Title, Body;
-    public string SendDate;
+    public DateTime SendDate;
 
     #region constructors
 
@@ -22,7 +22,7 @@ public class MessagesClass
     }
 
     private MessagesClass(int ID, int SenderID,
-        int RecipientID, string Body, string Title, string SendDate)
+        int RecipientID, string Body, string Title, DateTime SendDate)
     {
         this.ID = ID;
         this.SenderID = SenderID;
@@ -42,7 +42,7 @@ public class MessagesClass
             RecipientID = Convert.ToInt32(dr["RecipientID"]),
             Body = dr["Body"].ToString(),
             Title = dr["Title"].ToString(),
-            SendDate = Convert.ToString(dr["SendDate"])
+            SendDate = Convert.ToDateTime(dr["SendDate"])
         };
         return obj;
     }
@@ -55,7 +55,7 @@ public class MessagesClass
             RecipientID = RecipientID,
             Body = Body,
             Title = Title,
-            SendDate = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")
+            SendDate = DateTime.Now
         };
         message.Insert();
         return message;
@@ -79,7 +79,7 @@ public class MessagesClass
         sql_str = string.Format(sql_str, this.SenderID, this.RecipientID, this.Title, this.Body, this.SendDate);
         Dbase.ChangeTable(sql_str);
 
-        string get_id = "SELECT last_insert_rowid() AS ID";
+        string get_id = "SELECT @@IDENTITY AS ID";
 
         DataTable dt = Dbase.SelectFromTable(get_id);
 
@@ -139,8 +139,8 @@ public class MessagesClass
             }
             if (pairs[i].Value is DateTime)
             {
-                prepend = "date('";
-                append = "')";
+                prepend = "#";
+                append = "#";
             }
             sql_str += "[{0}] = {1}{2}{3}";
             if (i < pairs.Length - 1) sql_str += " AND ";

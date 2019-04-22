@@ -12,7 +12,7 @@ public class CommentsClass
     public int ID { get; private set; }
     public int CommentorID, ParentPostID, ParentCommentID, UpvoteCount, DownvoteCount;
     public string Title, Body;
-    public string CreationDate;
+    public DateTime CreationDate;
     public bool IsRemoved, IsDeleted;
 
 
@@ -25,7 +25,7 @@ public class CommentsClass
 
     private CommentsClass(int ID, string Title, string Body,
         int CommentorID, int ParentPostID, int ParentCommentID,
-        string CreationDate, bool IsRemoved, bool IsDeleted)
+        DateTime CreationDate, bool IsRemoved, bool IsDeleted)
     {
         this.ID = ID;
         this.Title = Title;
@@ -49,7 +49,7 @@ public class CommentsClass
             ParentCommentID = Convert.ToInt32(dr["ParentCommentID"]),
             Title = dr["Title"].ToString(),
             Body = dr["Body"].ToString(),
-            CreationDate = Convert.ToString(dr["CreationDate"]),
+            CreationDate = Convert.ToDateTime(dr["CreationDate"]),
             IsRemoved = Convert.ToBoolean(dr["IsRemoved"]),
             IsDeleted = Convert.ToBoolean(dr["IsDeleted"])
         };
@@ -66,7 +66,7 @@ public class CommentsClass
             CommentorID = CommentorID,
             ParentPostID = ParentPostID,
             ParentCommentID = ParentCommentID,
-            CreationDate = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"),
+            CreationDate = DateTime.Now,
             IsRemoved = false,
             IsDeleted = false
         };
@@ -95,7 +95,7 @@ public class CommentsClass
             this.ParentCommentID, this.UpvoteCount, this.DownvoteCount, this.CreationDate, this.IsRemoved, this.IsDeleted);
         Dbase.ChangeTable(sql_str);
 
-        string get_id = "SELECT last_insert_rowid() AS ID";
+        string get_id = "SELECT @@IDENTITY AS ID";
 
         DataTable dt = Dbase.SelectFromTable(get_id);
 
@@ -155,8 +155,8 @@ public class CommentsClass
             }
             if (pairs[i].Value is DateTime)
             {
-                prepend = "date('";
-                append = "')";
+                prepend = "#";
+                append = "#";
             }
             sql_str += "[{0}] = {1}{2}{3}";
             if (i < pairs.Length - 1) sql_str += " AND ";

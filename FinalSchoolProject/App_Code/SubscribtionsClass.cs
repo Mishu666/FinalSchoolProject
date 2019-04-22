@@ -11,7 +11,7 @@ public class SubscribtionsClass
 {
     public int ID { get; private set; }
     public int SubscriberID, SubscribedPageID;
-    public string SubscribtionDate;
+    public DateTime SubscribtionDate;
 
     #region constructors
 
@@ -21,7 +21,7 @@ public class SubscribtionsClass
     }
 
     private SubscribtionsClass(int ID, int SubscriberID,
-        int SubscribedPageID, string SubscribtionDate)
+        int SubscribedPageID, DateTime SubscribtionDate)
     {
         this.ID = ID;
         this.SubscriberID = SubscriberID;
@@ -37,7 +37,7 @@ public class SubscribtionsClass
             ID = Convert.ToInt32(dr["ID"]),
             SubscriberID = Convert.ToInt32(dr["SubscriberID"]),
             SubscribedPageID = Convert.ToInt32(dr["SubscribedPageID"]),
-            SubscribtionDate = Convert.ToString(dr["SubscribtionDate"])
+            SubscribtionDate = Convert.ToDateTime(dr["SubscribtionDate"])
         };
         return obj;
     }
@@ -48,7 +48,7 @@ public class SubscribtionsClass
         {
             SubscriberID = SubscriberID,
             SubscribedPageID = SubscribedPageID,
-            SubscribtionDate = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")
+            SubscribtionDate = DateTime.Now
         };
         sub.Insert();
         return sub;
@@ -72,7 +72,7 @@ public class SubscribtionsClass
         sql_str = string.Format(sql_str, this.SubscriberID, this.SubscribedPageID, this.SubscribtionDate);
         Dbase.ChangeTable(sql_str);
 
-        string get_id = "SELECT last_insert_rowid() AS ID";
+        string get_id = "SELECT @@IDENTITY AS ID";
 
         DataTable dt = Dbase.SelectFromTable(get_id);
 
@@ -130,8 +130,8 @@ public class SubscribtionsClass
             }
             if (pairs[i].Value is DateTime)
             {
-                prepend = "date('";
-                append = "')";
+                prepend = "#";
+                append = "#";
             }
             sql_str += "[{0}] = {1}{2}{3}";
             if (i < pairs.Length - 1) sql_str += " AND ";

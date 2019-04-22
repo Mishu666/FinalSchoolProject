@@ -67,7 +67,7 @@ public class ModeratorsClass
         sql_str = string.Format(sql_str, this.PageID, this.ModeratorID);
         Dbase.ChangeTable(sql_str);
 
-        string get_id = "SELECT last_insert_rowid() AS ID";
+        string get_id = "SELECT @@IDENTITY AS ID";
 
         DataTable dt = Dbase.SelectFromTable(get_id);
 
@@ -125,8 +125,8 @@ public class ModeratorsClass
             }
             if (pairs[i].Value is DateTime)
             {
-                prepend = "date('";
-                append = "')";
+                prepend = "#";
+                append = "#";
             }
             sql_str += "[{0}] = {1}{2}{3}";
             if (i < pairs.Length - 1) sql_str += " AND ";

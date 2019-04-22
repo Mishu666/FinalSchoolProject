@@ -13,7 +13,7 @@ public class UsersClass
 
     public int Flags, Points, MyFollowersCount, FollowingCount;
     public string Username, Password, ProfilePictureDir;
-    string DOB, CreationDate;
+    DateTime DOB, CreationDate;
     public bool IsAdmin, IsSuspended, IsPrivate, IsDeleted;
 
     #region constructors
@@ -25,7 +25,7 @@ public class UsersClass
 
     private UsersClass(int ID, int MyFollowersCount, int FollowingCount, int Flags, int Points,
         string Username, string Password, string ProfilePictureDir,
-        string DOB, string CreationDate,
+        DateTime DOB, DateTime CreationDate,
         bool IsAdmin, bool IsSuspended, bool IsPrivate, bool IsDeleted)
     {
         this.ID = ID;
@@ -57,8 +57,8 @@ public class UsersClass
             Username = dr["Username"].ToString(),
             Password = dr["Password"].ToString(),
             ProfilePictureDir = dr["ProfilePictureDir"].ToString(),
-            DOB = Convert.ToString(dr["DOB"]),
-            CreationDate = Convert.ToString(dr["CreationDate"]),
+            DOB = Convert.ToDateTime(dr["DOB"]),
+            CreationDate = Convert.ToDateTime(dr["CreationDate"]),
             IsAdmin = Convert.ToBoolean(dr["IsAdmin"]),
             IsSuspended = Convert.ToBoolean(dr["IsSuspended"]),
             IsPrivate = Convert.ToBoolean(dr["IsPrivate"]),
@@ -73,14 +73,14 @@ public class UsersClass
         {
             Username = Username,
             Password = Password,
-            DOB = DOB.ToString("dd/MM/yyyy HH:mm:ss"),
+            DOB = DOB,
             IsAdmin = false,
             MyFollowersCount = 0,
             FollowingCount = 0,
             Flags = 0,
             Points = 0,
             ProfilePictureDir = "",
-            CreationDate = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"),
+            CreationDate = DateTime.Now,
             IsSuspended = false,
             IsPrivate = false,
             IsDeleted = false
@@ -110,7 +110,7 @@ public class UsersClass
             this.CreationDate, this.DOB, this.IsAdmin, this.IsSuspended, this.IsPrivate, this.IsDeleted, this.ProfilePictureDir);
         Dbase.ChangeTable(sql_str);
 
-        string get_id = "SELECT last_insert_rowid() AS ID";
+        string get_id = "SELECT @@IDENTITY AS ID";
 
         DataTable dt = Dbase.SelectFromTable(get_id);
 
@@ -175,8 +175,8 @@ public class UsersClass
             }
             if (pairs[i].Value is DateTime)
             {
-                prepend = "date('";
-                append = "')";
+                prepend = "#";
+                append = "#";
             }
             sql_str += "[{0}] = {1}{2}{3}";
             if (i < pairs.Length - 1) sql_str += " AND ";

@@ -11,7 +11,7 @@ public class SavedPostsClass
 {
     public int ID { get; private set; }
     public int SaverID, SavedPostID;
-    public string SaveDate;
+    public DateTime SaveDate;
 
     #region constructors
 
@@ -21,7 +21,7 @@ public class SavedPostsClass
     }
 
     private SavedPostsClass(int ID, int SaverID,
-        int SavedPostID, string SaveDate)
+        int SavedPostID, DateTime SaveDate)
     {
         this.ID = ID;
         this.SaverID = SaverID;
@@ -37,7 +37,7 @@ public class SavedPostsClass
             ID = Convert.ToInt32(dr["ID"]),
             SaverID = Convert.ToInt32(dr["SaverID"]),
             SavedPostID = Convert.ToInt32(dr["SavedPostID"]),
-            SaveDate = Convert.ToString(dr["SaveDate"])
+            SaveDate = Convert.ToDateTime(dr["SaveDate"])
         };
         return obj;
     }
@@ -48,7 +48,7 @@ public class SavedPostsClass
         {
             SaverID = SaverID,
             SavedPostID = SavedPostID,
-            SaveDate = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")
+            SaveDate = DateTime.Now
         };
 
         post.Insert();
@@ -73,7 +73,7 @@ public class SavedPostsClass
         sql_str = string.Format(sql_str, this.SaverID, this.SavedPostID, this.SaveDate);
         Dbase.ChangeTable(sql_str);
 
-        string get_id = "SELECT last_insert_rowid() AS ID";
+        string get_id = "SELECT @@IDENTITY AS ID";
 
         DataTable dt = Dbase.SelectFromTable(get_id);
 
@@ -131,8 +131,8 @@ public class SavedPostsClass
             }
             if (pairs[i].Value is DateTime)
             {
-                prepend = "date('";
-                append = "')";
+                prepend = "#";
+                append = "#";
             }
             sql_str += "[{0}] = {1}{2}{3}";
             if (i < pairs.Length - 1) sql_str += " AND ";

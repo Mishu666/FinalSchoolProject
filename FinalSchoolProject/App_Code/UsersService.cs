@@ -22,6 +22,7 @@ public class UsersService : System.Web.Services.WebService
     {
         Session["Logged"] = false;
         Session["CurrentUserID"] = null;
+        Session["CurrentUserIsAdmin"] = null;
 
     }
 
@@ -31,6 +32,7 @@ public class UsersService : System.Web.Services.WebService
         UsersClass user = UsersClass.GetByCredentials(username, password);
         Session["Logged"] = true;
         Session["CurrentUserID"] = user.ID;
+        Session["CurrentUserIsAdmin"] = user.IsAdmin;
     }
 
     [WebMethod(EnableSession = true)]

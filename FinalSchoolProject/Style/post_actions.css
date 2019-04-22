@@ -1,3 +1,15 @@
 ﻿.upvote:hover, .downvote:hover {
     cursor: pointer;
 }
+
+.upvote_space:hover, .downvote_space:hover {
+    cursor: default !important;
+}
+
+.upvote_space.active {
+    color: orangered !important;
+}
+
+.downvote_space.active {
+    color: dodgerblue !important;
+}

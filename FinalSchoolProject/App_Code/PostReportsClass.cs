@@ -12,7 +12,7 @@ public class PostReportsClass
     public int ID { get; private set; }
     public int ReporterID, ReportedPostID;
     public string Body;
-    public string CreationDate;
+    public DateTime CreationDate;
 
     #region constructors
 
@@ -22,7 +22,7 @@ public class PostReportsClass
     }
 
     private PostReportsClass(int ID, int ReporterID,
-        int ReportedPostID, string Body, string CreationDate)
+        int ReportedPostID, string Body, DateTime CreationDate)
     {
         this.ID = ID;
         this.ReporterID = ReporterID;
@@ -40,7 +40,7 @@ public class PostReportsClass
             ReporterID = Convert.ToInt32(dr["ReporterID"]),
             ReportedPostID = Convert.ToInt32(dr["ReportedPostID"]),
             Body = dr["Body"].ToString(),
-            CreationDate = Convert.ToString(dr["CreationDate"])
+            CreationDate = Convert.ToDateTime(dr["CreationDate"])
         };
         return obj;
     }
@@ -52,7 +52,7 @@ public class PostReportsClass
             ReporterID = ReporterID,
             ReportedPostID = ReportedPostID,
             Body = Body,
-            CreationDate = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")
+            CreationDate = DateTime.Now
         };
         report.Insert();
         return report;
@@ -76,7 +76,7 @@ public class PostReportsClass
         sql_str = string.Format(sql_str, this.ReporterID, this.ReportedPostID, this.Body, this.CreationDate);
         Dbase.ChangeTable(sql_str);
 
-        string get_id = "SELECT last_insert_rowid() AS ID";
+        string get_id = "SELECT @@IDENTITY AS ID";
 
         DataTable dt = Dbase.SelectFromTable(get_id);
 
@@ -136,8 +136,8 @@ public class PostReportsClass
             }
             if (pairs[i].Value is DateTime)
             {
-                prepend = "date('";
-                append = "')";
+                prepend = "#";
+                append = "#";
             }
             sql_str += "[{0}] = {1}{2}{3}";
             if (i < pairs.Length - 1) sql_str += " AND ";

@@ -11,7 +11,7 @@ public class FollowersClass
 {
     public int ID { get; private set; }
     public int FollowerID, FollowedID;
-    public string FollowDate;
+    public DateTime FollowDate;
 
     #region constructors
 
@@ -20,7 +20,7 @@ public class FollowersClass
 
     }
 
-    private FollowersClass(int ID, int FollowerID, int FollowedID, string FollowDate)
+    private FollowersClass(int ID, int FollowerID, int FollowedID, DateTime FollowDate)
     {
         this.ID = ID;
         this.FollowerID = FollowerID;
@@ -36,7 +36,7 @@ public class FollowersClass
             ID = Convert.ToInt32(dr["ID"]),
             FollowerID = Convert.ToInt32(dr["FollowerID"]),
             FollowedID = Convert.ToInt32(dr["FollowedID"]),
-            FollowDate = Convert.ToString(dr["FollowDate"])
+            FollowDate = Convert.ToDateTime(dr["FollowDate"])
         };
         return obj;
     }
@@ -47,7 +47,7 @@ public class FollowersClass
         {
             FollowerID = FollowerID,
             FollowedID = FollowedID,
-            FollowDate = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")
+            FollowDate = DateTime.Now
         };
         follower.Insert();
         return follower;
@@ -71,7 +71,7 @@ public class FollowersClass
         sql_str = string.Format(sql_str, this.FollowerID, this.FollowedID, this.FollowDate);
         Dbase.ChangeTable(sql_str);
 
-        string get_id = "SELECT last_insert_rowid() AS ID";
+        string get_id = "SELECT @@IDENTITY AS ID";
 
         DataTable dt = Dbase.SelectFromTable(get_id);
 
@@ -129,8 +129,8 @@ public class FollowersClass
             }
             if (pairs[i].Value is DateTime)
             {
-                prepend = "date('";
-                append = "')";
+                prepend = "#";
+                append = "#";
             }
             sql_str += "[{0}] = {1}{2}{3}";
             if (i < pairs.Length - 1) sql_str += " AND ";

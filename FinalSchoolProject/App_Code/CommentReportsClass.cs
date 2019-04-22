@@ -12,7 +12,7 @@ public class CommentReportsClass
     public int ID { get; private set; }
     public int ReporterID, ReportedCommentID;
     public string Body;
-    public string CreationDate;
+    public DateTime CreationDate;
 
     #region constructors
 
@@ -22,7 +22,7 @@ public class CommentReportsClass
     }
 
     private CommentReportsClass(int ID, int ReporterID,
-        int ReportedCommentID, string Body, string CreationDate)
+        int ReportedCommentID, string Body, DateTime CreationDate)
     {
         this.ID = ID;
         this.ReporterID = ReporterID;
@@ -40,7 +40,7 @@ public class CommentReportsClass
             ReporterID = Convert.ToInt32(dr["ReporterID"]),
             ReportedCommentID = Convert.ToInt32(dr["ReportedCommentID"]),
             Body = dr["Body"].ToString(),
-            CreationDate = Convert.ToString(dr["CreationDate"])
+            CreationDate = Convert.ToDateTime(dr["CreationDate"])
         };
         return obj;
     }
@@ -52,7 +52,7 @@ public class CommentReportsClass
             ReporterID = ReporterID,
             ReportedCommentID = ReportedCommentID,
             Body = Body,
-            CreationDate = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")
+            CreationDate = DateTime.Now
         };
         
         commentreport.Insert();
@@ -77,7 +77,7 @@ public class CommentReportsClass
         sql_str = string.Format(sql_str, this.ReporterID, this.ReportedCommentID, this.Body, this.CreationDate);
         Dbase.ChangeTable(sql_str);
 
-        string get_id = "SELECT last_insert_rowid() AS ID";
+        string get_id = "SELECT @@IDENTITY AS ID";
 
         DataTable dt = Dbase.SelectFromTable(get_id);
 
@@ -137,8 +137,8 @@ public class CommentReportsClass
             }
             if (pairs[i].Value is DateTime)
             {
-                prepend = "date('";
-                append = "')";
+                prepend = "#";
+                append = "#";
             }
             sql_str += "[{0}] = {1}{2}{3}";
             if (i < pairs.Length - 1) sql_str += " AND ";
