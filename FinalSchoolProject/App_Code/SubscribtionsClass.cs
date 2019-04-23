@@ -67,7 +67,7 @@ public class SubscribtionsClass
 
         string sql_str = "INSERT INTO [Subscribtions] " +
             "([SubscriberID], [SubscribedPageID], [SubscribtionDate]) " +
-            "VALUES ({0}, {1}, '{3}') ";
+            "VALUES ({0}, {1}, #{3}#) ";
 
         sql_str = string.Format(sql_str, this.SubscriberID, this.SubscribedPageID, this.SubscribtionDate);
         Dbase.ChangeTable(sql_str);
@@ -82,7 +82,7 @@ public class SubscribtionsClass
     public void Update()
     {
         string sql_str = "UPDATE [Subscribtions] " +
-            "SET [SubscriberID] = {0}, [SubscribedPageID] = {1}, [SubscribtionDate] = '{3}'";
+            "SET [SubscriberID] = {0}, [SubscribedPageID] = {1}, [SubscribtionDate] = #{3}#";
         sql_str += " WHERE [ID]=" + this.ID;
         sql_str = string.Format(sql_str, this.SubscriberID, this.SubscribedPageID, this.SubscribtionDate);
         Dbase.ChangeTable(sql_str);

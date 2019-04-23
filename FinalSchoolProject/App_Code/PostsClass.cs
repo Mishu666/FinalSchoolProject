@@ -92,7 +92,7 @@ public class PostsClass
         string sql_str = "INSERT INTO [Posts] " +
             "([ConsultPageID], [AuthorID], [UpvoteCount], [DownvoteCount], [CommentCount], [Title], [Body], " +
             "[IsDeleted], [IsRemoved], [CreationDate]) " +
-            "VALUES ({0}, {1}, {2}, {3}, {4}, '{5}', '{6}', {7}, {8}, '{9}') ";
+            "VALUES ({0}, {1}, {2}, {3}, {4}, '{5}', '{6}', {7}, {8}, #{9}#) ";
 
         sql_str = string.Format(sql_str, this.ConsultPageID, this.AuthorID,
             this.UpvoteCount, this.DownvoteCount, this.CommentCount, this.Title, this.Body, this.IsDeleted,
@@ -111,7 +111,7 @@ public class PostsClass
         string sql_str = "UPDATE [Posts] " +
             "SET [ConsultPageID] = {0}, [AuthorID] = {1}, " +
             "[UpvoteCount] = {2}, [DownvoteCount] = {3}, [CommentCount] = {4}, [Title] = '{5}', [Body] = '{6}', " +
-            "[IsDeleted] = {7}, [IsRemoved] = {8}, [CreationDate] = '{9}'";
+            "[IsDeleted] = {7}, [IsRemoved] = {8}, [CreationDate] = #{9}#";
         sql_str += " WHERE [ID]=" + this.ID;
         sql_str = string.Format(sql_str, this.ConsultPageID, this.AuthorID,
             this.UpvoteCount, this.DownvoteCount, this.CommentCount, this.Title, this.Body, this.IsDeleted,

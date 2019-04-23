@@ -15,28 +15,24 @@ public partial class MasterPage : System.Web.UI.MasterPage
     {
         if (!IsPostBack)
         {
-            
+            BindConsultPagesRepeater();
         }
     }
 
     #endregion
 
+    #region page methods
+    
+    private void BindConsultPagesRepeater()
+    {
+        DataTable pages = ConsultPagesClass.GetAll();
+        ConsultPagesRepeater.DataSource = pages;
+        ConsultPagesRepeater.DataBind();
+    }
+
+    #endregion
+
     #region control events
-
-    protected void AdminToolsImageButton_Click(object sender, ImageClickEventArgs e)
-    {
-
-    }
-
-    protected void AccountImageButton_Click(object sender, ImageClickEventArgs e)
-    {
-
-    }
-
-    protected void SearchImageButton_Click(object sender, ImageClickEventArgs e)
-    {
-
-    }
 
     protected void LoginSubmitButton_Click(object sender, EventArgs e)
     {
@@ -56,25 +52,6 @@ public partial class MasterPage : System.Web.UI.MasterPage
 
         UsersService us = new UsersService();
         us.ValidateAndSignup(username, password, pass_confirm, DOB);
-
-    }
-
-    protected void LoginCancelButton_Click(object sender, EventArgs e)
-    {
-    }
-
-    protected void SwitchToSignupFormLinkButton_Click(object sender, EventArgs e)
-    {
-
-    }
-
-    protected void SignupCancelButton_Click(object sender, EventArgs e)
-    {
-
-    }
-
-    protected void SwitchToLoginFormLinkButton_Click(object sender, EventArgs e)
-    {
 
     }
 

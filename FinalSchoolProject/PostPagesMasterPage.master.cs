@@ -47,10 +47,6 @@ public partial class PostPagesMasterPage : System.Web.UI.MasterPage
                 GlobalFunctions.AddCssClass(downvote, "active");
 
             }
-            else
-            {
-                throw new Exception("invalid vote value");
-            }
         }
         else
         {

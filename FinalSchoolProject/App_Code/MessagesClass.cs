@@ -74,7 +74,7 @@ public class MessagesClass
 
         string sql_str = "INSERT INTO [Messages] " +
             "([SenderID], [RecipientID], [Title], [Body], [SendDate]) " +
-            "VALUES ({0}, {1}, '{2}' , '{3}', '{4}') ";
+            "VALUES ({0}, {1}, '{2}' , '{3}', #{4}#) ";
 
         sql_str = string.Format(sql_str, this.SenderID, this.RecipientID, this.Title, this.Body, this.SendDate);
         Dbase.ChangeTable(sql_str);
@@ -90,7 +90,7 @@ public class MessagesClass
     {
         string sql_str = "UPDATE [Messages] " +
             "SET [SenderID] = {0}, [RecipientID] = {1}, " +
-            "[Title] = '{2}',[Body] = '{3}', [SendDate] = '{4}'";
+            "[Title] = '{2}',[Body] = '{3}', [SendDate] = #{4}#";
         sql_str += " WHERE [ID]=" + this.ID;
         sql_str = string.Format(sql_str, this.SenderID, this.RecipientID, this.Title, this.Body, this.SendDate);
         Dbase.ChangeTable(sql_str);

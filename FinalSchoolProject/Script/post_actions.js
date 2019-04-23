@@ -54,7 +54,7 @@
     });
 
     $(".post").on("click", function (e) {
-        if (!$(e.target).hasClass("upvote") && !$(e.target).hasClass("downvote")) {
+        if (!$(e.target).hasClass("upvote") && !$(e.target).hasClass("downvote") && !$(e.target).hasClass("downvote_space") && !$(e.target).hasClass("upvote_space")) {
 
             viewPostPage($(this).data("id"));
 
@@ -133,7 +133,7 @@ function userLoggedInSuccessCallback(data) {
 
     if (data.d === true) {
 
-        $(".upvote").on("click", function (e) {
+        $(".upvote_space").on("click", function (e) {
 
             e.preventDefault();
             var post_id = $(this).data("post-id");
@@ -164,7 +164,7 @@ function userLoggedInSuccessCallback(data) {
 
         });
 
-        $(".downvote").on("click", function (e) {
+        $(".downvote_space").on("click", function (e) {
 
             e.preventDefault();
             var post_id = $(this).data("post-id");
@@ -265,5 +265,5 @@ function Downvote(postID, success_callback) {
 }
 
 function viewPostPage(ID) {
-    window.location.href = "ViewPost.aspx?id=" + ID;
+    window.location.href = "ViewPost.aspx?post-id=" + ID;
 }

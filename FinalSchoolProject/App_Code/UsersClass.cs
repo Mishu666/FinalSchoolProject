@@ -104,7 +104,7 @@ public class UsersClass
         string sql_str = "INSERT INTO [Users] " +
             "([Username], [Password], [MyFollowersCount], [FollowingCount], [Flags], [Points], " +
             "[CreationDate], [DOB], [IsAdmin], [IsSuspended], [IsPrivate], [IsDeleted], [ProfilePictureDir]) " +
-            "VALUES ('{0}','{1}', {2}, {3}, {4}, {5}, '{6}', '{7}', {8}, {9}, {10}, {11}, '{12}') ";
+            "VALUES ('{0}','{1}', {2}, {3}, {4}, {5}, #{6}#, #{7}#, {8}, {9}, {10}, {11}, '{12}') ";
 
         sql_str = string.Format(sql_str, this.Username, this.Password, this.MyFollowersCount, this.FollowingCount, this.Flags, this.Points,
             this.CreationDate, this.DOB, this.IsAdmin, this.IsSuspended, this.IsPrivate, this.IsDeleted, this.ProfilePictureDir);
@@ -122,7 +122,7 @@ public class UsersClass
         string sql_str = "UPDATE [Users] " +
             "SET [Username] = '{0}', [Password] = '{1}', " +
             "[MyFollowersCount] = {2}, [FollowingCount] = {3} , [Flags] = {4}, [Points]= {5}, " +
-            "[CreationDate] = '{6}', [DOB] = '{7}', [IsAdmin] = {8}, [IsSuspended] = {9}, " +
+            "[CreationDate] = #{6}#, [DOB] = #{7}#, [IsAdmin] = {8}, [IsSuspended] = {9}, " +
             "[IsPrivate] = {10}, [IsDeleted] = {11}, [ProfilePictureDir] = '{12}'";
         sql_str += " WHERE [ID]=" + this.ID;
         sql_str = string.Format(sql_str, this.Username, this.Password, this.MyFollowersCount, this.FollowingCount, this.Flags, this.Points,

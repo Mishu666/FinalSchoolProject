@@ -71,7 +71,7 @@ public class PostReportsClass
 
         string sql_str = "INSERT INTO [PostReports] " +
             "([ReporterID], [ReportedPostID], [Body], [CreationDate]) " +
-            "VALUES ({0}, {1}, '{2}', '{3}') ";
+            "VALUES ({0}, {1}, '{2}', #{3}#) ";
 
         sql_str = string.Format(sql_str, this.ReporterID, this.ReportedPostID, this.Body, this.CreationDate);
         Dbase.ChangeTable(sql_str);
@@ -87,7 +87,7 @@ public class PostReportsClass
     {
         string sql_str = "UPDATE [PostReports] " +
             "SET [ReporterID] = {0}, [ReportedPostID] = {1}, " +
-            "[Body] = '{2}', [CreationDate] = '{3}'";
+            "[Body] = '{2}', [CreationDate] = #{3}#";
         sql_str += " WHERE [ID]=" + this.ID;
         sql_str = string.Format(sql_str, this.ReporterID, this.ReportedPostID, this.Body, this.CreationDate);
         Dbase.ChangeTable(sql_str);

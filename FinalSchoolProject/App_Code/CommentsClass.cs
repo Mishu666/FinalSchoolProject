@@ -10,7 +10,7 @@ using System.Data;
 public class CommentsClass
 {
     public int ID { get; private set; }
-    public int CommentorID, ParentPostID, ParentCommentID, UpvoteCount, DownvoteCount;
+    public int CommentorID, ParentPostID, ParentCommentID, UpvoteCount, DownvoteCount, Depth;
     public string Title, Body;
     public DateTime CreationDate;
     public bool IsRemoved, IsDeleted;
@@ -23,13 +23,14 @@ public class CommentsClass
 
     }
 
-    private CommentsClass(int ID, string Title, string Body,
+    private CommentsClass(int ID, string Title, string Body, int Depth,
         int CommentorID, int ParentPostID, int ParentCommentID,
         DateTime CreationDate, bool IsRemoved, bool IsDeleted)
     {
         this.ID = ID;
         this.Title = Title;
         this.Body = Body;
+        this.Depth = Depth;
         this.CommentorID = CommentorID;
         this.ParentPostID = ParentPostID;
         this.ParentCommentID = ParentCommentID;
@@ -47,6 +48,7 @@ public class CommentsClass
             CommentorID = Convert.ToInt32(dr["CommentorID"]),
             ParentPostID = Convert.ToInt32(dr["ParentPostID"]),
             ParentCommentID = Convert.ToInt32(dr["ParentCommentID"]),
+            Depth = Convert.ToInt32(dr["Depth"]),
             Title = dr["Title"].ToString(),
             Body = dr["Body"].ToString(),
             CreationDate = Convert.ToDateTime(dr["CreationDate"]),
@@ -59,6 +61,7 @@ public class CommentsClass
     public static CommentsClass CreateNew(string Title, string Body,
         int CommentorID, int ParentPostID, int ParentCommentID)
     {
+        CommentsClass parent = CommentsClass.GetByID(ParentCommentID);
         CommentsClass comment = new CommentsClass
         {
             Title = Title,
@@ -66,6 +69,7 @@ public class CommentsClass
             CommentorID = CommentorID,
             ParentPostID = ParentPostID,
             ParentCommentID = ParentCommentID,
+            Depth = parent.Depth + 1,
             CreationDate = DateTime.Now,
             IsRemoved = false,
             IsDeleted = false
@@ -87,12 +91,12 @@ public class CommentsClass
         }
 
         string sql_str = "INSERT INTO [Comments] " +
-            "([Title], [Body], [CommentorID], [ParentPostID], [ParentCommentID], " +
+            "([Title], [Body], [CommentorID], [ParentPostID], [ParentCommentID], [Depth], " +
             "[UpvoteCount], [DownvoteCount], [CreationDate], [IsRemoved], [IsDeleted]) " +
-            "VALUES ('{0}','{1}',{2}, {3}, {4}, {5} {6}, '{7}', {8}, {9}) ";
+            "VALUES ('{0}','{1}',{2}, {3}, {4}, {5}, {6}, {7}, #{8}#, {9}, {10}) ";
 
         sql_str = string.Format(sql_str, this.Title, this.Body, this.CommentorID, this.ParentPostID,
-            this.ParentCommentID, this.UpvoteCount, this.DownvoteCount, this.CreationDate, this.IsRemoved, this.IsDeleted);
+            this.ParentCommentID, this.Depth, this.UpvoteCount, this.DownvoteCount, this.CreationDate, this.IsRemoved, this.IsDeleted);
         Dbase.ChangeTable(sql_str);
 
         string get_id = "SELECT @@IDENTITY AS ID";
@@ -106,11 +110,11 @@ public class CommentsClass
     {
         string sql_str = "UPDATE [Comments] " +
             "SET [Title] = '{0}', [Body] = '{1}', [CommentorID] = {2}, [UpvoteCount] = {3}, [DownvoteCount] = {4}," +
-            "[ParentPostID] = {5}, [ParentCommentID] = {6}, [CreationDate] = '{7}'," +
-            "[IsRemoved = {8}, [IsDeleted] = {9}";
+            "[ParentPostID] = {5}, [ParentCommentID] = {6}, [CreationDate] = #{7}#," +
+            "[IsRemoved = {8}, [IsDeleted] = {9}, [Depth] = {10}";
         sql_str += " WHERE [ID]=" + this.ID;
         sql_str = string.Format(sql_str, this.Title, this.Body, this.CommentorID, this.UpvoteCount, this.DownvoteCount,
-            this.ParentPostID, this.ParentCommentID, this.CreationDate, this.IsRemoved, this.IsDeleted);
+            this.ParentPostID, this.ParentCommentID, this.CreationDate, this.IsRemoved, this.IsDeleted, this.Depth);
         Dbase.ChangeTable(sql_str);
     }
 
@@ -125,7 +129,7 @@ public class CommentsClass
 
     public static DataTable GetAll()
     {
-        string sql_str = "SELECT * FROM [Comment]";
+        string sql_str = "SELECT * FROM [Comments]";
         DataTable all = Dbase.SelectFromTable(sql_str);
 
         return all;
@@ -139,7 +143,7 @@ public class CommentsClass
     }
     public static DataTable GetByProperties(params KeyValuePair<string, object>[] pairs)
     {
-        string sql_str = "SELECT * FROM [Comment]";
+        string sql_str = "SELECT * FROM [Comments]";
         string prepend, append;
 
         if (pairs.Length > 0) sql_str += " WHERE ";
@@ -170,40 +174,6 @@ public class CommentsClass
     #endregion
 
     #region utility functions
-
-    public static DataTable GetCommentHeirarchy(int ID)
-    {
-        string sql = @"With CommentsAndParents (
-                        ID,
-	                    CommentText,
-	                    ParentID,
-	                    ParentCommentText,
-	                    Depth
-                    )
-                    AS(
-                    SELECT  ID,
-                            Title,
-                            ParentCommentID,
-                            Title,
-                            0
-                    FROM Comments
-                    WHERE ParentCommentID IS NULL AND ID = " + ID + @"
-
-                    UNION ALL
-
-                    SELECT Comments.ID,
-                            Comments.Title,
-                            Comments.ParentCommentID,
-                            CommentsAndParents.CommentText,
-                            CommentsAndParents.Depth + 1
-                    FROM  Comments JOIN CommentsAndParents ON CommentsAndParents.ID = Comments.ParentCommentID
-                    )
-
-                    SELECT * FROM CommentsAndParents";
-
-        DataTable dt = Dbase.SelectFromTable(sql);
-        return dt;
-    }
 
     #endregion
 
