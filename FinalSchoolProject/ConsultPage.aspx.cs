@@ -18,11 +18,19 @@ public partial class ConsultPage : System.Web.UI.Page
             {
                 int page_id = Convert.ToInt32(page_id_obj);
                 ViewState["PageID"] = page_id;
-                DataTable page_dt = PostsClass.GetByProperties(new KeyValuePair<string, object>("ConsultPageID", page_id));
-
-                (Master as PostPagesMasterPage).BindPostRepeater(page_dt);
-
+                BindConsultPageRepeater();
             }
         }
     }
+
+    private void BindConsultPageRepeater()
+    {
+        int page_id = Convert.ToInt32(ViewState["PageID"]);
+        DataTable page_dt = PostsClass.GetByProperties(new KeyValuePair<string, object>("ConsultPageID", page_id));
+
+        ConsultPageRepeater.DataSource = page_dt;
+        ConsultPageRepeater.DataBind();
+
+    }
+
 }

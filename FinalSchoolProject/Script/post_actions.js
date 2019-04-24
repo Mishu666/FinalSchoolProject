@@ -1,5 +1,7 @@
 ﻿$(document).ready(function () {
 
+    userLoggedIn(userLoggedInSuccessCallback);
+
     let sort_dir = window.sessionStorage.getItem("sort_direction");
     if (sort_dir === null) {
         sort_dir = "ascending";
@@ -134,7 +136,7 @@ function userLoggedInSuccessCallback(data) {
     if (data.d === true) {
 
         $(".upvote_space").on("click", function (e) {
-
+            console.log("updoot");
             e.preventDefault();
             var post_id = $(this).data("post-id");
             var upvote_btn = $(this);
@@ -266,4 +268,24 @@ function Downvote(postID, success_callback) {
 
 function viewPostPage(ID) {
     window.location.href = "ViewPost.aspx?post-id=" + ID;
+}
+
+
+function ReportPost(postID) {
+    var data = { "PostID": postID };
+
+    $.ajax({
+
+        method: "POST",
+        data: JSON.stringify(data),
+        dataType: "json",
+        contentType: "application/json; charset=utf-8 ",
+        url: "UsersService.asmx/Downvote",
+        error: function (r) {
+            console.log("error");
+            console.log(r.responseText);
+        },
+        success: success_callback
+
+    });
 }

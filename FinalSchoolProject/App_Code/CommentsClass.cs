@@ -47,7 +47,6 @@ public class CommentsClass
             ID = Convert.ToInt32(dr["ID"]),
             CommentorID = Convert.ToInt32(dr["CommentorID"]),
             ParentPostID = Convert.ToInt32(dr["ParentPostID"]),
-            ParentCommentID = Convert.ToInt32(dr["ParentCommentID"]),
             Depth = Convert.ToInt32(dr["Depth"]),
             Title = dr["Title"].ToString(),
             Body = dr["Body"].ToString(),
@@ -55,6 +54,9 @@ public class CommentsClass
             IsRemoved = Convert.ToBoolean(dr["IsRemoved"]),
             IsDeleted = Convert.ToBoolean(dr["IsDeleted"])
         };
+
+        if (dr["ParentCommentID"] is int) obj.ParentCommentID = Convert.ToInt32(dr["ParentCommentID"]);
+
         return obj;
     }
 
@@ -85,18 +87,32 @@ public class CommentsClass
 
     private void Insert()
     {
+        string sql_str;
         if (ID != 0)
         {
             throw new Exception("already inserted");
         }
 
-        string sql_str = "INSERT INTO [Comments] " +
-            "([Title], [Body], [CommentorID], [ParentPostID], [ParentCommentID], [Depth], " +
-            "[UpvoteCount], [DownvoteCount], [CreationDate], [IsRemoved], [IsDeleted]) " +
-            "VALUES ('{0}','{1}',{2}, {3}, {4}, {5}, {6}, {7}, #{8}#, {9}, {10}) ";
+        if (this.ParentCommentID != 0)
+        {
 
-        sql_str = string.Format(sql_str, this.Title, this.Body, this.CommentorID, this.ParentPostID,
-            this.ParentCommentID, this.Depth, this.UpvoteCount, this.DownvoteCount, this.CreationDate, this.IsRemoved, this.IsDeleted);
+            sql_str = "INSERT INTO [Comments] " +
+                "([Title], [Body], [CommentorID], [ParentPostID], [ParentCommentID], [Depth], " +
+                "[UpvoteCount], [DownvoteCount], [CreationDate], [IsRemoved], [IsDeleted]) " +
+                "VALUES ('{0}','{1}',{2}, {3}, {4}, {5}, {6}, {7}, #{8}#, {9}, {10}) ";
+            sql_str = string.Format(sql_str, this.Title, this.Body, this.CommentorID, this.ParentPostID,
+                this.ParentCommentID, this.Depth, this.UpvoteCount, this.DownvoteCount, this.CreationDate, this.IsRemoved, this.IsDeleted);
+        }
+        else
+        {
+            sql_str = "INSERT INTO [Comments] " +
+                "([Title], [Body], [CommentorID], [ParentPostID], [Depth], " +
+                "[UpvoteCount], [DownvoteCount], [CreationDate], [IsRemoved], [IsDeleted]) " +
+                "VALUES ('{0}','{1}',{2}, {3}, {4}, {5}, {6}, #{7}#, {8}, {9}) ";
+            sql_str = string.Format(sql_str, this.Title, this.Body, this.CommentorID, this.ParentPostID, 
+                this.Depth, this.UpvoteCount, this.DownvoteCount, this.CreationDate, this.IsRemoved, this.IsDeleted);
+        }
+
         Dbase.ChangeTable(sql_str);
 
         string get_id = "SELECT @@IDENTITY AS ID";
@@ -108,13 +124,27 @@ public class CommentsClass
 
     public void Update()
     {
-        string sql_str = "UPDATE [Comments] " +
-            "SET [Title] = '{0}', [Body] = '{1}', [CommentorID] = {2}, [UpvoteCount] = {3}, [DownvoteCount] = {4}," +
-            "[ParentPostID] = {5}, [ParentCommentID] = {6}, [CreationDate] = #{7}#," +
-            "[IsRemoved = {8}, [IsDeleted] = {9}, [Depth] = {10}";
-        sql_str += " WHERE [ID]=" + this.ID;
-        sql_str = string.Format(sql_str, this.Title, this.Body, this.CommentorID, this.UpvoteCount, this.DownvoteCount,
-            this.ParentPostID, this.ParentCommentID, this.CreationDate, this.IsRemoved, this.IsDeleted, this.Depth);
+        string sql_str;
+        if (this.ParentCommentID != 0)
+        {
+            sql_str = "UPDATE [Comments] " +
+                "SET [Title] = '{0}', [Body] = '{1}', [CommentorID] = {2}, [UpvoteCount] = {3}, [DownvoteCount] = {4}," +
+                "[ParentPostID] = {5}, [ParentCommentID] = {6}, [CreationDate] = #{7}#," +
+                "[IsRemoved = {8}, [IsDeleted] = {9}, [Depth] = {10}";
+            sql_str += " WHERE [ID]=" + this.ID;
+            sql_str = string.Format(sql_str, this.Title, this.Body, this.CommentorID, this.UpvoteCount, this.DownvoteCount,
+                this.ParentPostID, this.ParentCommentID, this.CreationDate, this.IsRemoved, this.IsDeleted, this.Depth);
+        }
+        else
+        {
+            sql_str = "UPDATE [Comments] " +
+                "SET [Title] = '{0}', [Body] = '{1}', [CommentorID] = {2}, [UpvoteCount] = {3}, [DownvoteCount] = {4}," +
+                "[ParentPostID] = {5},[CreationDate] = #{6}#," +
+                "[IsRemoved = {7}, [IsDeleted] = {8}, [Depth] = {9}";
+            sql_str += " WHERE [ID]=" + this.ID;
+            sql_str = string.Format(sql_str, this.Title, this.Body, this.CommentorID, this.UpvoteCount, this.DownvoteCount,
+                this.ParentPostID, this.CreationDate, this.IsRemoved, this.IsDeleted, this.Depth);
+        }
         Dbase.ChangeTable(sql_str);
     }
 
@@ -134,6 +164,14 @@ public class CommentsClass
 
         return all;
     }
+
+    public static DataTable GetOriginalComments(int PostID)
+    {
+        string sql_str = "SELECT * FROM [Comments] WHERE [ParentCommentID] IS NULL AND [ParentPostID] = " + PostID;
+        return Dbase.SelectFromTable(sql_str);
+
+    }
+
     public static CommentsClass GetByID(int ID)
     {
         KeyValuePair<string, object> id_pair = new KeyValuePair<string, object>("ID", ID);

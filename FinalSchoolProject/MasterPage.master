@@ -79,7 +79,7 @@
                 <!-- Divider -->
                 <hr class="sidebar-divider mt-0">
 
-                <% if (Session["LoggedIn"] != null && (bool)Session["LoggedIn"] && Session["CurrentUserIsAdmin"] != null && (bool)Session["CurrentUserIsAdmin"])
+                <% if (Session["Logged"] != null && (bool)Session["Logged"] && Session["CurrentUserIsAdmin"] != null && (bool)Session["CurrentUserIsAdmin"])
                     {
                 %>
 
@@ -124,7 +124,7 @@
                 <!--Nav item - consult pages collapse menu-->
                 <li class="nav-item">
                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="true" aria-controls="collapsePages">
-                        <i class="fas fa-fw fa-cog"></i>
+                        <i class="fas fa-fw fa-folder"></i>
                         <span>Consult Pages</span>
                     </a>
                     <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
@@ -180,6 +180,35 @@
                     <ul class="navbar-nav ml-auto">
 
                         <asp:ContentPlaceHolder ID="nav_items_cph" runat="server"></asp:ContentPlaceHolder>
+
+                        <!-- Nav Item - Sort Direction-->
+
+                        <li class="nav-item dropdown no-arrow mx-1" runat="server" visible="true">
+                            <a class="nav-link dropdown-toggle" href="#" id="sortDirectionDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-fw"></i>
+                            </a>
+                        </li>
+
+                        <!-- Nav Item - Sort -->
+
+                        <li class="nav-item dropdown no-arrow mx-1" runat="server" visible="true">
+                            <a class="nav-link dropdown-toggle" id="sortDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-sort-amount-down fa-fw"></i>
+                            </a>
+                            <!-- Dropdown - Sort Options -->
+                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in w-auto" aria-labelledby="sortOptionsDropdown" id="sortOptions">
+                                <a class="dropdown-item d-flex align-items-center" id="sortByNew">New
+                                </a>
+                                <a class="dropdown-item d-flex align-items-center" id="sortByRating">Top
+                                </a>
+                            </div>
+                        </li>
+
+                        <li class="nav-item dropdown no-arrow mx-1" runat="server" visible="true">
+                            <div class="nav-link" id="sort_option_text">
+                                New
+                            </div>
+                        </li>
 
                         <!-- Nav Item - Search Dropdown (Visible Only XS) -->
                         <li class="nav-item dropdown no-arrow d-sm-none">

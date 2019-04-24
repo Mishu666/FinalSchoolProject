@@ -4,8 +4,6 @@ $(document).ready(function () {
     clearLoginModal();
     clearSignupModal();
 
-    userLoggedIn(userLoggedInSuccessCallback);
-
     $('#signupInputDOB').datepicker({
         autoclose: true,
         format: "dd/mm/yyyy"

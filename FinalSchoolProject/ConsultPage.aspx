@@ -1,24 +1,22 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/PostPagesMasterPage.master" AutoEventWireup="true" CodeFile="ConsultPage.aspx.cs" Inherits="ConsultPage" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="ConsultPage.aspx.cs" Inherits="ConsultPage" %>
 
-<asp:Content ID="Content1" ContentPlaceHolderID="master_head" runat="Server">
-
-</asp:Content>
-
-<asp:Content ID="navbar_content" ContentPlaceHolderID="nav_items_cph" runat="server">
-
-    <!-- Nav Item - Add -->
-
-    <li class="nav-item dropdown no-arrow mx-1" runat="server" visible="true">
-        <a class="nav-link dropdown-toggle" href="#" id="addPostDropDown" role="button" data-toggle="modal" aria-haspopup="true" aria-expanded="false" data-target="#AddPostModal">
-            <i class="fas fa-fw fa-plus"></i>
-        </a>
-    </li>
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
 
 </asp:Content>
 
-<asp:Content ID="Content2" ContentPlaceHolderID="sidebar" runat="Server">
+<asp:Content ID="Content2" ContentPlaceHolderID="main_content" runat="Server">
 
     <% ConsultPagesClass page = ConsultPagesClass.GetByID(Convert.ToInt32(ViewState["PageID"]));  %>
+
+    <asp:Repeater ID="ConsultPageRepeater" runat="server">
+
+        <ItemTemplate>
+
+            <Amir:Post runat="server" PostID='<%# Convert.ToInt32(Eval("ID")) %>' />
+
+        </ItemTemplate>
+
+    </asp:Repeater>
 
     <div class="card ml-5 shadow-sm h-100">
         <h1 class="card-header"><%= page.PageName %></h1>

@@ -17,8 +17,15 @@ public partial class Home : System.Web.UI.Page
 
     protected void Page_PreRender(object sender, EventArgs e)
     {
+        BindHomePostRepeater();
+    }
+
+    public void BindHomePostRepeater()
+    {
         DataTable allpostsdt = PostsClass.GetAll();
-        (Master as PostPagesMasterPage).BindPostRepeater(allpostsdt);
+        HomePostRepeater.DataSource = allpostsdt;
+        HomePostRepeater.DataBind();
+
     }
 
 

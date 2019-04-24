@@ -170,8 +170,7 @@ public class UsersService : System.Web.Services.WebService
         }
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
 
-        DataTable post_dt = PostsClass.GetByProperties(new KeyValuePair<string, object>("ID", PostID));
-        PostsClass post = PostsClass.FromDataRow(post_dt.Rows[0]);
+        PostsClass post = PostsClass.GetByID(PostID);
 
         DataTable vote_dt = PostVotesClass.GetByProperties(
                 new KeyValuePair<string, object>("VotedPostID", PostID),
@@ -221,8 +220,7 @@ public class UsersService : System.Web.Services.WebService
         }
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
 
-        DataTable post_dt = PostsClass.GetByProperties(new KeyValuePair<string, object>("ID", PostID));
-        PostsClass post = PostsClass.FromDataRow(post_dt.Rows[0]);
+        PostsClass post = PostsClass.GetByID(PostID);
 
         DataTable vote_dt = PostVotesClass.GetByProperties(
                 new KeyValuePair<string, object>("VotedPostID", PostID),
@@ -256,6 +254,25 @@ public class UsersService : System.Web.Services.WebService
 
         }
         return post.DownvoteCount;
+
+    }
+
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public void ReportPost(int PostID, string reportBody)
+    {
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        int userID = Convert.ToInt32(Session["CurrentUserID"]);
+        PostsClass post = PostsClass.GetByID(PostID);
+
+
 
     }
 
