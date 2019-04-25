@@ -1,11 +1,11 @@
-﻿.upvote_space:hover, .downvote_space:hover {
+﻿.upvote_space:hover, .downvote_space:hover, .comment_upvote_space:hover, .comment_downvote_space:hover {
     cursor: pointer;
 }
 
-.upvote_space.active {
+.upvote_space.active, .comment_upvote_space.active {
     color: orangered !important;
 }
 
-.downvote_space.active {
+.downvote_space.active, .comment_downvote_space.active {
     color: dodgerblue !important;
 }

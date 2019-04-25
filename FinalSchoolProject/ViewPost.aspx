@@ -12,11 +12,13 @@
 
 <asp:Content ID="Content2" ContentPlaceHolderID="main_content" runat="Server">
 
-    <div id="content_space" class="overflow-hidden d-flex flex-column py-3 px-4">
+    <div id="content_space" class="overflow-hidden d-flex flex-column py-3 px-4 h-100">
 
-        <Amir:Post runat="server" PostID='<%# Convert.ToInt32(ViewState["PostID"]) %>' />
+        <div id="post_space" runat="server">
+            <uc:Post ID="ViewPostPostControl" runat="server" />
+        </div>
 
-        <div id="comment_view" runat="server">
+        <div id="comment_space" runat="server" class="overflow-auto pr-3">
         </div>
 
     </div>

@@ -136,13 +136,16 @@ function userLoggedInSuccessCallback(data) {
     if (data.d === true) {
 
         $(".upvote_space").on("click", function (e) {
-            console.log("updoot");
             e.preventDefault();
             var post_id = $(this).data("post-id");
             var upvote_btn = $(this);
-            var downvote_btn = $(".downvote_space[data-post-id='" + upvote_btn.data("post-id") + "']");
-            var upvote_counter = $("#upvote_counter[data-post-id='" + post_id + "']");
-            var downvote_counter = $("#downvote_counter[data-post-id='" + post_id + "']");
+            var downvote_btn = $(".downvote_space[data-post-id='" + post_id + "']");
+            var upvote_counter = $(".upvote_counter[data-post-id='" + post_id + "']");
+            var downvote_counter = $(".downvote_counter[data-post-id='" + post_id + "']");
+
+
+            console.log(upvote_counter.data("post-id"));
+            console.log(downvote_counter.data("post-id"));
 
             if (upvote_btn.hasClass("active")) {
                 upvote_btn.removeClass("active");
@@ -171,9 +174,9 @@ function userLoggedInSuccessCallback(data) {
             e.preventDefault();
             var post_id = $(this).data("post-id");
             var downvote_btn = $(this);
-            var upvote_btn = $(".upvote_space[data-post-id='" + downvote_btn.data("post-id") + "']");
-            var downvote_counter = $("#downvote_counter[data-post-id='" + post_id + "']");
-            var upvote_counter = $("#upvote_counter[data-post-id='" + post_id + "']");
+            var upvote_btn = $(".upvote_space[data-post-id='" + post_id + "']");
+            var downvote_counter = $(".downvote_counter[data-post-id='" + post_id + "']");
+            var upvote_counter = $(".upvote_counter[data-post-id='" + post_id + "']");
 
             if (downvote_btn.hasClass("active")) {
                 downvote_btn.removeClass("active");
@@ -271,7 +274,7 @@ function viewPostPage(ID) {
 }
 
 
-function ReportPost(postID) {
+function ReportPost(postID, success_callback) {
     var data = { "PostID": postID };
 
     $.ajax({

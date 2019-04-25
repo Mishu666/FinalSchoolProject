@@ -14,17 +14,18 @@
 <asp:Content ID="home_sidebar" ContentPlaceHolderID="main_content" runat="Server">
 
     <div id="content_space" class="overflow-hidden d-flex flex-row h-100 py-3 px-4">
+
         <div id="posts_space" class="d-flex flex-column w-75 overflow-auto pr-3">
             <asp:Repeater runat="server" ID="HomePostRepeater">
 
                 <ItemTemplate>
-                    <Amir:Post runat="server" PostID='<%# Convert.ToInt32(Eval("ID")) %>' />
+                    <uc:Post runat="server" PostID='<%# Convert.ToInt32(Eval("ID")) %>' />
                 </ItemTemplate>
 
             </asp:Repeater>
         </div>
 
-        <div class="ml-5 d-flex flex-column h-100 w-25">
+        <div id="calendar_space" class="ml-5 d-flex flex-column h-100 w-25">
             <div id="user_calendar" class="mb-3"></div>
             <div class="w-100 flex-grow-1 border"></div>
         </div>

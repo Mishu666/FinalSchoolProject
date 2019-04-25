@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Data;
 using System.Web;
-using System.Data;  
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.HtmlControls;
 
 public partial class User_Controls_PostControl : System.Web.UI.UserControl
 {
-
     public int PostID { get; set; }
-    protected void Page_PreRender(object sender, EventArgs e)
+    protected void Page_Load(object sender, EventArgs e)
     {
         PostsClass post = PostsClass.GetByID(PostID);
         post_card.Attributes["data-id"] = post.ID.ToString();
@@ -32,7 +30,7 @@ public partial class User_Controls_PostControl : System.Web.UI.UserControl
         downvote_counter.Attributes["data-post-id"] = post.ID.ToString();
         downvote_button.Attributes["data-post-id"] = post.ID.ToString();
         SetVoteButtonColor();
-        
+
     }
 
     private void SetVoteButtonColor()
@@ -66,5 +64,4 @@ public partial class User_Controls_PostControl : System.Web.UI.UserControl
             GlobalFunctions.RemoveCssClass(downvote_button, "active");
         }
     }
-
 }

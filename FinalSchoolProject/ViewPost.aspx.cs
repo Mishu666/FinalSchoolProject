@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Data;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
-using TreeViewBindingTest;
 
 public partial class ViewPost : System.Web.UI.Page
 {
@@ -22,13 +20,9 @@ public partial class ViewPost : System.Web.UI.Page
 
             if (post == null) Response.Redirect("Home.aspx");
 
-            ViewState["PostID"] = post.ID;
+            ViewPostPostControl.PostID = id;
+            DisplayPostComments(id);
         }
-    }
-
-    protected void Page_PreRender(object sender, EventArgs e)
-    {
-
     }
 
     private void DisplayPostComments(int PostID)
@@ -36,28 +30,31 @@ public partial class ViewPost : System.Web.UI.Page
         DataTable original_comments = CommentsClass.GetOriginalComments(PostID);
         foreach (DataRow comment_dr in original_comments.Rows)
         {
-            DisplayCommentHierarchy(CommentsClass.FromDataRow(comment_dr));
+            DisplayComment(CommentsClass.FromDataRow(comment_dr), 0);
         }
 
     }
 
-    private void DisplayCommentHierarchy(CommentsClass comment)
+    private void DisplayCommentHierarchy(CommentsClass comment, int depth)
     {
 
-        DisplayComment(comment);
+        DisplayComment(comment, depth);
 
         DataTable child_comments = CommentsClass.GetByProperties(new KeyValuePair<string, object>("ParentCommentID", comment.ID));
 
         foreach (DataRow comment_dr in child_comments.Rows)
         {
-            DisplayCommentHierarchy(CommentsClass.FromDataRow(comment_dr));
+            DisplayCommentHierarchy(CommentsClass.FromDataRow(comment_dr), depth + 1);
         }
 
     }
 
-    private void DisplayComment(CommentsClass comment)
+    private void DisplayComment(CommentsClass comment, int depth)
     {
-
+        User_Controls_CommentControl comment_control = (User_Controls_CommentControl)Page.LoadControl("~/User_Controls/CommentControl.ascx");
+        comment_control.CommentID = comment.ID;
+        comment_control.Depth = depth;
+        comment_space.Controls.Add(comment_control);
 
     }
 

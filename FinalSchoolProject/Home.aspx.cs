@@ -13,11 +13,16 @@ public partial class Home : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
+
+        if(!IsPostBack)
+        {
+            BindHomePostRepeater();
+        }
+
     }
 
     protected void Page_PreRender(object sender, EventArgs e)
     {
-        BindHomePostRepeater();
     }
 
     public void BindHomePostRepeater()
