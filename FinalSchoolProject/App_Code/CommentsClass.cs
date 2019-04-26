@@ -124,7 +124,7 @@ public class CommentsClass
             sql_str = "UPDATE [Comments] " +
                 "SET [Body] = '{0}', [CommentorID] = {1}, [UpvoteCount] = {2}, [DownvoteCount] = {3}," +
                 "[ParentPostID] = {4}, [ParentCommentID] = {5}, [CreationDate] = #{6}#," +
-                "[IsRemoved = {7}, [IsDeleted] = {8}";
+                "[IsRemoved] = {7}, [IsDeleted] = {8}";
             sql_str += " WHERE [ID]=" + this.ID;
             sql_str = string.Format(sql_str, this.Body, this.CommentorID, this.UpvoteCount, this.DownvoteCount,
                 this.ParentPostID, this.ParentCommentID, this.CreationDate, this.IsRemoved, this.IsDeleted);
@@ -134,7 +134,7 @@ public class CommentsClass
             sql_str = "UPDATE [Comments] " +
                 "SET [Body] = '{0}', [CommentorID] = {1}, [UpvoteCount] = {2}, [DownvoteCount] = {3}," +
                 "[ParentPostID] = {4},[CreationDate] = #{5}#," +
-                "[IsRemoved = {6}, [IsDeleted] = {7}";
+                "[IsRemoved] = {6}, [IsDeleted] = {7}";
             sql_str += " WHERE [ID]=" + this.ID;
             sql_str = string.Format(sql_str, this.Body, this.CommentorID, this.UpvoteCount, this.DownvoteCount,
                 this.ParentPostID, this.CreationDate, this.IsRemoved, this.IsDeleted);

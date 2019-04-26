@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="PostControl.ascx.cs" Inherits="User_Controls_PostControl" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="PostControl.ascx.cs" Inherits="User_Controls_PostControl" ClassName="User_Controls_PostControl" %>
 
 <div class="card shadow-sm w-100 mb-3 post" id="post_card" runat="server">
     <div class="card-body">
@@ -18,13 +18,13 @@
             <span>&nbsp;-&nbsp; </span><a href='#' id="post_consult_page" runat="server"></a>
         </div>
         <div class="vote-block d-flex flex-row">
-            <a role="button" id="upvote_button" runat="server" class="mr-1 px-1 text-gray-500 upvote_space"
-                data-toggle="popover" data-placement="top" data-content="you must log in to vote" data-trigger="focus">
+            <a role="button" id="upvote_button" runat="server" class="mr-1 p-0 text-gray-500 upvote_space dismissable_popover"
+                data-placement="top" data-content="you must log in to vote">
                 <i tabindex="-1" class="upvote fas fa-arrow-up"></i>
             </a>
             <span id="upvote_counter" runat="server" class="upvote_counter d-flex flex-row justify-content-center align-items-center mx-3" style="max-width: 4rem;"></span>
-            <a role="button" id="downvote_button" runat="server" class="mr-1 px-1 text-gray-500 downvote_space"
-                data-toggle="popover" data-placement="top" data-content="you must log in to vote" data-trigger="focus">
+            <a role="button" id="downvote_button" runat="server" class="mr-1 p-0 text-gray-500 downvote_space dismissable_popover"
+                data-placement="top" data-content="you must log in to vote">
                 <i tabindex="-1" class="downvote fas fa-arrow-down"></i>
             </a>
             <span id="downvote_counter" runat="server" class="downvote_counter d-flex flex-row justify-content-center align-items-center mx-3" style="max-width: 4rem;"></span>

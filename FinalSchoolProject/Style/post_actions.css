@@ -1,6 +1,11 @@
-﻿.upvote_space:hover, .downvote_space:hover, .comment_upvote_space:hover, .comment_downvote_space:hover {
+﻿.upvote:hover, .downvote:hover, .comment_upvote:hover, .comment_downvote:hover {
     cursor: pointer;
 }
+
+.upvote_space:hover, .downvote_space:hover, .comment_upvote_space:hover, .comment_downvote_space:hover {
+    cursor: default !important;
+}
+
 
 .upvote_space.active, .comment_upvote_space.active {
     color: orangered !important;

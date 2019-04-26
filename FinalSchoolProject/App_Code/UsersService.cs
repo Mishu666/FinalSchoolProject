@@ -157,6 +157,8 @@ public class UsersService : System.Web.Services.WebService
         return false;
     }
 
+    #region voting
+
     [WebMethod(EnableSession = true)]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     public int Upvote(int PostID)
@@ -257,6 +259,108 @@ public class UsersService : System.Web.Services.WebService
 
     }
 
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public int CommentUpvote(int CommentID)
+    {
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.Status = "invalid login information";
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        int userID = Convert.ToInt32(Session["CurrentUserID"]);
+
+        CommentsClass comment = CommentsClass.GetByID(CommentID);
+
+        DataTable vote_dt = CommentVotesClass.GetByProperties(
+                new KeyValuePair<string, object>("VotedCommentID", CommentID),
+                new KeyValuePair<string, object>("VoterID", userID)
+            );
+
+        if (vote_dt == null || vote_dt.Rows.Count == 0)
+        {
+            CommentVotesClass.CreateNew(userID, CommentID, 1);
+            comment.UpvoteCount += 1;
+            comment.Update();
+            return comment.UpvoteCount;
+        }
+
+        CommentVotesClass vote = CommentVotesClass.FromDataRow(vote_dt.Rows[0]);
+
+
+        if (vote.VoteValue == 1)
+        {
+            vote.Delete();
+            comment.UpvoteCount -= 1;
+            comment.Update();
+
+        }
+        else if (vote.VoteValue == -1)
+        {
+            vote.VoteValue = 1;
+            vote.Update();
+            comment.UpvoteCount += 1;
+            comment.DownvoteCount -= 1;
+            comment.Update();
+
+        }
+
+        return comment.UpvoteCount;
+    }
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public int CommentDownvote(int CommentID)
+    {
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+        int userID = Convert.ToInt32(Session["CurrentUserID"]);
+
+        CommentsClass comment = CommentsClass.GetByID(CommentID);
+
+        DataTable vote_dt = CommentVotesClass.GetByProperties(
+                new KeyValuePair<string, object>("VotedCommentID", CommentID),
+                new KeyValuePair<string, object>("VoterID", userID)
+            );
+
+        if (vote_dt == null || vote_dt.Rows.Count == 0)
+        {
+            CommentVotesClass.CreateNew(userID, CommentID, -1);
+            comment.DownvoteCount += 1;
+            comment.Update();
+            return comment.DownvoteCount;
+        }
+
+        CommentVotesClass vote = CommentVotesClass.FromDataRow(vote_dt.Rows[0]);
+
+        if (vote.VoteValue == -1)
+        {
+            vote.Delete();
+            comment.DownvoteCount -= 1;
+            comment.Update();
+
+        }
+        else if (vote.VoteValue == 1)
+        {
+            vote.VoteValue = -1;
+            vote.Update();
+            comment.DownvoteCount += 1;
+            comment.UpvoteCount -= 1;
+            comment.Update();
+
+        }
+        return comment.DownvoteCount;
+
+    }
+
+    #endregion
 
     [WebMethod(EnableSession = true)]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]

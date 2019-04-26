@@ -56,7 +56,7 @@
     });
 
     $(".post").on("click", function (e) {
-        if (!$(e.target).hasClass("upvote") && !$(e.target).hasClass("downvote") && !$(e.target).hasClass("downvote_space") && !$(e.target).hasClass("upvote_space")) {
+        if (!$(e.target).hasClass("upvote") && !$(e.target).hasClass("downvote")) {
 
             viewPostPage($(this).data("id"));
 
@@ -135,17 +135,14 @@ function userLoggedInSuccessCallback(data) {
 
     if (data.d === true) {
 
-        $(".upvote_space").on("click", function (e) {
+        $(".upvote").on("click", function (e) {
+
             e.preventDefault();
-            var post_id = $(this).data("post-id");
-            var upvote_btn = $(this);
+            var post_id = $(this).parent().data("post-id");
+            var upvote_btn = $(this).parent();
             var downvote_btn = $(".downvote_space[data-post-id='" + post_id + "']");
             var upvote_counter = $(".upvote_counter[data-post-id='" + post_id + "']");
-            var downvote_counter = $(".downvote_counter[data-post-id='" + post_id + "']");
-
-
-            console.log(upvote_counter.data("post-id"));
-            console.log(downvote_counter.data("post-id"));
+            var downvote_counter = $(".downvote_counter[data-post-id='" + post_id + "']");           
 
             if (upvote_btn.hasClass("active")) {
                 upvote_btn.removeClass("active");
@@ -169,11 +166,10 @@ function userLoggedInSuccessCallback(data) {
 
         });
 
-        $(".downvote_space").on("click", function (e) {
-
+        $(".downvote").on("click", function (e) {
             e.preventDefault();
-            var post_id = $(this).data("post-id");
-            var downvote_btn = $(this);
+            var post_id = $(this).parent().data("post-id");
+            var downvote_btn = $(this).parent();
             var upvote_btn = $(".upvote_space[data-post-id='" + post_id + "']");
             var downvote_counter = $(".downvote_counter[data-post-id='" + post_id + "']");
             var upvote_counter = $(".upvote_counter[data-post-id='" + post_id + "']");
@@ -199,27 +195,103 @@ function userLoggedInSuccessCallback(data) {
             Downvote(post_id, downvoteSuccess);
 
         });
-    }
-    else {
 
-        $('[data-toggle="popover"]').popover();
+        //-----------------------------------------------------------------------------------------------------
 
-        $(".upvote").on("click", function (e) {
+        $(".comment_upvote").on("click", function (e) {
 
             e.preventDefault();
-            $(this).popover();
+            var comment_id = $(this).parent().data("comment-id");
+            var upvote_btn = $(this).parent();
+            var downvote_btn = $(".comment_downvote_space[data-comment-id='" + comment_id + "']");
+            var upvote_counter = $(".comment_upvote_counter[data-comment-id='" + comment_id + "']");
+            var downvote_counter = $(".comment_downvote_counter[data-comment-id='" + comment_id + "']");
+
+            if (upvote_btn.hasClass("active")) {
+                upvote_btn.removeClass("active");
+                upvote_counter.text(parseInt(upvote_counter.text()) - 1);
+            }
+            else {
+                if (downvote_btn.hasClass("active")) {
+                    downvote_btn.removeClass("active");
+                    upvote_btn.addClass("active");
+                    upvote_counter.text(parseInt(upvote_counter.text()) + 1);
+                    downvote_counter.text(parseInt(downvote_counter.text()) - 1);
+
+                }
+                else {
+                    upvote_btn.addClass("active");
+                    upvote_counter.text(parseInt(upvote_counter.text()) + 1);
+                }
+            }
+
+            CommentUpvote(comment_id, commentUpvoteSuccess);
 
         });
 
-        $(".downvote").on("click", function (e) {
+        $(".comment_downvote").on("click", function (e) {
+            e.preventDefault();
+            var comment_id = $(this).parent().data("comment-id");
+            var downvote_btn = $(this).parent();
+            var upvote_btn = $(".comment_upvote_space[data-comment-id='" + comment_id + "']");
+            var downvote_counter = $(".comment_downvote_counter[data-comment-id='" + comment_id + "']");
+            var upvote_counter = $(".comment_upvote_counter[data-comment-id='" + comment_id + "']");
+
+            if (downvote_btn.hasClass("active")) {
+                downvote_btn.removeClass("active");
+                downvote_counter.text(parseInt(downvote_counter.text()) - 1);
+            }
+            else {
+                if (upvote_btn.hasClass("active")) {
+                    upvote_btn.removeClass("active");
+                    downvote_btn.addClass("active");
+                    downvote_counter.text(parseInt(downvote_counter.text()) + 1);
+                    upvote_counter.text(parseInt(upvote_counter.text()) - 1);
+
+                }
+                else {
+                    downvote_btn.addClass("active");
+                    downvote_counter.text(parseInt(downvote_counter.text()) + 1);
+                }
+            }
+
+            CommentDownvote(comment_id, commentDownvoteSuccess);
+
+        });
+
+    }
+    else {
+
+        $(".dismissable_popover").popover({
+            trigger: "focus"
+        });
+
+
+        $(".upvote_space").on("click", function (e) {
+            console.log("dooot");
+            e.preventDefault();
+
+        });
+
+        $(".downvote_space").on("click", function (e) {
 
             e.preventDefault();
-            $(this).popover();
+        });
 
+        $(".comment_upvote_space").on("click", function (e) {
+
+            e.preventDefault();
+        });
+
+        $(".comment_downvote_space").on("click", function (e) {
+
+            e.preventDefault();
         });
 
     }
 }
+
+//--------------------------------------------------------------------------------------------
 
 function downvoteSuccess(data) {
 }
@@ -269,8 +341,65 @@ function Downvote(postID, success_callback) {
 
 }
 
+//-----------------------------------------------------------------------------------------
+
+function commentDownvoteSuccess(data) {
+    console.log(data.d);
+}
+
+function commentUpvoteSuccess(data) {
+    console.log(data.d);
+}
+
+function CommentUpvote(commentID, success_callback) {
+
+    var data = { "CommentID": commentID };
+
+    $.ajax({
+
+        method: "POST",
+        data: JSON.stringify(data),
+        dataType: "json",
+        contentType: "application/json; charset=utf-8 ",
+        url: "UsersService.asmx/CommentUpvote",
+        error: function (r) {
+            console.log("error");
+            console.log(r.status);
+        },
+        success: success_callback
+
+    });
+
+}
+
+function CommentDownvote(commentID, success_callback) {
+
+    var data = { "CommentID": commentID };
+
+    $.ajax({
+
+        method: "POST",
+        data: JSON.stringify(data),
+        dataType: "json",
+        contentType: "application/json; charset=utf-8 ",
+        url: "UsersService.asmx/CommentDownvote",
+        error: function (r) {
+            console.log("error");
+            console.log(r.responseText);
+        },
+        success: success_callback
+
+    });
+
+}
+
+
+//-------------------------------------------------------------------------------------------------------
+
 function viewPostPage(ID) {
-    window.location.href = "ViewPost.aspx?post-id=" + ID;
+    if (!window.location.toString().includes("ViewPost")) {
+        window.location.href = "ViewPost.aspx?post-id=" + ID;
+    }
 }
 
 

@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="CommentControl.ascx.cs" Inherits="User_Controls_CommentControl" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="CommentControl.ascx.cs" Inherits="User_Controls_CommentControl" ClassName="User_Controls_CommentControl" %>
 
 <div class='card shadow-sm mb-3' id="comment_card" runat="server">
     <div class='card-body'>
@@ -13,18 +13,19 @@
                 <div id="comment_creation_date" runat="server"></div>
             </div>
             <div class="vote-block d-flex flex-row">
-                <a role="button" id="comment_upvote_button" runat="server" class="mr-1 px-1 text-gray-500 comment_upvote_space"
-                    data-toggle="popover" data-placement="top" data-content="you must log in to vote" data-trigger="focus">
+                <a role="button" id="comment_upvote_button" runat="server" class="mr-1 p-0 text-gray-500 comment_upvote_space dismissable_popover"
+                    data-placement="top" data-content="you must log in to vote">
                     <i tabindex="-1" class="comment_upvote fas fa-arrow-up"></i>
                 </a>
                 <span id="comment_upvote_counter" runat="server" class="comment_upvote_counter d-flex flex-row justify-content-center align-items-center mx-3" style="max-width: 4rem;"></span>
-                <a role="button" id="comment_downvote_button" runat="server" class="mr-1 px-1 text-gray-500 comment_downvote_space"
-                    data-toggle="popover" data-placement="top" data-content="you must log in to vote" data-trigger="focus">
+                <a role="button" id="comment_downvote_button" runat="server" class="mr-1 p-0 text-gray-500 comment_downvote_space dismissable_popover"
+                    data-placement="top" data-content="you must log in to vote">
                     <i tabindex="-1" class="comment_downvote fas fa-arrow-down"></i>
                 </a>
                 <span id="comment_downvote_counter" runat="server" class="comment_downvote_counter d-flex flex-row justify-content-center align-items-center mx-3" style="max-width: 4rem;"></span>
             </div>
         </div>
+
         <div id="child_comments_space" runat="server" class="w-100 mt-2"></div>
 
     </div>

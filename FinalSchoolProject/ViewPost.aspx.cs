@@ -51,7 +51,7 @@ public partial class ViewPost : System.Web.UI.Page
 
     private void DisplayComment(CommentsClass comment, int depth)
     {
-        User_Controls_CommentControl comment_control = (User_Controls_CommentControl)Page.LoadControl("~/User_Controls/CommentControl.ascx");
+        User_Controls_CommentControl comment_control = (User_Controls_CommentControl)LoadControl("~/User_Controls/CommentControl.ascx");
         comment_control.CommentID = comment.ID;
         comment_control.Depth = depth;
         comment_space.Controls.Add(comment_control);
