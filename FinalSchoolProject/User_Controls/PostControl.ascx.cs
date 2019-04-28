@@ -19,7 +19,7 @@ public partial class User_Controls_PostControl : System.Web.UI.UserControl
         post_text.InnerText = post.Body;
         post_comment_count.InnerText = post.CommentCount.ToString();
         post_author_name.InnerText = UsersClass.GetByID(post.AuthorID).Username;
-        post_author_name.HRef = "";
+        post_author_name.HRef = "#";
         post_creation_date.InnerText = post.CreationDate.ToString("dd/MM/yyyy");
         post_consult_page.HRef = "ConsultPage.aspx?page-id=" + post.ConsultPageID.ToString();
         post_consult_page.InnerText = ConsultPagesClass.GetByID(post.ConsultPageID).PageName;

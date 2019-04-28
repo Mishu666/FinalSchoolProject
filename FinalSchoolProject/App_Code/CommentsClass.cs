@@ -48,7 +48,10 @@ public class CommentsClass
             Body = dr["Body"].ToString(),
             CreationDate = Convert.ToDateTime(dr["CreationDate"]),
             IsRemoved = Convert.ToBoolean(dr["IsRemoved"]),
-            IsDeleted = Convert.ToBoolean(dr["IsDeleted"])
+            IsDeleted = Convert.ToBoolean(dr["IsDeleted"]),
+            DownvoteCount = Convert.ToInt32(dr["DownvoteCount"]),
+            UpvoteCount = Convert.ToInt32(dr["UpvoteCount"])
+            
         };
 
         if (dr["ParentCommentID"] is int) obj.ParentCommentID = Convert.ToInt32(dr["ParentCommentID"]);
@@ -66,6 +69,23 @@ public class CommentsClass
             CommentorID = CommentorID,
             ParentPostID = ParentPostID,
             ParentCommentID = ParentCommentID,
+            CreationDate = DateTime.Now,
+            IsRemoved = false,
+            IsDeleted = false
+        };
+
+        comment.Insert();
+        return comment;
+    }
+
+    public static CommentsClass CreateNew(string Title, string Body,
+        int CommentorID, int ParentPostID)
+    {
+        CommentsClass comment = new CommentsClass
+        {
+            Body = Body,
+            CommentorID = CommentorID,
+            ParentPostID = ParentPostID,
             CreationDate = DateTime.Now,
             IsRemoved = false,
             IsDeleted = false

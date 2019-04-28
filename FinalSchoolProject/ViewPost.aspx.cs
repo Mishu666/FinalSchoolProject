@@ -35,19 +35,19 @@ public partial class ViewPost : System.Web.UI.Page
 
     }
 
-    private void DisplayCommentHierarchy(CommentsClass comment, int depth)
-    {
+    //private void DisplayCommentHierarchy(CommentsClass comment, int depth)
+    //{
 
-        DisplayComment(comment, depth);
+    //    DisplayComment(comment, depth);
 
-        DataTable child_comments = CommentsClass.GetByProperties(new KeyValuePair<string, object>("ParentCommentID", comment.ID));
+    //    DataTable child_comments = CommentsClass.GetByProperties(new KeyValuePair<string, object>("ParentCommentID", comment.ID));
 
-        foreach (DataRow comment_dr in child_comments.Rows)
-        {
-            DisplayCommentHierarchy(CommentsClass.FromDataRow(comment_dr), depth + 1);
-        }
+    //    foreach (DataRow comment_dr in child_comments.Rows)
+    //    {
+    //        DisplayCommentHierarchy(CommentsClass.FromDataRow(comment_dr), depth + 1);
+    //    }
 
-    }
+    //}
 
     private void DisplayComment(CommentsClass comment, int depth)
     {

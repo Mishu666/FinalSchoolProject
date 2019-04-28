@@ -18,7 +18,7 @@
             <uc:Post ID="ViewPostPostControl" runat="server" />
         </div>
 
-        <div id="comment_space" runat="server" class="overflow-auto pr-3">
+        <div id="comment_space" runat="server" class="overflow-auto pr-3 original_comments">
         </div>
 
     </div>

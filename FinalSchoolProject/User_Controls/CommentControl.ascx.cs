@@ -15,12 +15,13 @@ public partial class User_Controls_CommentControl : System.Web.UI.UserControl
     {
         CommentsClass comment = CommentsClass.GetByID(CommentID);
         comment_text.InnerText = comment.Body;
-        comment_card.Attributes["data-id"] = comment.ID.ToString();
+        comment_card.Attributes["data-comment-id"] = comment.ID.ToString();
         comment_card.Attributes["data-date"] = comment.CreationDate.ToString("dd/MM/yyyy HH:mm:ss");
         comment_card.Attributes["data-rating"] = (comment.UpvoteCount - comment.DownvoteCount).ToString();
         comment_text.InnerText = comment.Body;
         comment_author_name.InnerText = UsersClass.GetByID(comment.CommentorID).Username;
         comment_author_name.HRef = "#";
+        collapseChildrenButton.Attributes["data-comment-id"] = comment.ID.ToString();
         comment_creation_date.InnerText = comment.CreationDate.ToString("dd/MM/yyyy");
         comment_upvote_counter.InnerText = comment.UpvoteCount.ToString();
         comment_upvote_counter.Attributes["data-comment-id"] = comment.ID.ToString();

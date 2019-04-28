@@ -2,7 +2,7 @@
 
 
 <asp:Content ID="home_head" ContentPlaceHolderID="head" runat="Server">
-    
+
     <script type="text/javascript" src="Script/Home.js"></script>
     <link rel="stylesheet" href="Style/Home.css" />
 
@@ -11,11 +11,16 @@
 
 </asp:Content>
 
+<asp:Content ContentPlaceHolderID="nav_items_cph" runat="server">
+
+</asp:Content>
+
 <asp:Content ID="home_sidebar" ContentPlaceHolderID="main_content" runat="Server">
 
     <div id="content_space" class="overflow-hidden d-flex flex-row h-100 py-3 px-4">
 
         <div id="posts_space" class="d-flex flex-column w-75 overflow-auto pr-3">
+
             <asp:Repeater runat="server" ID="HomePostRepeater">
 
                 <ItemTemplate>

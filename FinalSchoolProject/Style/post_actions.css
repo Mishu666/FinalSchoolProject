@@ -1,8 +1,8 @@
-﻿.upvote:hover, .downvote:hover, .comment_upvote:hover, .comment_downvote:hover {
+﻿.action:hover {
     cursor: pointer;
 }
 
-.upvote_space:hover, .downvote_space:hover, .comment_upvote_space:hover, .comment_downvote_space:hover {
+.action_space:hover {
     cursor: default !important;
 }
 

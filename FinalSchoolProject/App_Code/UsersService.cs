@@ -380,4 +380,48 @@ public class UsersService : System.Web.Services.WebService
 
     }
 
+    [WebMethod]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    private void CreatePost(string title, string body, int PageID)
+    {
+
+        int userID = Convert.ToInt32(Session["CurrentUserID"]);
+
+        PostsClass.CreateNew(PageID, userID, title, body);
+
+    }
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public List<string> ValidateAndCreatePost(string title, string body, int PageID)
+    {
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        List<string> warnings = new List<string>();
+        bool valid = true;
+
+        if (string.IsNullOrWhiteSpace(title))
+        {
+            warnings.Add("Title cannot be empty");
+            valid = false;
+        }
+        if (string.IsNullOrWhiteSpace(body))
+        {
+            warnings.Add("Post cannot be empty");
+            valid = false;
+        }
+
+        if (valid)
+        {
+            CreatePost(title, body, PageID);
+        }
+
+        return warnings;
+    }
+
 }

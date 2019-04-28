@@ -19,6 +19,9 @@
 
     updateSort();
 
+    updateCommentSort();
+
+
     $("#sortDirectionDropdown").on("click", function (e) {
         let button = $("#sortDirectionDropdown > i");
         if (button.hasClass("fa-arrow-up")) {
@@ -26,25 +29,16 @@
         }
         else if (button.hasClass("fa-arrow-down")) {
             setSortDirection("descending");
-        }
-
-    });
-
-    $("#sortDirectionDropdown").on("click", function (e) {
-        let button = $("#sortDirectionDropdown > i");
-        if (button.hasClass("fa-arrow-up")) {
-            setSortDirection("descending");
-        }
-        else if (button.hasClass("fa-arrow-down")) {
-            setSortDirection("ascending");
         }
         updateSort();
+        updateCommentSort();
     });
 
     $("#sortByNew").on("click", function (e) {
 
         setSortOption("new");
         updateSort();
+        updateCommentSort();
 
     });
 
@@ -52,6 +46,7 @@
 
         setSortOption("top");
         updateSort();
+        updateCommentSort();
 
     });
 
@@ -64,7 +59,26 @@
 
     });
 
+    $(".collapse_children").on("click", function (e) {
+
+        let comment_id = $(this).parent().data("comment-id");
+        let child_space = $(".comment[data-comment-id='" + comment_id + "'] > #comment_footer > .child_comments_space");
+        if ($(this).hasClass("fa-chevron-up")) {
+            $(this).removeClass("fa-chevron-up");
+            $(this).addClass("fa-chevron-down");
+            child_space.hide(200);
+        }
+        else if ($(this).hasClass("fa-chevron-down")) {
+            $(this).removeClass("fa-chevron-down");
+            $(this).addClass("fa-chevron-up");
+            child_space.show(200);
+        }
+    });
+
+
 });
+
+//-----------------------------------------------------------------------------------------------------------------
 
 function sort_by_rating(a, b) {
 
@@ -80,8 +94,8 @@ function sort_by_date(a, b) {
     let a_date = Date.parse($(a).data("date"));
     let b_date = Date.parse($(b).data("date"));
 
-    if (a_date > b_date) return -1;
-    if (a_date < b_date) return 1;
+    if (a_date > b_date) return 1;
+    if (a_date < b_date) return -1;
     return 0;
 }
 
@@ -126,14 +140,62 @@ function updateSort() {
     post_list.sort(compareFunction);
     if (order === "ascending") post_list.reverse();
 
+    console.log(post_list);
+
     for (let i = 0; i < post_list.length; i++) {
         post_list[i].parentNode.append(post_list[i]);
     }
 }
 
+function updateCommentSort() {
+    let comment_list = $(".original_comments > .comment").get();
+
+    let option = window.sessionStorage.getItem("sort_option");
+    let order = window.sessionStorage.getItem("sort_direction");
+
+    let compareFunction = sort_by_date;
+    if (option.toLowerCase() === "top") compareFunction = sort_by_rating;
+
+
+    comment_list.sort(compareFunction);
+    if (order === "ascending") comment_list.reverse();
+
+    for (let i = 0; i < comment_list.length; i++) {
+        comment_list[i].parentNode.append(comment_list[i]);
+    }
+}
+
+//---------------------------------------------------------------------------------------------------------
+
 function userLoggedInSuccessCallback(data) {
 
     if (data.d === true) {
+
+        $("#addPostInConsultPageButton").on("click", function (e) {
+
+            e.preventDefault();
+            $("#hidden_post_card").show(200);
+
+        });
+
+        $("#cancel_post_button").on("click", function (e) {
+
+            e.preventDefault();
+            $("#hidden_post_card").hide(200);
+            clearAddPostInputs();
+            clearAddPostWarnings();
+        });
+
+        $("#confirm_post_button").on("click", function (e) {
+
+            e.preventDefault();
+            clearAddPostWarnings();
+            let title = $("#addPostTitle").val();
+            let body = $("#addPostBody").val();
+            let pageID = $(this).data("page-id");
+            createPost(title, body, pageID, createPostSuccessCallback);
+
+        });
 
         $(".upvote").on("click", function (e) {
 
@@ -142,7 +204,7 @@ function userLoggedInSuccessCallback(data) {
             var upvote_btn = $(this).parent();
             var downvote_btn = $(".downvote_space[data-post-id='" + post_id + "']");
             var upvote_counter = $(".upvote_counter[data-post-id='" + post_id + "']");
-            var downvote_counter = $(".downvote_counter[data-post-id='" + post_id + "']");           
+            var downvote_counter = $(".downvote_counter[data-post-id='" + post_id + "']");
 
             if (upvote_btn.hasClass("active")) {
                 upvote_btn.removeClass("active");
@@ -230,6 +292,7 @@ function userLoggedInSuccessCallback(data) {
         });
 
         $(".comment_downvote").on("click", function (e) {
+
             e.preventDefault();
             var comment_id = $(this).parent().data("comment-id");
             var downvote_btn = $(this).parent();
@@ -261,6 +324,10 @@ function userLoggedInSuccessCallback(data) {
 
     }
     else {
+
+        $("#addPostInConsultPageButton").popover({
+            trigger: "focus"
+        });
 
         $(".dismissable_popover").popover({
             trigger: "focus"
@@ -297,6 +364,7 @@ function downvoteSuccess(data) {
 }
 
 function upvoteSuccess(data) {
+
 }
 
 function Upvote(postID, success_callback) {
@@ -351,6 +419,26 @@ function commentUpvoteSuccess(data) {
     console.log(data.d);
 }
 
+function createPostSuccessCallback(data) {
+    let warnings = data.d;
+    for (let w of warnings) {
+        console.log(w);
+        let warning = createWarning(w);
+        $("#add_post_warning_space").append(warning);
+        if (w === "Title cannot be empty") {
+            $("#addPostTitle").addClass("border-danger");
+        }
+        if (w === "Post cannot be empty") {
+            $("#addPostBody").addClass("border-danger");
+        }
+    }
+
+    if (warnings.length === 0) {
+        console.log("added successfully");
+        window.location.reload();
+    }
+}
+
 function CommentUpvote(commentID, success_callback) {
 
     var data = { "CommentID": commentID };
@@ -393,17 +481,26 @@ function CommentDownvote(commentID, success_callback) {
 
 }
 
+function createPost(title, body, pageID, success_callback) {
+    var data = { "title": title, "body": body, "PageID": pageID };
 
-//-------------------------------------------------------------------------------------------------------
+    $.ajax({
 
-function viewPostPage(ID) {
-    if (!window.location.toString().includes("ViewPost")) {
-        window.location.href = "ViewPost.aspx?post-id=" + ID;
-    }
+        method: "POST",
+        data: JSON.stringify(data),
+        dataType: "json",
+        contentType: "application/json; charset=utf-8 ",
+        url: "UsersService.asmx/ValidateAndCreatePost",
+        error: function (r) {
+            console.log("error");
+            console.log(r.responseText);
+        },
+        success: success_callback
+
+    });
 }
 
-
-function ReportPost(postID, success_callback) {
+function reportPost(postID, success_callback) {
     var data = { "PostID": postID };
 
     $.ajax({
@@ -420,4 +517,24 @@ function ReportPost(postID, success_callback) {
         success: success_callback
 
     });
+}
+
+//-------------------------------------------------------------------------------------------------------
+
+function viewPostPage(ID) {
+    if (!window.location.toString().includes("ViewPost")) {
+        window.location.href = "ViewPost.aspx?post-id=" + ID;
+    }
+}
+
+function clearAddPostWarnings() {
+    $("#add_post_warning_space .alert").remove();
+    $("#addPostTitle").removeClass("border-danger");
+    $("#addPostBody").removeClass("border-danger");
+}
+
+function clearAddPostInputs() {
+
+    $("#addPostTitle").val("");
+    $("#addPostBody").val("");
 }

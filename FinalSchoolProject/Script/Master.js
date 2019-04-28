@@ -214,7 +214,7 @@ function clearSignupModal() {
 
 function createWarning(message) {
     let warning = document.createElement("div");
-    warning.className = "alert alert-danger w-75 mx-auto";
+    warning.className = "alert alert-danger w-75 mx-auto text-center";
     warning.setAttribute("role", "alert");
     warning.innerText = message;
     return warning;
