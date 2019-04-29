@@ -1,4 +1,6 @@
-﻿$(document).ready(function () {
+﻿var DateTime = luxon.DateTime;
+
+$(document).ready(function () {
 
     userLoggedIn(userLoggedInSuccessCallback);
 
@@ -91,8 +93,9 @@ function sort_by_rating(a, b) {
 }
 
 function sort_by_date(a, b) {
-    let a_date = Date.parse($(a).data("date"));
-    let b_date = Date.parse($(b).data("date"));
+    let a_date = DateTime.fromFormat($(a).data("date"), "dd/MM/yyyy HH:mm:ss");
+    console.log(a, a_date);
+    let b_date = DateTime.fromFormat($(b).data("date"), "dd/MM/yyyy HH:mm:ss");
 
     if (a_date > b_date) return 1;
     if (a_date < b_date) return -1;
@@ -138,7 +141,10 @@ function updateSort() {
 
 
     post_list.sort(compareFunction);
-    if (order === "ascending") post_list.reverse();
+    if (order === "ascending") {
+        console.log("asc");
+        post_list.reverse();
+    }
 
     console.log(post_list);
 

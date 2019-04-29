@@ -50,6 +50,9 @@
     <link href="Style/sb-admin-2.css" rel="stylesheet">
     <link rel="stylesheet" href="Style/Master.css" />
 
+    <!-- luxon datetime manipulation -->
+    <script type="text/javascript" src="Script/luxon.js"></script>
+
     <!-- date picker css -->
     <link rel="stylesheet" href="Style/bootstrap-datepicker.css" />
 
@@ -273,7 +276,7 @@
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="ViewUser.aspx">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Profile
                                 </a>

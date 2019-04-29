@@ -13,22 +13,6 @@ public partial class User_Controls_CommentControl : System.Web.UI.UserControl
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        CommentsClass comment = CommentsClass.GetByID(CommentID);
-        comment_text.InnerText = comment.Body;
-        comment_card.Attributes["data-comment-id"] = comment.ID.ToString();
-        comment_card.Attributes["data-date"] = comment.CreationDate.ToString("dd/MM/yyyy HH:mm:ss");
-        comment_card.Attributes["data-rating"] = (comment.UpvoteCount - comment.DownvoteCount).ToString();
-        comment_text.InnerText = comment.Body;
-        comment_author_name.InnerText = UsersClass.GetByID(comment.CommentorID).Username;
-        comment_author_name.HRef = "#";
-        collapseChildrenButton.Attributes["data-comment-id"] = comment.ID.ToString();
-        comment_creation_date.InnerText = comment.CreationDate.ToString("dd/MM/yyyy");
-        comment_upvote_counter.InnerText = comment.UpvoteCount.ToString();
-        comment_upvote_counter.Attributes["data-comment-id"] = comment.ID.ToString();
-        comment_upvote_button.Attributes["data-comment-id"] = comment.ID.ToString();
-        comment_downvote_counter.InnerText = comment.DownvoteCount.ToString();
-        comment_downvote_counter.Attributes["data-comment-id"] = comment.ID.ToString();
-        comment_downvote_button.Attributes["data-comment-id"] = comment.ID.ToString();
         SetVoteButtonColor();
         DisplayChildren();
         if (child_comments_space.Controls.Count == 0) child_comments_space.Visible = false;

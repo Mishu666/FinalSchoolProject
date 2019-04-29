@@ -15,7 +15,7 @@
 
 </asp:Content>
 
-<asp:Content ID="home_sidebar" ContentPlaceHolderID="main_content" runat="Server">
+<asp:Content ID="home_content" ContentPlaceHolderID="main_content" runat="Server">
 
     <div id="content_space" class="overflow-hidden d-flex flex-row h-100 py-3 px-4">
 

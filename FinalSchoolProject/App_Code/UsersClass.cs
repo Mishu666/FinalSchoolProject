@@ -217,5 +217,32 @@ public class UsersClass
         return user != null;
 
     }
+
+    public DataTable GetUserPosts()
+    {
+        string sql = "SELECT * FROM [Posts] WHERE [PosterID]=" + this.ID;
+        return Dbase.SelectFromTable(sql);
+    }
+
+    public DataTable GetUserSavedPosts()
+    {
+        string sql = "SELECT * FROM [Posts] WHERE [ID] IN (SELECT [SavedPostID] FROM [SavedPosts]  WHERE [SaverID]=" + this.ID + ")";
+        return Dbase.SelectFromTable(sql);
+
+    }
+
+    public DataTable GetUserUpvotedPosts()
+    {
+        string sql = "SELECT * FROM [Posts] WHERE [ID] IN (SELECT [VotedPostID] FROM [PostVotes]  WHERE [VoterID]=" + this.ID + " AND [VoteValue]=1)";
+        return Dbase.SelectFromTable(sql);
+
+    }
+
+    public DataTable GetUserDownvotedPosts()
+    {
+        string sql = "SELECT * FROM [Posts] WHERE [ID] IN (SELECT [VotedPostID] FROM [PostVotes]  WHERE [VoterID]=" + this.ID + " AND [VoteValue]=-1)";
+        return Dbase.SelectFromTable(sql);
+
+    }
     #endregion
 }

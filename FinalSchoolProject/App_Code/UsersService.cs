@@ -424,4 +424,101 @@ public class UsersService : System.Web.Services.WebService
         return warnings;
     }
 
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public List<PostsClass> GetUserPosts()
+    {
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        List<PostsClass> Posts = new List<PostsClass>();
+        UsersClass user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
+        DataTable posts_dt = user.GetUserPosts();
+
+        foreach (DataRow dr in posts_dt.Rows)
+        {
+            Posts.Add(PostsClass.FromDataRow(dr));
+        }
+
+        return Posts;
+
+    }
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public List<PostsClass> GetUserSavedPosts()
+    {
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        List<PostsClass> Posts = new List<PostsClass>();
+        UsersClass user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
+        DataTable posts_dt = user.GetUserSavedPosts();
+
+        foreach (DataRow dr in posts_dt.Rows)
+        {
+            Posts.Add(PostsClass.FromDataRow(dr));
+        }
+
+        return Posts;
+
+    }
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public List<PostsClass> GetUserUpvotedPosts()
+    {
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        List<PostsClass> Posts = new List<PostsClass>();
+        UsersClass user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
+        DataTable posts_dt = user.GetUserUpvotedPosts();
+
+        foreach (DataRow dr in posts_dt.Rows)
+        {
+            Posts.Add(PostsClass.FromDataRow(dr));
+        }
+
+        return Posts;
+
+    }
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public List<PostsClass> GetUserDownvotedPosts()
+    {
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        List<PostsClass> Posts = new List<PostsClass>();
+        UsersClass user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
+        DataTable posts_dt = user.GetUserDownvotedPosts();
+
+        foreach (DataRow dr in posts_dt.Rows)
+        {
+            Posts.Add(PostsClass.FromDataRow(dr));
+        }
+
+        return Posts;
+
+    }
+
 }
