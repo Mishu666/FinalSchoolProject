@@ -9,18 +9,18 @@ using System.Data;
 /// </summary>
 public class SavedPostsClass
 {
-    public int ID { get; private set; }
+    public int ID { get; protected set; }
     public int SaverID, SavedPostID;
     public DateTime SaveDate;
 
     #region constructors
 
-    private SavedPostsClass()
+    protected SavedPostsClass()
     {
 
     }
 
-    private SavedPostsClass(int ID, int SaverID,
+    protected SavedPostsClass(int ID, int SaverID,
         int SavedPostID, DateTime SaveDate)
     {
         this.ID = ID;
@@ -59,7 +59,7 @@ public class SavedPostsClass
 
     #region sql functions
 
-    private void Insert()
+    protected void Insert()
     {
         if (ID != 0)
         {

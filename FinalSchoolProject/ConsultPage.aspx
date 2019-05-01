@@ -40,12 +40,12 @@
                     <div id="add_post_footer" class="d-flex flex-row justify-content-end">
                         <div class="mr-auto">Will be posted to - <%= page.PageName %></div>
                         <button class="btn btn-secondary mr-2" id="cancel_post_button">Cancel</button>
-                        <button class="btn btn-primary" id="confirm_post_button" data-page-id="<%= page.ID %>">Post</button>
+                        <button class="btn btn-primary" id="confirm_post_button" data-page-id="<%= page.ID %>">Submit</button>
                     </div>
                 </div>
             </div>
 
-            <div id="post_space" class="overflow-auto  pr-3">
+            <div id="post_space" class="pr-3" style="overflow-y: scroll !important; overflow-x: hidden !important;">
                 <asp:Repeater ID="ConsultPageRepeater" runat="server">
 
                     <ItemTemplate>

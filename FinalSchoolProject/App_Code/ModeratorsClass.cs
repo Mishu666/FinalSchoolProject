@@ -9,17 +9,17 @@ using System.Data;
 /// </summary>
 public class ModeratorsClass
 {
-    public int ID { get; private set; }
+    public int ID { get; protected set; }
     public int PageID, ModeratorID;
 
     #region constructors
 
-    private ModeratorsClass()
+    protected ModeratorsClass()
     {
 
     }
 
-    private ModeratorsClass(int ID, int PageID, int ModeratorID)
+    protected ModeratorsClass(int ID, int PageID, int ModeratorID)
     {
         this.ID = ID;
         this.PageID = PageID;
@@ -53,7 +53,7 @@ public class ModeratorsClass
 
     #region sql functions
 
-    private void Insert()
+    protected void Insert()
     {
         if (ID != 0)
         {

@@ -9,19 +9,19 @@ using System.Data;
 /// </summary>
 public class ConsultPagesClass
 {
-    public int ID { get; private set; }
+    public int ID { get; protected set; }
     public int SubscriberCount;
     public string PageName, Describtion;
     public bool IsLocked;
 
     #region constructors
 
-    private ConsultPagesClass()
+    protected ConsultPagesClass()
     {
 
     }
 
-    private ConsultPagesClass(int ID, int SubscriberCount, string PageName,string Describtion, bool IsLocked)
+    protected ConsultPagesClass(int ID, int SubscriberCount, string PageName,string Describtion, bool IsLocked)
     {
         this.ID = ID;
         this.SubscriberCount = SubscriberCount;
@@ -61,7 +61,7 @@ public class ConsultPagesClass
 
     #region sql functions
 
-    private void Insert()
+    protected void Insert()
     {
         if (ID != 0)
         {

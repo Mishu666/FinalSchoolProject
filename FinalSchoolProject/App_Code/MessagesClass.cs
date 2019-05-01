@@ -9,19 +9,19 @@ using System.Data;
 /// </summary>
 public class MessagesClass
 {
-    public int ID { get; private set; }
+    public int ID { get; protected set; }
     public int SenderID, RecipientID;
     public string Title, Body;
     public DateTime SendDate;
 
     #region constructors
 
-    private MessagesClass()
+    protected MessagesClass()
     {
 
     }
 
-    private MessagesClass(int ID, int SenderID,
+    protected MessagesClass(int ID, int SenderID,
         int RecipientID, string Body, string Title, DateTime SendDate)
     {
         this.ID = ID;
@@ -65,7 +65,7 @@ public class MessagesClass
 
     #region sql functions
 
-    private void Insert()
+    protected void Insert()
     {
         if (ID != 0)
         {

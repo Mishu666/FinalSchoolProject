@@ -9,7 +9,7 @@ using System.Data;
 /// </summary>
 public class UsersClass
 {
-    public int ID { get; private set; }
+    public int ID { get; protected set; }
 
     public int Flags, Points, MyFollowersCount, FollowingCount;
     public string Username, Password, ProfilePictureDir;
@@ -18,12 +18,12 @@ public class UsersClass
 
     #region constructors
 
-    private UsersClass()
+    protected UsersClass()
     {
 
     }
 
-    private UsersClass(int ID, int MyFollowersCount, int FollowingCount, int Flags, int Points,
+    protected UsersClass(int ID, int MyFollowersCount, int FollowingCount, int Flags, int Points,
         string Username, string Password, string ProfilePictureDir,
         DateTime DOB, DateTime CreationDate,
         bool IsAdmin, bool IsSuspended, bool IsPrivate, bool IsDeleted)
@@ -94,7 +94,7 @@ public class UsersClass
 
     #region sql functions
 
-    private void Insert()
+    protected void Insert()
     {
         if (ID != 0)
         {
@@ -220,7 +220,7 @@ public class UsersClass
 
     public DataTable GetUserPosts()
     {
-        string sql = "SELECT * FROM [Posts] WHERE [PosterID]=" + this.ID;
+        string sql = "SELECT * FROM [Posts] WHERE [AuthorID]=" + this.ID;
         return Dbase.SelectFromTable(sql);
     }
 

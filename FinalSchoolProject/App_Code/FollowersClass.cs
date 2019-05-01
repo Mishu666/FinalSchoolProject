@@ -9,18 +9,18 @@ using System.Data;
 /// </summary>
 public class FollowersClass
 {
-    public int ID { get; private set; }
+    public int ID { get; protected set; }
     public int FollowerID, FollowedID;
     public DateTime FollowDate;
 
     #region constructors
 
-    private FollowersClass()
+    protected FollowersClass()
     {
 
     }
 
-    private FollowersClass(int ID, int FollowerID, int FollowedID, DateTime FollowDate)
+    protected FollowersClass(int ID, int FollowerID, int FollowedID, DateTime FollowDate)
     {
         this.ID = ID;
         this.FollowerID = FollowerID;
@@ -57,7 +57,7 @@ public class FollowersClass
 
     #region sql functions
 
-    private void Insert()
+    protected void Insert()
     {
         if (ID != 0)
         {

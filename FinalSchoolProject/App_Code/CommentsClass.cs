@@ -9,8 +9,8 @@ using System.Data;
 /// </summary>
 public class CommentsClass
 {
-    public int ID { get; private set; }
-    public int CommentorID, ParentPostID, ParentCommentID, UpvoteCount, DownvoteCount;
+    public int ID { get; protected set; }
+    public int CommentorID, ParentPostID, UpvoteCount, DownvoteCount;
     public string Body;
     public DateTime CreationDate;
     public bool IsRemoved, IsDeleted;
@@ -18,20 +18,19 @@ public class CommentsClass
 
     #region constructors
 
-    private CommentsClass()
+    protected CommentsClass()
     {
 
     }
 
-    private CommentsClass(int ID, string Body,
-        int CommentorID, int ParentPostID, int ParentCommentID,
+    protected CommentsClass(int ID, string Body,
+        int CommentorID, int ParentPostID,
         DateTime CreationDate, bool IsRemoved, bool IsDeleted)
     {
         this.ID = ID;
         this.Body = Body;
         this.CommentorID = CommentorID;
         this.ParentPostID = ParentPostID;
-        this.ParentCommentID = ParentCommentID;
         this.CreationDate = CreationDate;
         this.IsRemoved = IsRemoved;
         this.IsDeleted = IsDeleted;
@@ -51,34 +50,13 @@ public class CommentsClass
             IsDeleted = Convert.ToBoolean(dr["IsDeleted"]),
             DownvoteCount = Convert.ToInt32(dr["DownvoteCount"]),
             UpvoteCount = Convert.ToInt32(dr["UpvoteCount"])
-            
-        };
 
-        if (dr["ParentCommentID"] is int) obj.ParentCommentID = Convert.ToInt32(dr["ParentCommentID"]);
+        };
 
         return obj;
     }
 
-    public static CommentsClass CreateNew(string Title, string Body,
-        int CommentorID, int ParentPostID, int ParentCommentID)
-    {
-        CommentsClass parent = CommentsClass.GetByID(ParentCommentID);
-        CommentsClass comment = new CommentsClass
-        {
-            Body = Body,
-            CommentorID = CommentorID,
-            ParentPostID = ParentPostID,
-            ParentCommentID = ParentCommentID,
-            CreationDate = DateTime.Now,
-            IsRemoved = false,
-            IsDeleted = false
-        };
-
-        comment.Insert();
-        return comment;
-    }
-
-    public static CommentsClass CreateNew(string Title, string Body,
+    public static CommentsClass CreateNew(string Body,
         int CommentorID, int ParentPostID)
     {
         CommentsClass comment = new CommentsClass
@@ -99,7 +77,7 @@ public class CommentsClass
 
     #region sql functions
 
-    private void Insert()
+    protected void Insert()
     {
         string sql_str;
         if (ID != 0)
@@ -107,25 +85,13 @@ public class CommentsClass
             throw new Exception("already inserted");
         }
 
-        if (this.ParentCommentID != 0)
-        {
 
-            sql_str = "INSERT INTO [Comments] " +
-                "([Body], [CommentorID], [ParentPostID], [ParentCommentID], " +
-                "[UpvoteCount], [DownvoteCount], [CreationDate], [IsRemoved], [IsDeleted]) " +
-                "VALUES ('{0}',{1}, {2}, {3}, {4}, {5}, #{6}#, {7}, {8}) ";
-            sql_str = string.Format(sql_str, this.Body, this.CommentorID, this.ParentPostID,
-                this.ParentCommentID, this.UpvoteCount, this.DownvoteCount, this.CreationDate, this.IsRemoved, this.IsDeleted);
-        }
-        else
-        {
-            sql_str = "INSERT INTO [Comments] " +
-                "([Body], [CommentorID], [ParentPostID], " +
-                "[UpvoteCount], [DownvoteCount], [CreationDate], [IsRemoved], [IsDeleted]) " +
-                "VALUES ('{0}',{1}, {2}, {3}, {4}, #{5}#, {6}, {7}) ";
-            sql_str = string.Format(sql_str, this.Body, this.CommentorID, this.ParentPostID, 
-                this.UpvoteCount, this.DownvoteCount, this.CreationDate, this.IsRemoved, this.IsDeleted);
-        }
+        sql_str = "INSERT INTO [Comments] " +
+            "([Body], [CommentorID], [ParentPostID], " +
+            "[UpvoteCount], [DownvoteCount], [CreationDate], [IsRemoved], [IsDeleted]) " +
+            "VALUES ('{0}',{1}, {2}, {3}, {4}, #{5}#, {6}, {7}) ";
+        sql_str = string.Format(sql_str, this.Body, this.CommentorID, this.ParentPostID,
+            this.UpvoteCount, this.DownvoteCount, this.CreationDate, this.IsRemoved, this.IsDeleted);
 
         Dbase.ChangeTable(sql_str);
 
@@ -139,26 +105,15 @@ public class CommentsClass
     public void Update()
     {
         string sql_str;
-        if (this.ParentCommentID != 0)
-        {
-            sql_str = "UPDATE [Comments] " +
-                "SET [Body] = '{0}', [CommentorID] = {1}, [UpvoteCount] = {2}, [DownvoteCount] = {3}," +
-                "[ParentPostID] = {4}, [ParentCommentID] = {5}, [CreationDate] = #{6}#," +
-                "[IsRemoved] = {7}, [IsDeleted] = {8}";
-            sql_str += " WHERE [ID]=" + this.ID;
-            sql_str = string.Format(sql_str, this.Body, this.CommentorID, this.UpvoteCount, this.DownvoteCount,
-                this.ParentPostID, this.ParentCommentID, this.CreationDate, this.IsRemoved, this.IsDeleted);
-        }
-        else
-        {
-            sql_str = "UPDATE [Comments] " +
-                "SET [Body] = '{0}', [CommentorID] = {1}, [UpvoteCount] = {2}, [DownvoteCount] = {3}," +
-                "[ParentPostID] = {4},[CreationDate] = #{5}#," +
-                "[IsRemoved] = {6}, [IsDeleted] = {7}";
-            sql_str += " WHERE [ID]=" + this.ID;
-            sql_str = string.Format(sql_str, this.Body, this.CommentorID, this.UpvoteCount, this.DownvoteCount,
-                this.ParentPostID, this.CreationDate, this.IsRemoved, this.IsDeleted);
-        }
+
+        sql_str = "UPDATE [Comments] " +
+            "SET [Body] = '{0}', [CommentorID] = {1}, [UpvoteCount] = {2}, [DownvoteCount] = {3}," +
+            "[ParentPostID] = {4},[CreationDate] = #{5}#," +
+            "[IsRemoved] = {6}, [IsDeleted] = {7}";
+        sql_str += " WHERE [ID]=" + this.ID;
+        sql_str = string.Format(sql_str, this.Body, this.CommentorID, this.UpvoteCount, this.DownvoteCount,
+            this.ParentPostID, this.CreationDate, this.IsRemoved, this.IsDeleted);
+
         Dbase.ChangeTable(sql_str);
     }
 

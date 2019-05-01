@@ -9,19 +9,19 @@ using System.Data;
 /// </summary>
 public class CommentReportsClass
 {
-    public int ID { get; private set; }
+    public int ID { get; protected set; }
     public int ReporterID, ReportedCommentID;
     public string Body;
     public DateTime CreationDate;
 
     #region constructors
 
-    private CommentReportsClass()
+    protected CommentReportsClass()
     {
 
     }
 
-    private CommentReportsClass(int ID, int ReporterID,
+    protected CommentReportsClass(int ID, int ReporterID,
         int ReportedCommentID, string Body, DateTime CreationDate)
     {
         this.ID = ID;
@@ -63,7 +63,7 @@ public class CommentReportsClass
 
     #region sql functions
 
-    private void Insert()
+    protected void Insert()
     {
         if (ID != 0)
         {

@@ -7,10 +7,10 @@
 }
 
 
-.upvote_space.active, .comment_upvote_space.active {
+.upvote_space.active_vote, .comment_upvote_space.active_vote {
     color: orangered !important;
 }
 
-.downvote_space.active, .comment_downvote_space.active {
+.downvote_space.active_vote, .comment_downvote_space.active_vote {
     color: dodgerblue !important;
 }

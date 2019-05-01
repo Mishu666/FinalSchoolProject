@@ -19,7 +19,7 @@
 
     <div id="content_space" class="overflow-hidden d-flex flex-row h-100 py-3 px-4">
 
-        <div id="posts_space" class="d-flex flex-column w-75 overflow-auto pr-3">
+        <div id="posts_space" class="d-flex flex-column w-75 pr-3" style="overflow-y: scroll !important; overflow-x: hidden !important;">
 
             <asp:Repeater runat="server" ID="HomePostRepeater">
 

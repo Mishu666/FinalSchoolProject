@@ -21,6 +21,7 @@ public partial class ViewPost : System.Web.UI.Page
             if (post == null) Response.Redirect("Home.aspx");
 
             ViewPostPostControl.PostID = id;
+            ViewState["PostID"] = id;
             DisplayPostComments(id);
         }
     }
@@ -30,7 +31,7 @@ public partial class ViewPost : System.Web.UI.Page
         DataTable original_comments = CommentsClass.GetOriginalComments(PostID);
         foreach (DataRow comment_dr in original_comments.Rows)
         {
-            DisplayComment(CommentsClass.FromDataRow(comment_dr), 0);
+            DisplayComment(CommentsClass.FromDataRow(comment_dr));
         }
 
     }
@@ -49,11 +50,10 @@ public partial class ViewPost : System.Web.UI.Page
 
     //}
 
-    private void DisplayComment(CommentsClass comment, int depth)
+    private void DisplayComment(CommentsClass comment)
     {
         User_Controls_CommentControl comment_control = (User_Controls_CommentControl)LoadControl("~/User_Controls/CommentControl.ascx");
         comment_control.CommentID = comment.ID;
-        comment_control.Depth = depth;
         comment_space.Controls.Add(comment_control);
 
     }

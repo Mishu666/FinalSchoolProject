@@ -364,7 +364,7 @@ public class UsersService : System.Web.Services.WebService
 
     [WebMethod(EnableSession = true)]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public void ReportPost(int PostID, string reportBody)
+    private void ReportPost(int PostID, string reportBody)
     {
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
@@ -376,24 +376,24 @@ public class UsersService : System.Web.Services.WebService
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
         PostsClass post = PostsClass.GetByID(PostID);
 
-
+        //CONTINUE
 
     }
 
     [WebMethod]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    private void CreatePost(string title, string body, int PageID)
+    private void CreatePost(string title, string Body, int PageID)
     {
 
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
 
-        PostsClass.CreateNew(PageID, userID, title, body);
+        PostsClass.CreateNew(PageID, userID, title, Body);
 
     }
 
     [WebMethod(EnableSession = true)]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public List<string> ValidateAndCreatePost(string title, string body, int PageID)
+    public List<string> ValidateAndCreatePost(string title, string Body, int PageID)
     {
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
@@ -410,7 +410,7 @@ public class UsersService : System.Web.Services.WebService
             warnings.Add("Title cannot be empty");
             valid = false;
         }
-        if (string.IsNullOrWhiteSpace(body))
+        if (string.IsNullOrWhiteSpace(Body))
         {
             warnings.Add("Post cannot be empty");
             valid = false;
@@ -418,40 +418,35 @@ public class UsersService : System.Web.Services.WebService
 
         if (valid)
         {
-            CreatePost(title, body, PageID);
+            CreatePost(title, Body, PageID);
         }
 
         return warnings;
     }
 
-
-    [WebMethod(EnableSession = true)]
+    [WebMethod]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public List<PostsClass> GetUserPosts()
+    private void CreateNewComment(string Body, int ParentPostID)
     {
-        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
-        {
-            HttpContext current = HttpContext.Current;
-            current.Response.StatusCode = 401;
-            current.Response.End();
-        }
 
-        List<PostsClass> Posts = new List<PostsClass>();
-        UsersClass user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
-        DataTable posts_dt = user.GetUserPosts();
+        int userID = Convert.ToInt32(Session["CurrentUserID"]);
 
-        foreach (DataRow dr in posts_dt.Rows)
-        {
-            Posts.Add(PostsClass.FromDataRow(dr));
-        }
+        CommentsClass.CreateNew(Body, userID, ParentPostID);
+    }
 
-        return Posts;
+    [WebMethod]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    private void CreateCommentReply(string Body, int ParentCommentID)
+    {
 
+        int userID = Convert.ToInt32(Session["CurrentUserID"]);
+
+        CommentRepliesClass.CreateNew(Body, userID, ParentCommentID);
     }
 
     [WebMethod(EnableSession = true)]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public List<PostsClass> GetUserSavedPosts()
+    public List<string> ValidateAndCreateComment(string Body, int ParentPostID)
     {
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
@@ -460,22 +455,35 @@ public class UsersService : System.Web.Services.WebService
             current.Response.End();
         }
 
-        List<PostsClass> Posts = new List<PostsClass>();
-        UsersClass user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
-        DataTable posts_dt = user.GetUserSavedPosts();
+        List<string> warnings = new List<string>();
+        PostsClass post = PostsClass.GetByID(ParentPostID);
+        bool valid = true;
 
-        foreach (DataRow dr in posts_dt.Rows)
+        if (post == null)
         {
-            Posts.Add(PostsClass.FromDataRow(dr));
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+            valid = false;
         }
 
-        return Posts;
+        if (string.IsNullOrWhiteSpace(Body))
+        {
+            warnings.Add("Comment cannot be empty");
+            valid = false;
+        }
 
+        if (valid)
+        {
+            CreateNewComment(Body, ParentPostID);
+        }
+
+        return warnings;
     }
 
     [WebMethod(EnableSession = true)]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public List<PostsClass> GetUserUpvotedPosts()
+    public List<string> ValidateAndCreateCommentReply(string Body, int ParentCommentID)
     {
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
@@ -484,41 +492,31 @@ public class UsersService : System.Web.Services.WebService
             current.Response.End();
         }
 
-        List<PostsClass> Posts = new List<PostsClass>();
-        UsersClass user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
-        DataTable posts_dt = user.GetUserUpvotedPosts();
+        List<string> warnings = new List<string>();
+        CommentsClass comment = CommentsClass.GetByID(ParentCommentID);
+        bool valid = true;
 
-        foreach (DataRow dr in posts_dt.Rows)
-        {
-            Posts.Add(PostsClass.FromDataRow(dr));
-        }
-
-        return Posts;
-
-    }
-
-    [WebMethod(EnableSession = true)]
-    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public List<PostsClass> GetUserDownvotedPosts()
-    {
-        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        if (comment == null)
         {
             HttpContext current = HttpContext.Current;
             current.Response.StatusCode = 401;
             current.Response.End();
+            valid = false;
+
         }
 
-        List<PostsClass> Posts = new List<PostsClass>();
-        UsersClass user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
-        DataTable posts_dt = user.GetUserDownvotedPosts();
-
-        foreach (DataRow dr in posts_dt.Rows)
+        if (string.IsNullOrWhiteSpace(Body))
         {
-            Posts.Add(PostsClass.FromDataRow(dr));
+            warnings.Add("Comment cannot be empty");
+            valid = false;
         }
 
-        return Posts;
+        if (valid)
+        {
+            CreateCommentReply(Body, ParentCommentID);
+        }
 
+        return warnings;
     }
 
 }

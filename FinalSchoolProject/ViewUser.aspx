@@ -1,9 +1,12 @@
-﻿<%@ Page Title="" Language="VB" MasterPageFile="~/MasterPage.master" AutoEventWireup="false" CodeFile="ViewUser.aspx.vb" Inherits="ViewUser" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="ViewUser.aspx.cs" Inherits="ViewUser" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
 
     <script type="text/javascript" src="Script/ViewUser.js"></script>
     <link rel="stylesheet" href="Style/ViewUser.css" />
+
+    <script type="text/javascript" src="Script/post_actions.js"></script>
+    <link rel="stylesheet" href="Style/post_actions.css" />
 
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="nav_items_cph" runat="Server">
@@ -15,21 +18,27 @@
 
             <ul class="nav nav-tabs">
                 <li class="nav-item">
-                    <asp:Button runat="server" class="nav-link active" ID="ProfileMyPostsTab" Text="My Posts" />
+                    <a runat="server" class="nav-link active" id="ProfileMyPostsTab" data-post-type="submitted" onserverclick="ProfilePostsTab_ServerClick">Submitted</a>
                 </li>
                 <li class="nav-item">
-                    <asp:Button runat="server" class="nav-link" ID="ProfileSavedPostsTab" Text="Saved" />
+                    <a runat="server" class="nav-link" id="ProfileSavedPostsTab" data-post-type="saved" onserverclick="ProfilePostsTab_ServerClick">Saved</a>
                 </li>
                 <li class="nav-item">
-                    <asp:Button runat="server" class="nav-link" ID="ProfileUpvotedPostsTab" Text="Saved" />
+                    <a runat="server" class="nav-link" id="ProfileUpvotedPostsTab" data-post-type="upvoted" onserverclick="ProfilePostsTab_ServerClick">Upvoted</a>
                 </li>
                 <li class="nav-item">
-                    <asp:Button runat="server" class="nav-link" ID="ProfileDownvotedPostsTab" Text="Saved" />
+                    <a runat="server" class="nav-link" id="ProfileDownvotedPostsTab" data-post-type="downvoted" onserverclick="ProfilePostsTab_ServerClick">Downvoted</a>
                 </li>
             </ul>
 
-            <div id="posts_space" class="d-flex flex-column overflow-auto pr-3 bg-danger">
-                
+            <div id="posts_space" class="d-flex flex-column pr-3 mt-3" style="overflow-y: scroll !important; overflow-x: hidden !important;">
+
+                <asp:Repeater ID="ProfilePostsRepeater" runat="server">
+                    <ItemTemplate>
+                        <uc:Post runat="server" PostID='<%# Convert.ToInt32(Eval("ID")) %>' />
+                    </ItemTemplate>
+                </asp:Repeater>
+
             </div>
 
         </div>
@@ -39,4 +48,3 @@
 
     </div>
 </asp:Content>
-

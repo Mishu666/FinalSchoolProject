@@ -9,18 +9,18 @@ using System.Data;
 /// </summary>
 public class SubscribtionsClass
 {
-    public int ID { get; private set; }
+    public int ID { get; protected set; }
     public int SubscriberID, SubscribedPageID;
     public DateTime SubscribtionDate;
 
     #region constructors
 
-    private SubscribtionsClass()
+    protected SubscribtionsClass()
     {
 
     }
 
-    private SubscribtionsClass(int ID, int SubscriberID,
+    protected SubscribtionsClass(int ID, int SubscriberID,
         int SubscribedPageID, DateTime SubscribtionDate)
     {
         this.ID = ID;
@@ -58,7 +58,7 @@ public class SubscribtionsClass
 
     #region sql functions
 
-    private void Insert()
+    protected void Insert()
     {
         if (ID != 0)
         {

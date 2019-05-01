@@ -55,7 +55,7 @@ $(document).ready(function () {
     $(".post").on("click", function (e) {
         if (!$(e.target).hasClass("upvote") && !$(e.target).hasClass("downvote")) {
 
-            viewPostPage($(this).data("id"));
+            viewPostPage($(this).data("post-id"));
 
         }
 
@@ -63,8 +63,8 @@ $(document).ready(function () {
 
     $(".collapse_children").on("click", function (e) {
 
-        let comment_id = $(this).parent().data("comment-id");
-        let child_space = $(".comment[data-comment-id='" + comment_id + "'] > #comment_footer > .child_comments_space");
+        let comment_card = $(this).closest(".card.comment");
+        let child_space = comment_card.find(".child_comments_space");
         if ($(this).hasClass("fa-chevron-up")) {
             $(this).removeClass("fa-chevron-up");
             $(this).addClass("fa-chevron-down");
@@ -94,7 +94,6 @@ function sort_by_rating(a, b) {
 
 function sort_by_date(a, b) {
     let a_date = DateTime.fromFormat($(a).data("date"), "dd/MM/yyyy HH:mm:ss");
-    console.log(a, a_date);
     let b_date = DateTime.fromFormat($(b).data("date"), "dd/MM/yyyy HH:mm:ss");
 
     if (a_date > b_date) return 1;
@@ -142,11 +141,8 @@ function updateSort() {
 
     post_list.sort(compareFunction);
     if (order === "ascending") {
-        console.log("asc");
         post_list.reverse();
     }
-
-    console.log(post_list);
 
     for (let i = 0; i < post_list.length; i++) {
         post_list[i].parentNode.append(post_list[i]);
@@ -177,6 +173,71 @@ function userLoggedInSuccessCallback(data) {
 
     if (data.d === true) {
 
+        $(".reply_button").on("click", function (e) {
+            e.preventDefault();
+            clearAddReplyInputs();
+            clearAddReplyWarnings();
+
+            let comment_card = $(this).closest(".card.comment");
+            let hidden_card = comment_card.find(".card.hidden_reply").first();
+
+            if (hidden_card.css("display") === "none") {
+                $(".hidden_reply").hide(200);
+                hidden_card.show(200);
+            } else {
+                hidden_card.hide(200);
+            }
+
+            console.log(hidden_card);
+
+        });
+
+        $(".confirm_reply_button").on("click", function (e) {
+
+            e.preventDefault();
+            clearAddCommentWarnings();
+            let comment_card = $(this).closest(".card.comment");
+            let body = comment_card.find(".addReplyBody").first().val();
+            let ParentCommentID = comment_card.data("comment-id");
+            createCommentReply(body, ParentCommentID, createCommentReplySuccess);
+
+        });
+
+        $(".cancel_reply_button").on("click", function (e) {
+
+            e.preventDefault();
+            let hidden_card = $(this).closest(".card.hidden_reply");
+            hidden_card.hide(200);
+            clearAddReplyInputs();
+            clearAddReplyWarnings();
+        });
+
+
+        $("#addOriginalCommentButton").on("click", function (e) {
+
+            e.preventDefault();
+            $("#hidden_comment_card").show(200);
+
+        });
+
+        $("#confirm_comment_button").on("click", function (e) {
+
+            e.preventDefault();
+            clearAddPostWarnings();
+            let body = $("#addCommentBody").val();
+            let pageID = $(this).data("page-id");
+            createNewComment(body, pageID, createNewCommentSuccess);
+
+        });
+
+        $("#cancel_comment_button").on("click", function (e) {
+
+            e.preventDefault();
+            $("#hidden_comment_card").hide(200);
+            clearAddCommentInputs();
+            clearAddCommentWarnings();
+        });
+
         $("#addPostInConsultPageButton").on("click", function (e) {
 
             e.preventDefault();
@@ -199,33 +260,33 @@ function userLoggedInSuccessCallback(data) {
             let title = $("#addPostTitle").val();
             let body = $("#addPostBody").val();
             let pageID = $(this).data("page-id");
-            createPost(title, body, pageID, createPostSuccessCallback);
+            createPost(title, body, pageID, createPostSuccess);
 
         });
 
         $(".upvote").on("click", function (e) {
-
             e.preventDefault();
-            var post_id = $(this).parent().data("post-id");
-            var upvote_btn = $(this).parent();
-            var downvote_btn = $(".downvote_space[data-post-id='" + post_id + "']");
-            var upvote_counter = $(".upvote_counter[data-post-id='" + post_id + "']");
-            var downvote_counter = $(".downvote_counter[data-post-id='" + post_id + "']");
+            var parent_card = $(this).closest(".card.post");
+            var post_id = parent_card.data("post-id");
+            var upvote_btn = parent_card.find(".upvote_space");
+            var downvote_btn = parent_card.find(".downvote_space");
+            var upvote_counter = parent_card.find(".upvote_counter");
+            var downvote_counter = parent_card.find(".downvote_counter");
 
-            if (upvote_btn.hasClass("active")) {
-                upvote_btn.removeClass("active");
+            if (upvote_btn.hasClass("active_vote")) {
+                upvote_btn.removeClass("active_vote");
                 upvote_counter.text(parseInt(upvote_counter.text()) - 1);
             }
             else {
-                if (downvote_btn.hasClass("active")) {
-                    downvote_btn.removeClass("active");
-                    upvote_btn.addClass("active");
+                if (downvote_btn.hasClass("active_vote")) {
+                    downvote_btn.removeClass("active_vote");
+                    upvote_btn.addClass("active_vote");
                     upvote_counter.text(parseInt(upvote_counter.text()) + 1);
                     downvote_counter.text(parseInt(downvote_counter.text()) - 1);
 
                 }
                 else {
-                    upvote_btn.addClass("active");
+                    upvote_btn.addClass("active_vote");
                     upvote_counter.text(parseInt(upvote_counter.text()) + 1);
                 }
             }
@@ -236,26 +297,27 @@ function userLoggedInSuccessCallback(data) {
 
         $(".downvote").on("click", function (e) {
             e.preventDefault();
-            var post_id = $(this).parent().data("post-id");
-            var downvote_btn = $(this).parent();
-            var upvote_btn = $(".upvote_space[data-post-id='" + post_id + "']");
-            var downvote_counter = $(".downvote_counter[data-post-id='" + post_id + "']");
-            var upvote_counter = $(".upvote_counter[data-post-id='" + post_id + "']");
+            var parent_card = $(this).closest(".card.post");
+            var post_id = parent_card.data("post-id");
+            var upvote_btn = parent_card.find(".upvote_space");
+            var downvote_btn = parent_card.find(".downvote_space");
+            var upvote_counter = parent_card.find(".upvote_counter");
+            var downvote_counter = parent_card.find(".downvote_counter");
 
-            if (downvote_btn.hasClass("active")) {
-                downvote_btn.removeClass("active");
+            if (downvote_btn.hasClass("active_vote")) {
+                downvote_btn.removeClass("active_vote");
                 downvote_counter.text(parseInt(downvote_counter.text()) - 1);
             }
             else {
-                if (upvote_btn.hasClass("active")) {
-                    upvote_btn.removeClass("active");
-                    downvote_btn.addClass("active");
+                if (upvote_btn.hasClass("active_vote")) {
+                    upvote_btn.removeClass("active_vote");
+                    downvote_btn.addClass("active_vote");
                     downvote_counter.text(parseInt(downvote_counter.text()) + 1);
                     upvote_counter.text(parseInt(upvote_counter.text()) - 1);
 
                 }
                 else {
-                    downvote_btn.addClass("active");
+                    downvote_btn.addClass("active_vote");
                     downvote_counter.text(parseInt(downvote_counter.text()) + 1);
                 }
             }
@@ -269,26 +331,27 @@ function userLoggedInSuccessCallback(data) {
         $(".comment_upvote").on("click", function (e) {
 
             e.preventDefault();
-            var comment_id = $(this).parent().data("comment-id");
-            var upvote_btn = $(this).parent();
-            var downvote_btn = $(".comment_downvote_space[data-comment-id='" + comment_id + "']");
-            var upvote_counter = $(".comment_upvote_counter[data-comment-id='" + comment_id + "']");
-            var downvote_counter = $(".comment_downvote_counter[data-comment-id='" + comment_id + "']");
+            var parent_card = $(this).closest(".card.post");
+            var comment_id = parent_card.data("comment-id");
+            var upvote_btn = parent_card.find(".upvote_space");
+            var downvote_btn = parent_card.find(".downvote_space");
+            var upvote_counter = parent_card.find(".upvote_counter");
+            var downvote_counter = parent_card.find(".downvote_counter");
 
-            if (upvote_btn.hasClass("active")) {
-                upvote_btn.removeClass("active");
+            if (upvote_btn.hasClass("active_vote")) {
+                upvote_btn.removeClass("active_vote");
                 upvote_counter.text(parseInt(upvote_counter.text()) - 1);
             }
             else {
-                if (downvote_btn.hasClass("active")) {
-                    downvote_btn.removeClass("active");
-                    upvote_btn.addClass("active");
+                if (downvote_btn.hasClass("active_vote")) {
+                    downvote_btn.removeClass("active_vote");
+                    upvote_btn.addClass("active_vote");
                     upvote_counter.text(parseInt(upvote_counter.text()) + 1);
                     downvote_counter.text(parseInt(downvote_counter.text()) - 1);
 
                 }
                 else {
-                    upvote_btn.addClass("active");
+                    upvote_btn.addClass("active_vote");
                     upvote_counter.text(parseInt(upvote_counter.text()) + 1);
                 }
             }
@@ -300,26 +363,27 @@ function userLoggedInSuccessCallback(data) {
         $(".comment_downvote").on("click", function (e) {
 
             e.preventDefault();
-            var comment_id = $(this).parent().data("comment-id");
-            var downvote_btn = $(this).parent();
-            var upvote_btn = $(".comment_upvote_space[data-comment-id='" + comment_id + "']");
-            var downvote_counter = $(".comment_downvote_counter[data-comment-id='" + comment_id + "']");
-            var upvote_counter = $(".comment_upvote_counter[data-comment-id='" + comment_id + "']");
+            var parent_card = $(this).closest(".card.post");
+            var comment_id = parent_card.data("comment-id");
+            var upvote_btn = parent_card.find(".upvote_space");
+            var downvote_btn = parent_card.find(".downvote_space");
+            var upvote_counter = parent_card.find(".upvote_counter");
+            var downvote_counter = parent_card.find(".downvote_counter");
 
-            if (downvote_btn.hasClass("active")) {
-                downvote_btn.removeClass("active");
+            if (downvote_btn.hasClass("active_vote")) {
+                downvote_btn.removeClass("active_vote");
                 downvote_counter.text(parseInt(downvote_counter.text()) - 1);
             }
             else {
-                if (upvote_btn.hasClass("active")) {
-                    upvote_btn.removeClass("active");
-                    downvote_btn.addClass("active");
+                if (upvote_btn.hasClass("active_vote")) {
+                    upvote_btn.removeClass("active_vote");
+                    downvote_btn.addClass("active_vote");
                     downvote_counter.text(parseInt(downvote_counter.text()) + 1);
                     upvote_counter.text(parseInt(upvote_counter.text()) - 1);
 
                 }
                 else {
-                    downvote_btn.addClass("active");
+                    downvote_btn.addClass("active_vote");
                     downvote_counter.text(parseInt(downvote_counter.text()) + 1);
                 }
             }
@@ -331,32 +395,27 @@ function userLoggedInSuccessCallback(data) {
     }
     else {
 
-        $("#addPostInConsultPageButton").popover({
-            trigger: "focus"
-        });
-
         $(".dismissable_popover").popover({
             trigger: "focus"
         });
 
 
-        $(".upvote_space").on("click", function (e) {
-            console.log("dooot");
+        $(".upvote").on("click", function (e) {
             e.preventDefault();
 
         });
 
-        $(".downvote_space").on("click", function (e) {
+        $(".downvote").on("click", function (e) {
 
             e.preventDefault();
         });
 
-        $(".comment_upvote_space").on("click", function (e) {
+        $(".comment_upvote").on("click", function (e) {
 
             e.preventDefault();
         });
 
-        $(".comment_downvote_space").on("click", function (e) {
+        $(".comment_downvote").on("click", function (e) {
 
             e.preventDefault();
         });
@@ -425,7 +484,7 @@ function commentUpvoteSuccess(data) {
     console.log(data.d);
 }
 
-function createPostSuccessCallback(data) {
+function createPostSuccess(data) {
     let warnings = data.d;
     for (let w of warnings) {
         console.log(w);
@@ -444,6 +503,42 @@ function createPostSuccessCallback(data) {
         window.location.reload();
     }
 }
+
+function createNewCommentSuccess(data) {
+    let warnings = data.d;
+    for (let w of warnings) {
+        console.log(w);
+        let warning = createWarning(w);
+        $("#add_comment_warning_space").append(warning);
+        if (w === "Comment cannot be empty") {
+            $("#addCommentBody").addClass("border-danger");
+        }
+    }
+
+    if (warnings.length === 0) {
+        console.log("added successfully");
+        window.location.reload();
+    }
+}
+
+function createCommentReplySuccess(data) {
+    let warnings = data.d;
+    for (let w of warnings) {
+        console.log(w);
+        let warning = createWarning(w);
+        $(".add_reply_warning_space").append(warning);
+        if (w === "Comment cannot be empty") {
+            $(".addReplyBody").addClass("border-danger");
+        }
+    }
+
+    if (warnings.length === 0) {
+        console.log("added successfully");
+        window.location.reload();
+    }
+}
+
+//----------------------------------------------------------------------------------------------------------------------------
 
 function CommentUpvote(commentID, success_callback) {
 
@@ -506,8 +601,27 @@ function createPost(title, body, pageID, success_callback) {
     });
 }
 
-function reportPost(postID, success_callback) {
-    var data = { "PostID": postID };
+//function reportPost(postID, success_callback) {
+//    var data = { "PostID": postID };
+
+//    $.ajax({
+
+//        method: "POST",
+//        data: JSON.stringify(data),
+//        dataType: "json",
+//        contentType: "application/json; charset=utf-8 ",
+//        url: "UsersService.asmx/Downvote",
+//        error: function (r) {
+//            console.log("error");
+//            console.log(r.responseText);
+//        },
+//        success: success_callback
+
+//    });
+//}
+
+function createNewComment(body, post_id, success_callback) {
+    var data = { "Body": body, "ParentPostID": post_id };
 
     $.ajax({
 
@@ -515,7 +629,26 @@ function reportPost(postID, success_callback) {
         data: JSON.stringify(data),
         dataType: "json",
         contentType: "application/json; charset=utf-8 ",
-        url: "UsersService.asmx/Downvote",
+        url: "UsersService.asmx/ValidateAndCreateComment",
+        error: function (r) {
+            console.log("error");
+            console.log(r.responseText);
+        },
+        success: success_callback
+
+    });
+}
+
+function createCommentReply(body, parent_comment_id, success_callback) {
+    var data = { "Body": body, "ParentCommentID": parent_comment_id };
+
+    $.ajax({
+
+        method: "POST",
+        data: JSON.stringify(data),
+        dataType: "json",
+        contentType: "application/json; charset=utf-8 ",
+        url: "UsersService.asmx/ValidateAndCreateCommentReply",
         error: function (r) {
             console.log("error");
             console.log(r.responseText);
@@ -543,4 +676,24 @@ function clearAddPostInputs() {
 
     $("#addPostTitle").val("");
     $("#addPostBody").val("");
+}
+
+function clearAddCommentWarnings() {
+    $("#add_comment_warning_space .alert").remove();
+    $("#addCommentBody").removeClass("border-danger");
+}
+
+function clearAddCommentInputs() {
+
+    $("#addCommentBody").val("");
+}
+
+function clearAddReplyWarnings() {
+    $(".add_reply_warning_space .alert").remove();
+    $(".addReplyBody").removeClass("border-danger");
+}
+
+function clearAddReplyInputs() {
+
+    $(".addReplyBody").val("");
 }

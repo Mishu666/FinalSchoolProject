@@ -9,7 +9,7 @@ using System.Web.UI.WebControls;
 public partial class User_Controls_PostControl : System.Web.UI.UserControl
 {
     public int PostID { get; set; }
-    protected void Page_Load(object sender, EventArgs e)
+    protected void Page_PreRender(object sender, EventArgs e)
     {
         SetVoteButtonColor();
     }
@@ -31,18 +31,18 @@ public partial class User_Controls_PostControl : System.Web.UI.UserControl
 
             if (vote_val == 1)
             {
-                GlobalFunctions.AddCssClass(upvote_button, "active");
+                GlobalFunctions.AddCssClass(upvote_button, "active_vote");
             }
             else if (vote_val == -1)
             {
-                GlobalFunctions.AddCssClass(downvote_button, "active");
+                GlobalFunctions.AddCssClass(downvote_button, "active_vote");
 
             }
         }
         else
         {
-            GlobalFunctions.RemoveCssClass(upvote_button, "active");
-            GlobalFunctions.RemoveCssClass(downvote_button, "active");
+            GlobalFunctions.RemoveCssClass(upvote_button, "active_vote");
+            GlobalFunctions.RemoveCssClass(downvote_button, "active_vote");
         }
     }
 }

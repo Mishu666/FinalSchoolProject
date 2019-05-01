@@ -9,17 +9,17 @@ using System.Data;
 /// </summary>
 public class CommentVotesClass
 {
-    public int ID { get; private set; }
+    public int ID { get; protected set; }
     public int VoterID, VotedCommentID, VoteValue;
 
     #region constructors
 
-    private CommentVotesClass()
+    protected CommentVotesClass()
     {
 
     }
 
-    private CommentVotesClass(int ID, int VoterID,
+    protected CommentVotesClass(int ID, int VoterID,
         int VotedCommentID, int VoteValue)
     {
         this.ID = ID;
@@ -57,7 +57,7 @@ public class CommentVotesClass
 
     #region sql functions
 
-    private void Insert()
+    protected void Insert()
     {
         if (ID != 0)
         {

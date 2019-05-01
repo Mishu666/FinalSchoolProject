@@ -9,7 +9,7 @@ using System.Data;
 /// </summary>
 public class PostsClass
 {
-    public int ID { get; private set; }
+    public int ID { get; protected set; }
     public int ConsultPageID, AuthorID, UpvoteCount, DownvoteCount, CommentCount;
     public string Title, Body;
     public bool IsDeleted, IsRemoved;
@@ -18,12 +18,12 @@ public class PostsClass
 
     #region constructors
 
-    private PostsClass()
+    protected PostsClass()
     {
 
     }
 
-    private PostsClass(int ID, int ConsultPageID, int AuthorID, int UpvoteCount, int DownvoteCount, int CommentCount,
+    protected PostsClass(int ID, int ConsultPageID, int AuthorID, int UpvoteCount, int DownvoteCount, int CommentCount,
         string Title, string Body, bool IsDeleted, bool IsRemoved, DateTime CreationDate)
     {
         this.ID = ID;
@@ -82,7 +82,7 @@ public class PostsClass
 
     #region sql functions
 
-    private void Insert()
+    protected void Insert()
     {
         if (ID != 0)
         {

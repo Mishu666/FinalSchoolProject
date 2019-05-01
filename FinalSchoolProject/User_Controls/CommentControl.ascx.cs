@@ -9,9 +9,8 @@ using System.Web.UI.WebControls;
 public partial class User_Controls_CommentControl : System.Web.UI.UserControl
 {
     public int CommentID { get; set; }
-    public int Depth { get; set; }
 
-    protected void Page_Load(object sender, EventArgs e)
+    protected void Page_PreRender(object sender, EventArgs e)
     {
         SetVoteButtonColor();
         DisplayChildren();
@@ -58,7 +57,6 @@ public partial class User_Controls_CommentControl : System.Web.UI.UserControl
         {
             User_Controls_CommentControl child = (User_Controls_CommentControl)Page.LoadControl("~/User_Controls/CommentControl.ascx");
             child.CommentID = Convert.ToInt32(comment_dr["ID"]);
-            child.Depth = Depth + 1;
             child_comments_space.Controls.Add(child);
         }
     }
