@@ -173,6 +173,12 @@ function userLoggedInSuccessCallback(data) {
 
     if (data.d === true) {
 
+        $(".EditUserButton").on("click", function (e) {
+            e.preventDefault();
+            $("#default_user_view").hide();
+            $("#edit_user_view").show();
+        });
+
         $(".reply_button").on("click", function (e) {
             e.preventDefault();
             clearAddReplyInputs();
@@ -217,6 +223,7 @@ function userLoggedInSuccessCallback(data) {
 
             e.preventDefault();
             $("#hidden_comment_card").show(200);
+            $(".hidden_reply").hide(200);
 
         });
 
@@ -331,12 +338,12 @@ function userLoggedInSuccessCallback(data) {
         $(".comment_upvote").on("click", function (e) {
 
             e.preventDefault();
-            var parent_card = $(this).closest(".card.post");
+            var parent_card = $(this).closest(".card.comment");
             var comment_id = parent_card.data("comment-id");
-            var upvote_btn = parent_card.find(".upvote_space");
-            var downvote_btn = parent_card.find(".downvote_space");
-            var upvote_counter = parent_card.find(".upvote_counter");
-            var downvote_counter = parent_card.find(".downvote_counter");
+            var upvote_btn = parent_card.find(".comment_upvote_space");
+            var downvote_btn = parent_card.find(".comment_downvote_space");
+            var upvote_counter = parent_card.find(".comment_upvote_counter");
+            var downvote_counter = parent_card.find(".comment_downvote_counter");
 
             if (upvote_btn.hasClass("active_vote")) {
                 upvote_btn.removeClass("active_vote");
@@ -363,12 +370,12 @@ function userLoggedInSuccessCallback(data) {
         $(".comment_downvote").on("click", function (e) {
 
             e.preventDefault();
-            var parent_card = $(this).closest(".card.post");
+            var parent_card = $(this).closest(".card.comment");
             var comment_id = parent_card.data("comment-id");
-            var upvote_btn = parent_card.find(".upvote_space");
-            var downvote_btn = parent_card.find(".downvote_space");
-            var upvote_counter = parent_card.find(".upvote_counter");
-            var downvote_counter = parent_card.find(".downvote_counter");
+            var upvote_btn = parent_card.find(".comment_upvote_space");
+            var downvote_btn = parent_card.find(".comment_downvote_space");
+            var upvote_counter = parent_card.find(".comment_upvote_counter");
+            var downvote_counter = parent_card.find(".comment_downvote_counter");
 
             if (downvote_btn.hasClass("active_vote")) {
                 downvote_btn.removeClass("active_vote");
@@ -541,7 +548,6 @@ function createCommentReplySuccess(data) {
 //----------------------------------------------------------------------------------------------------------------------------
 
 function CommentUpvote(commentID, success_callback) {
-
     var data = { "CommentID": commentID };
 
     $.ajax({
@@ -583,7 +589,7 @@ function CommentDownvote(commentID, success_callback) {
 }
 
 function createPost(title, body, pageID, success_callback) {
-    var data = { "title": title, "body": body, "PageID": pageID };
+    var data = { "title": title, "Body": body, "PageID": pageID };
 
     $.ajax({
 

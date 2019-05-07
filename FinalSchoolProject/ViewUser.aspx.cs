@@ -9,41 +9,75 @@ using System.Web.UI.HtmlControls;
 
 public partial class ViewUser : System.Web.UI.Page
 {
-    public int UserID;
     protected void Page_Load(object sender, EventArgs e)
     {
-        object userid = Request.QueryString["user-id"];
-        if (userid == null)
+        if (!IsPostBack)
         {
-            if (Session["Logged"] == null || (bool)Session["Logged"] == false)
-            {
-                Response.Redirect("Home.aspx");
-            }
-            else
-            {
-                UserID = Convert.ToInt32(Session["CurrentUserID"]);
-            }
-        }
-        else
-        {
-            UsersClass user = UsersClass.GetByID(Convert.ToInt32(userid));
-            if (user == null)
-            {
-                Response.Redirect("Home.aspx");
-            }
-            else
-            {
-                UserID = user.ID;
-            }
-        }
+            object userid = Request.QueryString["user-id"];
 
-        FillPostsRepeater("submitted");
+            UsersClass current_user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
+
+            if (userid == null)
+            {
+                if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+                {
+                    Response.Redirect("Home.aspx");
+                }
+                else
+                {
+                    ViewState["ViewUserID"] = current_user.ID;
+                }
+            }
+            else
+            {
+                UsersClass user = UsersClass.GetByID(Convert.ToInt32(userid));
+                if (user == null)
+                {
+                    Response.Redirect("Home.aspx");
+                }
+                else
+                {
+                    ViewState["ViewUserID"] = user.ID;
+                }
+            }
+
+            if(current_user == null)
+            {
+                FollowUserButton.Visible = true;
+            }
+            else
+            {
+                UsersClass view_user = UsersClass.GetByID(Convert.ToInt32(ViewState["ViewUserID"]));
+
+                if (view_user.ID == current_user.ID)
+                {
+                    EditUserButton.Visible = true;
+                }
+                else
+                {
+                    KeyValuePair<string, object> follower_id_pair = new KeyValuePair<string, object>("FollowerID", current_user.ID);
+                    KeyValuePair<string, object> followed_id_pair = new KeyValuePair<string, object>("FollowedID", view_user.ID);
+                    DataTable followers_dt = FollowersClass.GetByProperties(follower_id_pair, followed_id_pair);
+
+                    if(followers_dt == null || followers_dt.Rows.Count ==0)
+                    {
+                        FollowUserButton.Visible = true;
+                    }
+                    else
+                    {
+                        UnfollowUserButton.Visible = true;
+                    }
+                }
+            }
+
+            FillPostsRepeater("submitted");
+        }
 
     }
 
     public void FillPostsRepeater(string type)
     {
-        UsersClass user = UsersClass.GetByID(Convert.ToInt32(UserID));
+        UsersClass user = UsersClass.GetByID(Convert.ToInt32(ViewState["ViewUserID"]));
         DataTable posts_dt;
 
         if (type == "submitted")

@@ -12,7 +12,7 @@ public class UsersClass
     public int ID { get; protected set; }
 
     public int Flags, Points, MyFollowersCount, FollowingCount;
-    public string Username, Password, ProfilePictureDir;
+    public string Username, Password, ProfilePictureDir, Bio;
     DateTime DOB, CreationDate;
     public bool IsAdmin, IsSuspended, IsPrivate, IsDeleted;
 
@@ -24,7 +24,7 @@ public class UsersClass
     }
 
     protected UsersClass(int ID, int MyFollowersCount, int FollowingCount, int Flags, int Points,
-        string Username, string Password, string ProfilePictureDir,
+        string Username, string Password, string ProfilePictureDir, string Bio,
         DateTime DOB, DateTime CreationDate,
         bool IsAdmin, bool IsSuspended, bool IsPrivate, bool IsDeleted)
     {
@@ -35,6 +35,7 @@ public class UsersClass
         this.Points = Points;
         this.Username = Username;
         this.Password = Password;
+        this.Bio = Bio;
         this.DOB = DOB;
         this.CreationDate = CreationDate;
         this.IsAdmin = IsAdmin;
@@ -56,6 +57,7 @@ public class UsersClass
             Points = Convert.ToInt32(dr["Points"]),
             Username = dr["Username"].ToString(),
             Password = dr["Password"].ToString(),
+            Bio = dr["Bio"].ToString(),
             ProfilePictureDir = dr["ProfilePictureDir"].ToString(),
             DOB = Convert.ToDateTime(dr["DOB"]),
             CreationDate = Convert.ToDateTime(dr["CreationDate"]),
@@ -79,6 +81,7 @@ public class UsersClass
             FollowingCount = 0,
             Flags = 0,
             Points = 0,
+            Bio = "Hello fellow consultants and consultees!",
             ProfilePictureDir = "",
             CreationDate = DateTime.Now,
             IsSuspended = false,
@@ -103,11 +106,11 @@ public class UsersClass
 
         string sql_str = "INSERT INTO [Users] " +
             "([Username], [Password], [MyFollowersCount], [FollowingCount], [Flags], [Points], " +
-            "[CreationDate], [DOB], [IsAdmin], [IsSuspended], [IsPrivate], [IsDeleted], [ProfilePictureDir]) " +
-            "VALUES ('{0}','{1}', {2}, {3}, {4}, {5}, #{6}#, #{7}#, {8}, {9}, {10}, {11}, '{12}') ";
+            "[CreationDate], [DOB], [IsAdmin], [IsSuspended], [IsPrivate], [IsDeleted], [ProfilePictureDir]. [Bio]) " +
+            "VALUES ('{0}','{1}', {2}, {3}, {4}, {5}, #{6}#, #{7}#, {8}, {9}, {10}, {11}, '{12}', '{13}') ";
 
         sql_str = string.Format(sql_str, this.Username, this.Password, this.MyFollowersCount, this.FollowingCount, this.Flags, this.Points,
-            this.CreationDate, this.DOB, this.IsAdmin, this.IsSuspended, this.IsPrivate, this.IsDeleted, this.ProfilePictureDir);
+            this.CreationDate, this.DOB, this.IsAdmin, this.IsSuspended, this.IsPrivate, this.IsDeleted, this.ProfilePictureDir, this.Bio);
         Dbase.ChangeTable(sql_str);
 
         string get_id = "SELECT @@IDENTITY AS ID";
@@ -123,10 +126,10 @@ public class UsersClass
             "SET [Username] = '{0}', [Password] = '{1}', " +
             "[MyFollowersCount] = {2}, [FollowingCount] = {3} , [Flags] = {4}, [Points]= {5}, " +
             "[CreationDate] = #{6}#, [DOB] = #{7}#, [IsAdmin] = {8}, [IsSuspended] = {9}, " +
-            "[IsPrivate] = {10}, [IsDeleted] = {11}, [ProfilePictureDir] = '{12}'";
+            "[IsPrivate] = {10}, [IsDeleted] = {11}, [ProfilePictureDir] = '{12}', [Bio] = '{13}'";
         sql_str += " WHERE [ID]=" + this.ID;
         sql_str = string.Format(sql_str, this.Username, this.Password, this.MyFollowersCount, this.FollowingCount, this.Flags, this.Points,
-            this.CreationDate, this.DOB, this.IsAdmin, this.IsSuspended, this.IsPrivate, this.IsDeleted, this.ProfilePictureDir);
+            this.CreationDate, this.DOB, this.IsAdmin, this.IsSuspended, this.IsPrivate, this.IsDeleted, this.ProfilePictureDir, this.Bio);
         Dbase.ChangeTable(sql_str);
     }
 

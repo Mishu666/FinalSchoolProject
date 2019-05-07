@@ -14,7 +14,7 @@
     <li class="nav-item dropdown no-arrow mx-1" visible="true">
         <a class="nav-link dropdown-toggle dismissable_popover" href="#" id="addOriginalCommentButton" role="button" data-consult-page-id="<%= Convert.ToInt32(ViewState["PageID"]) %>"
             data-placement="top" data-content="you must log in to comment">
-            <i class="fas fa-plus"></i>
+            <i class="fas fa-comment-medical"></i>
         </a>
     </li>
 

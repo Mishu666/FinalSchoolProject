@@ -94,14 +94,7 @@
                     </a>
                     <div id="collapseAdminTools" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
-                            <h6 class="collapse-header">Login Screens:</h6>
-                            <a class="collapse-item" href="login.html">Login</a>
-                            <a class="collapse-item" href="register.html">Register</a>
-                            <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
-                            <div class="collapse-divider"></div>
-                            <h6 class="collapse-header">Other Pages:</h6>
-                            <a class="collapse-item" href="404.html">404 Page</a>
-                            <a class="collapse-item" href="blank.html">Blank Page</a>
+                            <a class="collapse-item" href="UserEditor.aspx">User Editor</a>
                         </div>
                     </div>
                 </li>
@@ -172,7 +165,7 @@
                             <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." style="height: 38px;"
                                 aria-label="Search" aria-describedby="basic-addon2">
                             <div class="input-group-append">
-                                <button class="btn btn-dark" type="button">
+                                <button class="btn btn-primary" type="button">
                                     <i class="fas fa-search fa-sm"></i>
                                 </button>
                             </div>
@@ -224,7 +217,7 @@
                                     <div class="input-group">
                                         <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
                                         <div class="input-group-append">
-                                            <button class="btn btn-dark" type="button">
+                                            <button class="btn btn-primary" type="button">
                                                 <i class="fas fa-search fa-sm"></i>
                                             </button>
                                         </div>
@@ -340,7 +333,7 @@
                         <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                         <div class="modal-footer">
                             <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                            <asp:Button ID="LogoutConfirmButton" runat="server" CssClass="btn btn-dark" Text="Logout" OnClick="LogoutConfirmButton_Click" />
+                            <asp:Button ID="LogoutConfirmButton" runat="server" CssClass="btn btn-primary" Text="Logout" OnClick="LogoutConfirmButton_Click" />
                         </div>
                     </div>
                 </div>
@@ -374,7 +367,7 @@
                         <br />
                         <div class="modal-footer">
                             <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                            <asp:Button runat="server" CssClass="btn btn-dark" ID="LogInSubmitButton" Text="Log In"
+                            <asp:Button runat="server" CssClass="btn btn-primary" ID="LogInSubmitButton" Text="Log In"
                                 OnClick="LoginSubmitButton_Click" />
                         </div>
                     </div>
@@ -415,7 +408,7 @@
                         <br />
                         <div class="modal-footer">
                             <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                            <asp:Button runat="server" CssClass="btn btn-dark" ID="SignUpSubmitButton" Text="Sign Up" OnClick="SignupSubmitButton_Click" />
+                            <asp:Button runat="server" CssClass="btn btn-primary" ID="SignUpSubmitButton" Text="Sign Up" OnClick="SignupSubmitButton_Click" />
                         </div>
                     </div>
                 </div>

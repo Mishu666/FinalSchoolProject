@@ -42,9 +42,60 @@
             </div>
 
         </div>
-        <div id="user_space" class="card shadow-sm ml-5 d-flex flex-column h-100 w-25">
-            <img src="#" alt="profile picture" />
-        </div>
 
+        <% UsersClass user = UsersClass.GetByID(Convert.ToInt32(ViewState["ViewUserID"])); %>
+
+        <div id="user_space" class="card shadow-sm ml-5 d-flex flex-column h-100" style="width: 30% !important;">
+            <img src="<%= user.ProfilePictureDir %>" alt="profile picture" onerror="this.remove();" class="card-img-top" />
+            <div class="card-body" id="default_user_view">
+                <h5 class="card-title"><%= user.Username %><span id="admin_badge" runat="server" visible="false" class="badge badge-success ml-3">admin</span></h5>
+
+                <%
+                    if (!string.IsNullOrWhiteSpace(user.Bio))
+                    {
+                %>
+
+                <p class="card-text"><%= user.Bio %></p>
+
+                <%
+                    }
+                %>
+
+                <button id="EditUserButton" runat="server" visible="false" type="button" class="EditUserButton btn btn-primary">Edit<i class="far fa-edit ml-2"></i></button>
+                <button id="FollowUserButton" runat="server" visible="false" type="button" class="FollowUserButton btn btn-success">Follow<i class="fas fa-plus ml-2"></i></button>
+                <button id="UnfollowUserButton" runat="server" visible="false" type="button" class="UnfollowUserButton btn btn-secondary">Following<i class="fas fa-check ml-2"></i></button>
+
+            </div>
+            <div class="card-body" id="edit_user_view" style="display: none;">
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon-username">new username</span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="<%= user.Username %>" aria-label="Username" aria-describedby="basic-addon-username">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon-confirm-password">confirm password</span>
+                    </div>
+                    <input type="text" class="form-control" aria-label="Username" aria-describedby="basic-addon-confirm-password">
+                </div>
+
+                <div class="custom-control custom-switch mb-3">
+                    <input type="checkbox" class="custom-control-input" id="customSwitchPrivateProfile">
+                    <label class="custom-control-label" for="customSwitchPrivateProfile">Private</label>
+                </div>
+
+                <button id="CancelEditButton" type="button" class="btn btn-secondary">Cancel</button>
+                <button id="ConfirmEditButton" type="button" class="btn btn-primary">Confirm</button>
+
+            </div>
+            <div class="card-footer d-flex flex-row justify-content-around align-items-center">
+                <span><%= user.MyFollowersCount %> Followers</span>
+                <span><%= user.FollowingCount %> Following</span>
+            </div>
+        </div>
     </div>
+
 </asp:Content>

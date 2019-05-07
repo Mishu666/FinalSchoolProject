@@ -30,7 +30,7 @@
             </asp:Repeater>
         </div>
 
-        <div id="calendar_space" class="ml-5 d-flex flex-column h-100 w-25">
+        <div id="calendar_space" class="ml-5 d-flex flex-column h-100 w-25" style="width: 30% !important;">
             <div id="user_calendar" class="mb-3"></div>
             <div class="w-100 flex-grow-1 border"></div>
         </div>
