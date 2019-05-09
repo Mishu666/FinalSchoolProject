@@ -45,10 +45,23 @@
 
         <% UsersClass user = UsersClass.GetByID(Convert.ToInt32(ViewState["ViewUserID"])); %>
 
-        <div id="user_space" class="card shadow-sm ml-5 d-flex flex-column h-100" style="width: 30% !important;">
+        <div id="user_space" class="card shadow-sm ml-3 d-flex flex-column h-100" style="width: 30% !important;">
             <img src="<%= user.ProfilePictureDir %>" alt="profile picture" onerror="this.remove();" class="card-img-top" />
             <div class="card-body" id="default_user_view">
-                <h5 class="card-title"><%= user.Username %><span id="admin_badge" runat="server" visible="false" class="badge badge-success ml-3">admin</span></h5>
+                <h5 class="card-title mr-1"><%= user.Username %>
+
+                    <%
+                        if (user.IsAdmin)
+                        {
+                    %>
+
+                    <span id="admin_badge" class="badge badge-primary">admin</span>
+
+                    <%
+                        }
+                    %>
+
+                </h5>
 
                 <%
                     if (!string.IsNullOrWhiteSpace(user.Bio))
@@ -69,26 +82,29 @@
             <div class="card-body" id="edit_user_view" style="display: none;">
 
                 <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="basic-addon-username">new username</span>
-                    </div>
-                    <input type="text" class="form-control" placeholder="<%= user.Username %>" aria-label="Username" aria-describedby="basic-addon-username">
+                    <input id="EditUsernameInput" type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon-username"
+                        value="<%= user.Username %>" data-default-value="<%= user.Username %>">
                 </div>
 
                 <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="basic-addon-confirm-password">confirm password</span>
-                    </div>
-                    <input type="text" class="form-control" aria-label="Username" aria-describedby="basic-addon-confirm-password">
+                    <textarea id="EditBioInput" class="form-control" placeholder="Username" aria-label="Username" rows="5"
+                       data-default-value="<%= user.Bio %>" aria-describedby="basic-addon-username"><%= user.Bio %></textarea>
+                </div>
+
+                <div class="input-group mb-3">
+                    <input id="EditConfirmPasswordInput" type="text" class="form-control" placeholder="Confirm password"
+                        aria-label="Confirm Password" aria-describedby="basic-addon-confirm-password">
                 </div>
 
                 <div class="custom-control custom-switch mb-3">
-                    <input type="checkbox" class="custom-control-input" id="customSwitchPrivateProfile">
-                    <label class="custom-control-label" for="customSwitchPrivateProfile">Private</label>
+                    <input type="checkbox" class="custom-control-input" id="EditIsPrivateSwitch"
+                        data-default-value="<%= user.IsPrivate %>" checked="<%= user.IsPrivate %>">
+                    <label class="custom-control-label" for="EditIsPrivateSwitch">Private</label>
                 </div>
 
                 <button id="CancelEditButton" type="button" class="btn btn-secondary">Cancel</button>
                 <button id="ConfirmEditButton" type="button" class="btn btn-primary">Confirm</button>
+                <div class="w-100 mt-3" id="edit_user_warning_space"></div>
 
             </div>
             <div class="card-footer d-flex flex-row justify-content-around align-items-center">

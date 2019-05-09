@@ -51,20 +51,13 @@ function validateAndLoginSuccess(data) {
 
     for (let w of warnings) {
         console.log(w);
-        let warning = createWarning(w);
+        let warning = createWarning(w.Text);
         $("#login_warning_space").append(warning);
-        if (w === "username cannot be empty") {
-            $("#loginInputUsername").addClass("border-danger");
-        }
-        if (w === "password cannot be empty") {
-            $("#loginInputPassword").addClass("border-danger");
-        }
-        if (w === "username and password do not match") {
-            $("#loginInputUsername").addClass("border-danger");
-            $("#loginInputPassword").addClass("border-danger");
+        for (let wc of w.WarnControls) {
+            $("#" + wc).addClass("border-danger");
+
         }
     }
-
     if (warnings.length === 0) {
         console.log("login success");
         window.location.reload();
@@ -76,27 +69,12 @@ function validateAndSignupSuccess(data) {
     let warnings = data.d;
 
     for (let w of warnings) {
-        let warning = createWarning(w);
         console.log(w);
+        let warning = createWarning(w.Text);
         $("#signup_warning_space").append(warning);
-        if (w === "username cannot be empty") {
-            $("#signupInputUsername").addClass("border-danger");
-        }
-        if (w === "username taken") {
-            $("#signupInputUsername").addClass("border-danger");
-        }
-        if (w === "password cannot be empty") {
-            $("#signupInputPassword").addClass("border-danger");
-        }
-        if (w === "passwords do not match") {
-            $("#signupInputPassword").addClass("border-danger");
-            $("#signupInputPasswordConfirm").addClass("border-danger");
-        }
-        if (w === "birth date cannot be empty") {
-            $("#signupInputDOB").addClass("border-danger");
-        }
-        if (w === "invalid date of birth") {
-            $("#signupInputDOB").addClass("border-danger");
+        for (let wc of w.WarnControls) {
+            $("#" + wc).addClass("border-danger");
+
         }
     }
 

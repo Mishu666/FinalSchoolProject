@@ -40,32 +40,36 @@ public class UsersService : System.Web.Services.WebService
     private void SignUpUser(string username, string password, DateTime DOB)
     {
         UsersClass.CreateNew(username, password, DOB);
-        LogInUser(username, password);        
+        LogInUser(username, password);
     }
-    
+
     [WebMethod(EnableSession = true)]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public List<string> ValidateAndLogin(string username, string password)
+    public List<Warning> ValidateAndLogin(string username, string password)
     {
 
-        List<string> warnings = new List<string>();
+        List<Warning> warnings = new List<Warning>();
         bool valid = true;
 
         if (string.IsNullOrWhiteSpace(username))
         {
-            warnings.Add("username cannot be empty");
+            warnings.Add(new Warning("loginInputUsername", "username cannot be empty"));
             valid = false;
         }
-        if(string.IsNullOrWhiteSpace(password))
+        if (string.IsNullOrWhiteSpace(password))
         {
-            warnings.Add("password cannot be empty");
+            warnings.Add(new Warning("loginInputPassword", "password cannot be empty"));
             valid = false;
         }
-        if(valid)
+        if (valid)
         {
-            if(!UsersClass.UserExists(username, password))
+            if (!UsersClass.UserExists(username, password))
             {
-                warnings.Add("username and password do not match");
+                Warning w = new Warning();
+                w.Text = "username and password do not match";
+                w.WarnControls.Add("loginInputUsername");
+                w.WarnControls.Add("loginInputPassword");
+                warnings.Add(w);
                 valid = false;
             }
             else
@@ -79,56 +83,59 @@ public class UsersService : System.Web.Services.WebService
 
     [WebMethod(EnableSession = true)]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public List<string> ValidateAndSignup(string username, string password, string pass_confirm, string DOBstr)
+    public List<Warning> ValidateAndSignup(string username, string password, string pass_confirm, string DOBstr)
     {
-        List<string> warnings = new List<string>();
+        List<Warning> warnings = new List<Warning>();
         bool valid = true;
         DateTime DOB;
         bool DOB_parsed = DateTime.TryParseExact(DOBstr, "dd/MM/yyyy", null, DateTimeStyles.None, out DOB);
 
         if (string.IsNullOrWhiteSpace(username))
         {
-            warnings.Add("username cannot be empty");
+            warnings.Add(new Warning("signupInputUsername", "username cannot be empty"));
             valid = false;
         }
         else
         {
-            if(UsersClass.UserNameTaken(username))
+            if (UsersClass.UserNameTaken(username))
             {
-                warnings.Add("username taken");
+                warnings.Add(new Warning("signupInputUsername", "username taken"));
                 valid = false;
             }
         }
         if (string.IsNullOrWhiteSpace(password))
         {
-            warnings.Add("password cannot be empty");
+            warnings.Add(new Warning("signupInputPassword", "password cannot be empty"));
             valid = false;
         }
         else
         {
             if (!password.Equals(pass_confirm))
             {
-                warnings.Add("passwords do not match");
+                Warning w = new Warning();
+                w.Text = "passwords do not match";
+                w.WarnControls.Add("signupInputPassword");
+                w.WarnControls.Add("signupInputPasswordConfirm");
+                warnings.Add(w);
                 valid = false;
             }
         }
-        if (string.IsNullOrWhiteSpace(DOB.ToString()))
+        if (string.IsNullOrWhiteSpace(DOBstr))
         {
-            warnings.Add("birth date cannot be empty");
+            warnings.Add(new Warning("signupInputDOB", "birth date cannot be empty"));
+            valid = false;
+        }
+
+        if (!DOB_parsed || DOB > DateTime.Today)
+        {
+            warnings.Add(new Warning("signupInputDOB", "invalid date of birth"));
             valid = false;
         }
 
         if (valid)
         {
-            if (!DOB_parsed || DOB.CompareTo(DateTime.Today) > 0)
-            {
-                warnings.Add("invalid date of birth");
-                valid = false;
-            }
-            else
-            {
-                SignUpUser(username, password, DOB);
-            }
+            SignUpUser(username, password, DOB);
+
         }
 
         return warnings;
@@ -189,7 +196,7 @@ public class UsersService : System.Web.Services.WebService
 
         PostVotesClass vote = PostVotesClass.FromDataRow(vote_dt.Rows[0]);
 
-        
+
         if (vote.VoteValue == 1)
         {
             vote.Delete();
@@ -229,7 +236,7 @@ public class UsersService : System.Web.Services.WebService
                 new KeyValuePair<string, object>("VoterID", userID)
             );
 
-        if(vote_dt == null || vote_dt.Rows.Count == 0)
+        if (vote_dt == null || vote_dt.Rows.Count == 0)
         {
             PostVotesClass.CreateNew(userID, PostID, -1);
             post.DownvoteCount += 1;
@@ -251,7 +258,7 @@ public class UsersService : System.Web.Services.WebService
             vote.VoteValue = -1;
             vote.Update();
             post.DownvoteCount += 1;
-            post.UpvoteCount   -= 1;
+            post.UpvoteCount -= 1;
             post.Update();
 
         }
@@ -393,7 +400,7 @@ public class UsersService : System.Web.Services.WebService
 
     [WebMethod(EnableSession = true)]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public List<string> ValidateAndCreatePost(string title, string Body, int PageID)
+    public List<Warning> ValidateAndCreatePost(string title, string Body, int PageID)
     {
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
@@ -402,17 +409,17 @@ public class UsersService : System.Web.Services.WebService
             current.Response.End();
         }
 
-        List<string> warnings = new List<string>();
+        List<Warning> warnings = new List<Warning>();
         bool valid = true;
 
         if (string.IsNullOrWhiteSpace(title))
         {
-            warnings.Add("Title cannot be empty");
+            warnings.Add(new Warning("addPostTitle", "Title cannot be empty"));
             valid = false;
         }
         if (string.IsNullOrWhiteSpace(Body))
         {
-            warnings.Add("Post cannot be empty");
+            warnings.Add(new Warning("addPostBody", "Post cannot be empty"));
             valid = false;
         }
 
@@ -446,7 +453,7 @@ public class UsersService : System.Web.Services.WebService
 
     [WebMethod(EnableSession = true)]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public List<string> ValidateAndCreateComment(string Body, int ParentPostID)
+    public List<Warning> ValidateAndCreateComment(string Body, int ParentPostID)
     {
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
@@ -455,7 +462,7 @@ public class UsersService : System.Web.Services.WebService
             current.Response.End();
         }
 
-        List<string> warnings = new List<string>();
+        List<Warning> warnings = new List<Warning>();
         PostsClass post = PostsClass.GetByID(ParentPostID);
         bool valid = true;
 
@@ -469,7 +476,7 @@ public class UsersService : System.Web.Services.WebService
 
         if (string.IsNullOrWhiteSpace(Body))
         {
-            warnings.Add("Comment cannot be empty");
+            warnings.Add(new Warning("addCommentBody", "Comment cannot be empty"));
             valid = false;
         }
 
@@ -483,7 +490,7 @@ public class UsersService : System.Web.Services.WebService
 
     [WebMethod(EnableSession = true)]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public List<string> ValidateAndCreateCommentReply(string Body, int ParentCommentID)
+    public List<Warning> ValidateAndCreateCommentReply(string Body, int ParentCommentID)
     {
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
@@ -492,7 +499,7 @@ public class UsersService : System.Web.Services.WebService
             current.Response.End();
         }
 
-        List<string> warnings = new List<string>();
+        List<Warning> warnings = new List<Warning>();
         CommentsClass comment = CommentsClass.GetByID(ParentCommentID);
         bool valid = true;
 
@@ -507,7 +514,7 @@ public class UsersService : System.Web.Services.WebService
 
         if (string.IsNullOrWhiteSpace(Body))
         {
-            warnings.Add("Comment cannot be empty");
+            warnings.Add(new Warning("addCommentBody", "Comment cannot be empty"));
             valid = false;
         }
 
@@ -519,4 +526,81 @@ public class UsersService : System.Web.Services.WebService
         return warnings;
     }
 
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    private void UpdateUserInfo(string Username, string Bio, bool IsPrivate)
+    {
+
+        int userID = Convert.ToInt32(Session["CurrentUserID"]);
+        UsersClass user = UsersClass.GetByID(userID);
+
+        user.Username = Username;
+        user.Bio = Bio;
+        user.IsPrivate = IsPrivate;
+        user.Update();
+
+    }
+
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public List<Warning> ValidateAndUpdateUserInfo(string Username, string Bio, bool IsPrivate, string PasswordConfirm)
+    {
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        List<Warning> warnings = new List<Warning>();
+        int userID = Convert.ToInt32(Session["CurrentUserID"]);
+        UsersClass user = UsersClass.GetByID(userID);
+        bool valid = true;
+
+
+        if (string.IsNullOrWhiteSpace(Username))
+        {
+            warnings.Add(new Warning("EditUsernameInput", "Username cannot be empty"));
+            valid = false;
+        }
+        else
+        {
+            if (UsersClass.UserNameTaken(Username) && Username != user.Username)
+            {
+                warnings.Add(new Warning("EditUsernameInput", "username taken"));
+                valid = false;
+            }
+        }
+
+        if (string.IsNullOrWhiteSpace(Bio))
+        {
+            warnings.Add(new Warning("EditBioInput", "Bio cannot be empty"));
+            valid = false;
+        }
+
+        if (string.IsNullOrWhiteSpace(PasswordConfirm))
+        {
+
+            warnings.Add(new Warning("EditConfirmPasswordInput", "Enter password to confirm changes"));
+            valid = false;
+        }
+        else
+        {
+            if (user.Password != PasswordConfirm)
+            {
+                warnings.Add(new Warning("EditConfirmPasswordInput", "Wrong Password"));
+                valid = false;
+            }
+        }
+
+        if (valid)
+        {
+            UpdateUserInfo(Username, Bio, IsPrivate);
+        }
+
+        return warnings;
+
+    }
 }

@@ -106,7 +106,7 @@ public class UsersClass
 
         string sql_str = "INSERT INTO [Users] " +
             "([Username], [Password], [MyFollowersCount], [FollowingCount], [Flags], [Points], " +
-            "[CreationDate], [DOB], [IsAdmin], [IsSuspended], [IsPrivate], [IsDeleted], [ProfilePictureDir]. [Bio]) " +
+            "[CreationDate], [DOB], [IsAdmin], [IsSuspended], [IsPrivate], [IsDeleted], [ProfilePictureDir], [Bio]) " +
             "VALUES ('{0}','{1}', {2}, {3}, {4}, {5}, #{6}#, #{7}#, {8}, {9}, {10}, {11}, '{12}', '{13}') ";
 
         sql_str = string.Format(sql_str, this.Username, this.Password, this.MyFollowersCount, this.FollowingCount, this.Flags, this.Points,

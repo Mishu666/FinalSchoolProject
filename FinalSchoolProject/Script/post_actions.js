@@ -53,7 +53,8 @@ $(document).ready(function () {
     });
 
     $(".post").on("click", function (e) {
-        if (!$(e.target).hasClass("upvote") && !$(e.target).hasClass("downvote")) {
+        console.log(e.target);
+        if (!$(e.target).hasClass("upvote") && !$(e.target).hasClass("downvote") && !$(e.target).parents().hasClass("dropdown")) {
 
             viewPostPage($(this).data("post-id"));
 
@@ -172,6 +173,30 @@ function updateCommentSort() {
 function userLoggedInSuccessCallback(data) {
 
     if (data.d === true) {
+
+        $("#ConfirmEditButton").on("click", function (e) {
+            e.preventDefault();
+
+            clearEditUserWarnings();
+
+            let username = $("#EditUsernameInput").val();
+            let bio = $("#EditBioInput").val();
+            let confirm_pass = $("#EditConfirmPasswordInput").val();
+            let isprivate = $("#EditIsPrivateSwitch").prop("checked");
+
+            updateUserInfo(username, bio, isprivate, confirm_pass, updateUserInfoSuccessCallback);
+
+        });
+
+        $("#CancelEditButton").on("click", function (e) {
+            e.preventDefault();
+            $("#edit_user_view").hide();
+            $("#default_user_view").show();
+
+            clearEditUserInputs();
+            clearEditUserWarnings();
+
+        });
 
         $(".EditUserButton").on("click", function (e) {
             e.preventDefault();
@@ -493,15 +518,14 @@ function commentUpvoteSuccess(data) {
 
 function createPostSuccess(data) {
     let warnings = data.d;
+
     for (let w of warnings) {
         console.log(w);
-        let warning = createWarning(w);
+        let warning = createWarning(w.Text);
         $("#add_post_warning_space").append(warning);
-        if (w === "Title cannot be empty") {
-            $("#addPostTitle").addClass("border-danger");
-        }
-        if (w === "Post cannot be empty") {
-            $("#addPostBody").addClass("border-danger");
+        for (let wc of w.WarnControls) {
+            $("#" + wc).addClass("border-danger");
+
         }
     }
 
@@ -513,12 +537,14 @@ function createPostSuccess(data) {
 
 function createNewCommentSuccess(data) {
     let warnings = data.d;
+
     for (let w of warnings) {
         console.log(w);
-        let warning = createWarning(w);
+        let warning = createWarning(w.Text);
         $("#add_comment_warning_space").append(warning);
-        if (w === "Comment cannot be empty") {
-            $("#addCommentBody").addClass("border-danger");
+        for (let wc of w.WarnControls) {
+            $("#" + wc).addClass("border-danger");
+
         }
     }
 
@@ -530,12 +556,14 @@ function createNewCommentSuccess(data) {
 
 function createCommentReplySuccess(data) {
     let warnings = data.d;
+
     for (let w of warnings) {
         console.log(w);
-        let warning = createWarning(w);
+        let warning = createWarning(w.Text);
         $(".add_reply_warning_space").append(warning);
-        if (w === "Comment cannot be empty") {
-            $(".addReplyBody").addClass("border-danger");
+        for (let wc of w.WarnControls) {
+            $("." + wc).addClass("border-danger");
+
         }
     }
 
@@ -544,8 +572,6 @@ function createCommentReplySuccess(data) {
         window.location.reload();
     }
 }
-
-//----------------------------------------------------------------------------------------------------------------------------
 
 function CommentUpvote(commentID, success_callback) {
     var data = { "CommentID": commentID };
@@ -587,6 +613,8 @@ function CommentDownvote(commentID, success_callback) {
     });
 
 }
+
+//----------------------------------------------------------------------------------------------------------------------------
 
 function createPost(title, body, pageID, success_callback) {
     var data = { "title": title, "Body": body, "PageID": pageID };
@@ -666,6 +694,48 @@ function createCommentReply(body, parent_comment_id, success_callback) {
 
 //-------------------------------------------------------------------------------------------------------
 
+function updateUserInfoSuccessCallback(data) {
+
+    let warnings = data.d;
+
+    for (let w of warnings) {
+        console.log(w);
+        let warning = createWarning(w.Text);
+        $("#edit_user_warning_space").append(warning);
+        for (let wc of w.WarnControls) {
+            $("." + wc).addClass("border-danger");
+
+        }
+    }
+
+    if (warnings.length === 0) {
+        console.log("added successfully");
+        window.location.reload();
+    }
+
+}
+
+function updateUserInfo(username, bio, is_private, password_confirm, success_callback) {
+    var data = { "Username": username, "Bio": bio, "IsPrivate": is_private, "PasswordConfirm": password_confirm };
+
+    $.ajax({
+
+        method: "POST",
+        data: JSON.stringify(data),
+        dataType: "json",
+        contentType: "application/json; charset=utf-8 ",
+        url: "UsersService.asmx/ValidateAndUpdateUserInfo",
+        error: function (r) {
+            console.log("error");
+            console.log(r.responseText);
+        },
+        success: success_callback
+
+    });
+}
+
+//-------------------------------------------------------------------------------------------------------
+
 function viewPostPage(ID) {
     if (!window.location.toString().includes("ViewPost")) {
         window.location.href = "ViewPost.aspx?post-id=" + ID;
@@ -702,4 +772,17 @@ function clearAddReplyWarnings() {
 function clearAddReplyInputs() {
 
     $(".addReplyBody").val("");
+}
+
+function clearEditUserInputs() {
+    $("#EditUsernameInput").val($("#EditUsernameInput").data("default-value"));
+    $("#EditBioInput").val($("#EditBioInput").data("default-value"));
+    $("#EditConfirmPasswordInput").val("");
+    $("#EditIsPrivateSwitch").prop("checked", $("#EditIsPrivateSwitch").data("default-value"));
+}
+
+function clearEditUserWarnings() {
+    $("#edit_user_warning_space .alert").remove();
+    $("#EditBioInput").removeClass("border-danger");
+    $("#EditConfirmPasswordInput").removeClass("border-danger");
 }
