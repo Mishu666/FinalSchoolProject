@@ -54,7 +54,8 @@ $(document).ready(function () {
 
     $(".post").on("click", function (e) {
         console.log(e.target);
-        if (!$(e.target).hasClass("upvote") && !$(e.target).hasClass("downvote") && !$(e.target).parents().hasClass("dropdown")) {
+        if (!$(e.target).hasClass("card-footer") && !$(e.target).hasClass("dropdown") &&
+            !$(e.target).parents().hasClass("card-footer") && !$(e.target).parents().hasClass("dropdown")) {
 
             viewPostPage($(this).data("post-id"));
 
@@ -78,6 +79,18 @@ $(document).ready(function () {
         }
     });
 
+    $(".DeletePostButton").on("click", function (e) {
+
+        e.preventDefault();
+        let post_card = $(this).closest(".card.post");
+        let post_id = post_card.data("post-id");
+        DeletePost(post_id, DeletePostSuccessCallback);
+        post_card.hide(200, function() {
+            post_card.remove();
+        });
+
+
+    });
 
 });
 
@@ -296,6 +309,18 @@ function userLoggedInSuccessCallback(data) {
 
         });
 
+        $(".save_post").on("click", function (e) {
+            e.preventDefault();
+            var parent_card = $(this).closest(".card.post");
+            var post_id = parent_card.data("post-id");
+            var save_btn = parent_card.find(".save_space");
+
+            save_btn.toggleClass("active_action");
+
+            SavePost(post_id, SavePostSuccessCallback);
+
+        });
+
         $(".upvote").on("click", function (e) {
             e.preventDefault();
             var parent_card = $(this).closest(".card.post");
@@ -305,20 +330,20 @@ function userLoggedInSuccessCallback(data) {
             var upvote_counter = parent_card.find(".upvote_counter");
             var downvote_counter = parent_card.find(".downvote_counter");
 
-            if (upvote_btn.hasClass("active_vote")) {
-                upvote_btn.removeClass("active_vote");
+            if (upvote_btn.hasClass("active_action")) {
+                upvote_btn.removeClass("active_action");
                 upvote_counter.text(parseInt(upvote_counter.text()) - 1);
             }
             else {
-                if (downvote_btn.hasClass("active_vote")) {
-                    downvote_btn.removeClass("active_vote");
-                    upvote_btn.addClass("active_vote");
+                if (downvote_btn.hasClass("active_action")) {
+                    downvote_btn.removeClass("active_action");
+                    upvote_btn.addClass("active_action");
                     upvote_counter.text(parseInt(upvote_counter.text()) + 1);
                     downvote_counter.text(parseInt(downvote_counter.text()) - 1);
 
                 }
                 else {
-                    upvote_btn.addClass("active_vote");
+                    upvote_btn.addClass("active_action");
                     upvote_counter.text(parseInt(upvote_counter.text()) + 1);
                 }
             }
@@ -336,20 +361,20 @@ function userLoggedInSuccessCallback(data) {
             var upvote_counter = parent_card.find(".upvote_counter");
             var downvote_counter = parent_card.find(".downvote_counter");
 
-            if (downvote_btn.hasClass("active_vote")) {
-                downvote_btn.removeClass("active_vote");
+            if (downvote_btn.hasClass("active_action")) {
+                downvote_btn.removeClass("active_action");
                 downvote_counter.text(parseInt(downvote_counter.text()) - 1);
             }
             else {
-                if (upvote_btn.hasClass("active_vote")) {
-                    upvote_btn.removeClass("active_vote");
-                    downvote_btn.addClass("active_vote");
+                if (upvote_btn.hasClass("active_action")) {
+                    upvote_btn.removeClass("active_action");
+                    downvote_btn.addClass("active_action");
                     downvote_counter.text(parseInt(downvote_counter.text()) + 1);
                     upvote_counter.text(parseInt(upvote_counter.text()) - 1);
 
                 }
                 else {
-                    downvote_btn.addClass("active_vote");
+                    downvote_btn.addClass("active_action");
                     downvote_counter.text(parseInt(downvote_counter.text()) + 1);
                 }
             }
@@ -370,20 +395,20 @@ function userLoggedInSuccessCallback(data) {
             var upvote_counter = parent_card.find(".comment_upvote_counter");
             var downvote_counter = parent_card.find(".comment_downvote_counter");
 
-            if (upvote_btn.hasClass("active_vote")) {
-                upvote_btn.removeClass("active_vote");
+            if (upvote_btn.hasClass("active_action")) {
+                upvote_btn.removeClass("active_action");
                 upvote_counter.text(parseInt(upvote_counter.text()) - 1);
             }
             else {
-                if (downvote_btn.hasClass("active_vote")) {
-                    downvote_btn.removeClass("active_vote");
-                    upvote_btn.addClass("active_vote");
+                if (downvote_btn.hasClass("active_action")) {
+                    downvote_btn.removeClass("active_action");
+                    upvote_btn.addClass("active_action");
                     upvote_counter.text(parseInt(upvote_counter.text()) + 1);
                     downvote_counter.text(parseInt(downvote_counter.text()) - 1);
 
                 }
                 else {
-                    upvote_btn.addClass("active_vote");
+                    upvote_btn.addClass("active_action");
                     upvote_counter.text(parseInt(upvote_counter.text()) + 1);
                 }
             }
@@ -402,20 +427,20 @@ function userLoggedInSuccessCallback(data) {
             var upvote_counter = parent_card.find(".comment_upvote_counter");
             var downvote_counter = parent_card.find(".comment_downvote_counter");
 
-            if (downvote_btn.hasClass("active_vote")) {
-                downvote_btn.removeClass("active_vote");
+            if (downvote_btn.hasClass("active_action")) {
+                downvote_btn.removeClass("active_action");
                 downvote_counter.text(parseInt(downvote_counter.text()) - 1);
             }
             else {
-                if (upvote_btn.hasClass("active_vote")) {
-                    upvote_btn.removeClass("active_vote");
-                    downvote_btn.addClass("active_vote");
+                if (upvote_btn.hasClass("active_action")) {
+                    upvote_btn.removeClass("active_action");
+                    downvote_btn.addClass("active_action");
                     downvote_counter.text(parseInt(downvote_counter.text()) + 1);
                     upvote_counter.text(parseInt(upvote_counter.text()) - 1);
 
                 }
                 else {
-                    downvote_btn.addClass("active_vote");
+                    downvote_btn.addClass("active_action");
                     downvote_counter.text(parseInt(downvote_counter.text()) + 1);
                 }
             }
@@ -732,6 +757,60 @@ function updateUserInfo(username, bio, is_private, password_confirm, success_cal
         success: success_callback
 
     });
+}
+
+//-------------------------------------------------------------------------------------------------------
+
+function SavePostSuccessCallback(data) {
+
+}
+
+function SavePost(post_id, success_callback) {
+
+    var data = { "PostID": post_id };
+
+    $.ajax({
+
+        method: "POST",
+        data: JSON.stringify(data),
+        dataType: "json",
+        contentType: "application/json; charset=utf-8 ",
+        url: "UsersService.asmx/SavePost",
+        error: function (r) {
+            console.log("error");
+            console.log(r.responseText);
+        },
+        success: success_callback
+
+    });
+}
+
+//-------------------------------------------------------------------------------------------------------
+
+function DeletePostSuccessCallback(data) {
+
+}
+
+function DeletePost(post_id, success_callback) {
+
+
+    var data = { "PostID": post_id };
+
+    $.ajax({
+
+        method: "POST",
+        data: JSON.stringify(data),
+        dataType: "json",
+        contentType: "application/json; charset=utf-8 ",
+        url: "UsersService.asmx/DeletePost",
+        error: function (r) {
+            console.log("error");
+            console.log(r.responseText);
+        },
+        success: success_callback
+
+    });
+
 }
 
 //-------------------------------------------------------------------------------------------------------

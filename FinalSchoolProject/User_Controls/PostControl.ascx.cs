@@ -18,11 +18,16 @@ public partial class User_Controls_PostControl : System.Web.UI.UserControl
     {
         if (Session["Logged"] == null || (bool)Session["Logged"] == false) return;
 
-        int VoterID = Convert.ToInt32(Session["CurrentUserID"]);
+        int UserID = Convert.ToInt32(Session["CurrentUserID"]);
         DataTable post_votes = PostVotesClass.GetByProperties(
             new KeyValuePair<string, object>("VotedPostID", PostID),
-            new KeyValuePair<string, object>("VoterID", VoterID)
+            new KeyValuePair<string, object>("VoterID", UserID)
             );
+        DataTable saved_post = SavedPostsClass.GetByProperties(
+            new KeyValuePair<string, object>("SaverID", UserID),
+            new KeyValuePair<string, object>("SavedPostID", PostID)
+            );
+
 
         if (post_votes != null && post_votes.Rows.Count > 0)
         {
@@ -31,18 +36,28 @@ public partial class User_Controls_PostControl : System.Web.UI.UserControl
 
             if (vote_val == 1)
             {
-                GlobalFunctions.AddCssClass(upvote_button, "active_vote");
+                GlobalFunctions.AddCssClass(upvote_button, "active_action");
             }
             else if (vote_val == -1)
             {
-                GlobalFunctions.AddCssClass(downvote_button, "active_vote");
+                GlobalFunctions.AddCssClass(downvote_button, "active_action");
 
             }
         }
         else
         {
-            GlobalFunctions.RemoveCssClass(upvote_button, "active_vote");
-            GlobalFunctions.RemoveCssClass(downvote_button, "active_vote");
+            GlobalFunctions.RemoveCssClass(upvote_button, "active_action");
+            GlobalFunctions.RemoveCssClass(downvote_button, "active_action");
         }
+
+        if(saved_post != null && saved_post.Rows.Count > 0)
+        {
+            GlobalFunctions.AddCssClass(save_button, "active_action");
+        }
+        else
+        {
+            GlobalFunctions.RemoveCssClass(save_button, "active_action");
+        }
+
     }
 }

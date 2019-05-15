@@ -7,10 +7,14 @@
 }
 
 
-.upvote_space.active_vote, .comment_upvote_space.active_vote {
+.upvote_space.active_action, .comment_upvote_space.active_action {
     color: orangered !important;
 }
 
-.downvote_space.active_vote, .comment_downvote_space.active_vote {
+.downvote_space.active_action, .comment_downvote_space.active_action {
     color: dodgerblue !important;
+}
+
+.save_space.active_action {
+    color: gold !important;
 }

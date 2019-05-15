@@ -55,7 +55,7 @@
                         {
                     %>
 
-                    <span id="admin_badge" class="badge badge-primary">admin</span>
+                    <span id="admin_badge" class="badge badge-dark">admin</span>
 
                     <%
                         }
@@ -75,7 +75,7 @@
                 %>
 
                 <button id="EditUserButton" runat="server" visible="false" type="button" class="EditUserButton btn btn-primary">Edit<i class="far fa-edit ml-2"></i></button>
-                <button id="FollowUserButton" runat="server" visible="false" type="button" class="FollowUserButton btn btn-success">Follow<i class="fas fa-plus ml-2"></i></button>
+                <button id="FollowUserButton" runat="server" visible="false" type="button" class="FollowUserButton btn btn-primary">Follow<i class="fas fa-plus ml-2"></i></button>
                 <button id="UnfollowUserButton" runat="server" visible="false" type="button" class="UnfollowUserButton btn btn-secondary">Following<i class="fas fa-check ml-2"></i></button>
 
             </div>

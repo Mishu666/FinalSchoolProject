@@ -9,19 +9,39 @@
     <div class="card-body">
         <div class="card-head d-flex flex-row align-items-center justify-content-between">
             <h4 class="font-weight-bold font-size-48 text-gray-900 post_title"><%= post.Title %></h4>
+
+            <%
+                if (Session["Logged"] != null && (bool)Session["Logged"] == true)
+                {
+
+                    UsersClass current_user = UsersClass.GetByID(post.AuthorID);
+            %>
+
             <div class="dropdown no-arrow">
                 <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400 post_dropdown"></i>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink"
                     x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(17px, 19px, 0px);">
-                    <div class="dropdown-header">Dropdown Header:</div>
-                    <a class="dropdown-item" href="#">Action</a>
-                    <a class="dropdown-item" href="#">Another action</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">Something else here</a>
+
+                    <%
+                        if (current_user.ID == post.AuthorID || current_user.IsAdmin)
+                        {
+                    %>
+
+                    <button class="DeletePostButton dropdown-item"><i class="fas fa-trash-alt mr-2 text-gray-600"></i>Delete</button>
+                    
+                    <%
+                        }
+                    %>
+                    
+                    <button  class="ReportPostButton dropdown-item"><i class="fas fa-flag mr-2 text-gray-600"></i>Report</button>
                 </div>
             </div>
+
+            <%
+                }
+            %>
         </div>
         <p class="card-text post_text"><%= post.Body %></p>
     </div>
@@ -40,6 +60,10 @@
             </a>
         </div>
         <div class="vote-block d-flex flex-row">
+            <a runat="server" role="button" id="save_button" class="mr-4 p-0 text-gray-500 action_space save_space dismissable_popover"
+                data-placement="top" data-content="you must log in to save posts">
+                <i tabindex="-1" class="save_post action fas fa-star"></i>
+            </a>
             <a runat="server" role="button" id="upvote_button" class="mr-1 p-0 text-gray-500 action_space upvote_space dismissable_popover"
                 data-placement="top" data-content="you must log in to vote">
                 <i tabindex="-1" class="upvote action fas fa-arrow-up"></i>

@@ -97,12 +97,19 @@ public class UsersService : System.Web.Services.WebService
         }
         else
         {
+            if (username.Length > 15)
+            {
+                warnings.Add(new Warning("signupInputUsername", "username cannot be longer than 15 characters"));
+                valid = false;
+            }
+
             if (UsersClass.UserNameTaken(username))
             {
                 warnings.Add(new Warning("signupInputUsername", "username taken"));
                 valid = false;
             }
         }
+
         if (string.IsNullOrWhiteSpace(password))
         {
             warnings.Add(new Warning("signupInputPassword", "password cannot be empty"));
@@ -141,6 +148,8 @@ public class UsersService : System.Web.Services.WebService
         return warnings;
     }
 
+    //------------------------------------------------------------------------------------------------------------
+
     [WebMethod]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     public bool UsernameTaken(string username)
@@ -164,7 +173,7 @@ public class UsersService : System.Web.Services.WebService
         return false;
     }
 
-    #region voting
+    //------------------------------------------------------------------------------------------------------------
 
     [WebMethod(EnableSession = true)]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
@@ -265,6 +274,8 @@ public class UsersService : System.Web.Services.WebService
         return post.DownvoteCount;
 
     }
+
+    //------------------------------------------------------------------------------------------------------------
 
     [WebMethod(EnableSession = true)]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
@@ -367,11 +378,54 @@ public class UsersService : System.Web.Services.WebService
 
     }
 
-    #endregion
+    //------------------------------------------------------------------------------------------------------------
 
     [WebMethod(EnableSession = true)]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     private void ReportPost(int PostID, string reportBody)
+    {
+
+        int userID = Convert.ToInt32(Session["CurrentUserID"]);
+        PostsClass post = PostsClass.GetByID(PostID);
+
+        //CONTINUE
+
+    }
+
+    //------------------------------------------------------------------------------------------------------------
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public void DeletePost(int PostID)
+    {
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        int userID = Convert.ToInt32(Session["CurrentUserID"]);
+        PostsClass post = PostsClass.GetByID(PostID);
+        UsersClass post_author = UsersClass.GetByID(post.AuthorID);
+
+        if (post.AuthorID != userID || post_author.IsAdmin == false)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        post.Delete();
+
+    }
+
+
+    //------------------------------------------------------------------------------------------------------------
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public void SavePost(int PostID)
     {
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
@@ -383,9 +437,12 @@ public class UsersService : System.Web.Services.WebService
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
         PostsClass post = PostsClass.GetByID(PostID);
 
-        //CONTINUE
+        SavedPostsClass.CreateNew(userID, PostID);
 
     }
+
+
+    //------------------------------------------------------------------------------------------------------------
 
     [WebMethod]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
@@ -431,6 +488,8 @@ public class UsersService : System.Web.Services.WebService
         return warnings;
     }
 
+    //------------------------------------------------------------------------------------------------------------
+
     [WebMethod]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     private void CreateNewComment(string Body, int ParentPostID)
@@ -439,16 +498,6 @@ public class UsersService : System.Web.Services.WebService
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
 
         CommentsClass.CreateNew(Body, userID, ParentPostID);
-    }
-
-    [WebMethod]
-    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    private void CreateCommentReply(string Body, int ParentCommentID)
-    {
-
-        int userID = Convert.ToInt32(Session["CurrentUserID"]);
-
-        CommentRepliesClass.CreateNew(Body, userID, ParentCommentID);
     }
 
     [WebMethod(EnableSession = true)]
@@ -486,6 +535,18 @@ public class UsersService : System.Web.Services.WebService
         }
 
         return warnings;
+    }
+
+    //------------------------------------------------------------------------------------------------------------
+
+    [WebMethod]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    private void CreateCommentReply(string Body, int ParentCommentID)
+    {
+
+        int userID = Convert.ToInt32(Session["CurrentUserID"]);
+
+        CommentRepliesClass.CreateNew(Body, userID, ParentCommentID);
     }
 
     [WebMethod(EnableSession = true)]
@@ -526,6 +587,7 @@ public class UsersService : System.Web.Services.WebService
         return warnings;
     }
 
+    //------------------------------------------------------------------------------------------------------------
 
     [WebMethod(EnableSession = true)]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]

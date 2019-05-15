@@ -68,7 +68,7 @@ public class SavedPostsClass
 
         string sql_str = "INSERT INTO [SavedPosts] " +
             "([SaverID], [SavedPostID], [SaveDate]) " +
-            "VALUES ({0}, {1}, #{3}#)";
+            "VALUES ({0}, {1}, #{2}#)";
 
         sql_str = string.Format(sql_str, this.SaverID, this.SavedPostID, this.SaveDate);
         Dbase.ChangeTable(sql_str);
@@ -83,7 +83,7 @@ public class SavedPostsClass
     public void Update()
     {
         string sql_str = "UPDATE [SavedPosts] " +
-            "SET [SaverID] = {0}, [SavedPostID] = {1}, [SaveDate] = #{3}#";
+            "SET [SaverID]={0}, [SavedPostID]={1}, [SaveDate]=#{2}#";
         sql_str += " WHERE [ID]=" + this.ID;
         sql_str = string.Format(sql_str, this.SaverID, this.SavedPostID, this.SaveDate);
         Dbase.ChangeTable(sql_str);
@@ -134,7 +134,7 @@ public class SavedPostsClass
                 prepend = "#";
                 append = "#";
             }
-            sql_str += "[{0}] = {1}{2}{3}";
+            sql_str += "[{0}]={1}{2}{3}";
             if (i < pairs.Length - 1) sql_str += " AND ";
 
             sql_str = string.Format(sql_str, pairs[i].Key, prepend, pairs[i].Value, append);
