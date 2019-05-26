@@ -11,10 +11,10 @@ public class UsersClass
 {
     public int ID { get; protected set; }
 
-    public int Flags, Points, MyFollowersCount, FollowingCount;
+    public int Flags, Points;
     public string Username, Password, ProfilePictureDir, Bio;
-    DateTime DOB, CreationDate;
-    public bool IsAdmin, IsSuspended, IsPrivate, IsDeleted;
+    public DateTime DOB, CreationDate;
+    public bool IsAdmin, IsSuspended;
 
     #region constructors
 
@@ -23,14 +23,12 @@ public class UsersClass
 
     }
 
-    protected UsersClass(int ID, int MyFollowersCount, int FollowingCount, int Flags, int Points,
+    protected UsersClass(int ID, int Flags, int Points,
         string Username, string Password, string ProfilePictureDir, string Bio,
         DateTime DOB, DateTime CreationDate,
-        bool IsAdmin, bool IsSuspended, bool IsPrivate, bool IsDeleted)
+        bool IsAdmin, bool IsSuspended)
     {
         this.ID = ID;
-        this.MyFollowersCount = MyFollowersCount;
-        this.FollowingCount = FollowingCount;
         this.Flags = Flags;
         this.Points = Points;
         this.Username = Username;
@@ -40,8 +38,6 @@ public class UsersClass
         this.CreationDate = CreationDate;
         this.IsAdmin = IsAdmin;
         this.IsSuspended = IsSuspended;
-        this.IsPrivate = IsPrivate;
-        this.IsDeleted = IsDeleted;
         this.ProfilePictureDir = ProfilePictureDir;
     }
 
@@ -51,8 +47,6 @@ public class UsersClass
         UsersClass obj = new UsersClass
         {
             ID = Convert.ToInt32(dr["ID"]),
-            MyFollowersCount = Convert.ToInt32(dr["MyFollowersCount"]),
-            FollowingCount = Convert.ToInt32(dr["FollowingCount"]),
             Flags = Convert.ToInt32(dr["Flags"]),
             Points = Convert.ToInt32(dr["Points"]),
             Username = dr["Username"].ToString(),
@@ -63,8 +57,6 @@ public class UsersClass
             CreationDate = Convert.ToDateTime(dr["CreationDate"]),
             IsAdmin = Convert.ToBoolean(dr["IsAdmin"]),
             IsSuspended = Convert.ToBoolean(dr["IsSuspended"]),
-            IsPrivate = Convert.ToBoolean(dr["IsPrivate"]),
-            IsDeleted = Convert.ToBoolean(dr["IsDeleted"])
         };
         return obj;
     }
@@ -77,16 +69,12 @@ public class UsersClass
             Password = Password,
             DOB = DOB,
             IsAdmin = false,
-            MyFollowersCount = 0,
-            FollowingCount = 0,
             Flags = 0,
             Points = 0,
             Bio = "Hello fellow consultants and consultees!",
             ProfilePictureDir = "",
             CreationDate = DateTime.Now,
             IsSuspended = false,
-            IsPrivate = false,
-            IsDeleted = false
         };
         user.Insert();
         return user;
@@ -105,12 +93,12 @@ public class UsersClass
         }
 
         string sql_str = "INSERT INTO [Users] " +
-            "([Username], [Password], [MyFollowersCount], [FollowingCount], [Flags], [Points], " +
-            "[CreationDate], [DOB], [IsAdmin], [IsSuspended], [IsPrivate], [IsDeleted], [ProfilePictureDir], [Bio]) " +
-            "VALUES ('{0}','{1}', {2}, {3}, {4}, {5}, #{6}#, #{7}#, {8}, {9}, {10}, {11}, '{12}', '{13}') ";
+            "([Username], [Password], [Flags], [Points], " +
+            "[CreationDate], [DOB], [IsAdmin], [IsSuspended], [ProfilePictureDir], [Bio]) " +
+            "VALUES ('{0}','{1}', {2}, {3}, #{4}#, #{5}#, {6}, {7},'{8}', '{9}') ";
 
-        sql_str = string.Format(sql_str, this.Username, this.Password, this.MyFollowersCount, this.FollowingCount, this.Flags, this.Points,
-            this.CreationDate, this.DOB, this.IsAdmin, this.IsSuspended, this.IsPrivate, this.IsDeleted, this.ProfilePictureDir, this.Bio);
+        sql_str = string.Format(sql_str, this.Username, this.Password, this.Flags, this.Points,
+            this.CreationDate, this.DOB, this.IsAdmin, this.IsSuspended, this.ProfilePictureDir, this.Bio);
         Dbase.ChangeTable(sql_str);
 
         string get_id = "SELECT @@IDENTITY AS ID";
@@ -124,12 +112,12 @@ public class UsersClass
     {
         string sql_str = "UPDATE [Users] " +
             "SET [Username] = '{0}', [Password] = '{1}', " +
-            "[MyFollowersCount] = {2}, [FollowingCount] = {3} , [Flags] = {4}, [Points]= {5}, " +
-            "[CreationDate] = #{6}#, [DOB] = #{7}#, [IsAdmin] = {8}, [IsSuspended] = {9}, " +
-            "[IsPrivate] = {10}, [IsDeleted] = {11}, [ProfilePictureDir] = '{12}', [Bio] = '{13}'";
+            "[Flags] = {2}, [Points]= {3}, " +
+            "[CreationDate] = #{4}#, [DOB] = #{5}#, [IsAdmin] = {6}, [IsSuspended] = {7}, " +
+            "[ProfilePictureDir] = '{8}', [Bio] = '{9}'";
         sql_str += " WHERE [ID]=" + this.ID;
-        sql_str = string.Format(sql_str, this.Username, this.Password, this.MyFollowersCount, this.FollowingCount, this.Flags, this.Points,
-            this.CreationDate, this.DOB, this.IsAdmin, this.IsSuspended, this.IsPrivate, this.IsDeleted, this.ProfilePictureDir, this.Bio);
+        sql_str = string.Format(sql_str, this.Username, this.Password, this.Flags, this.Points,
+            this.CreationDate, this.DOB, this.IsAdmin, this.IsSuspended, this.ProfilePictureDir, this.Bio);
         Dbase.ChangeTable(sql_str);
     }
 
@@ -247,5 +235,18 @@ public class UsersClass
         return Dbase.SelectFromTable(sql);
 
     }
+
+    public DataTable GetConversationWith(int UserID)
+    {
+
+        string sql_str = "SELECT * FROM [Messages] WHERE ([SenderID] = {0} AND [RecipientID] = {1})" +
+            " OR ([SenderID] = {1} AND [RecipientID] = {0}) ORDER BY [SendDate]";
+
+        sql_str = string.Format(sql_str, this.ID, UserID);
+
+        return Dbase.SelectFromTable(sql_str);
+
+    }
+
     #endregion
 }

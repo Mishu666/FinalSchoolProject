@@ -11,67 +11,62 @@ public partial class ViewUser : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (!IsPostBack)
+        object userid = Request.QueryString["user-id"];
+
+        UsersClass current_user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
+
+        if (userid == null)
         {
-            object userid = Request.QueryString["user-id"];
-
-            UsersClass current_user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
-
-            if (userid == null)
+            if (Session["Logged"] == null || (bool)Session["Logged"] == false)
             {
-                if (Session["Logged"] == null || (bool)Session["Logged"] == false)
-                {
-                    Response.Redirect("Home.aspx");
-                }
-                else
-                {
-                    ViewState["ViewUserID"] = current_user.ID;
-                }
+                Response.Redirect("Home.aspx");
             }
             else
             {
-                UsersClass user = UsersClass.GetByID(Convert.ToInt32(userid));
-                if (user == null)
-                {
-                    Response.Redirect("Home.aspx");
-                }
-                else
-                {
-                    ViewState["ViewUserID"] = user.ID;
-                }
+                ViewState["ViewUserID"] = current_user.ID;
             }
-
-            if(current_user == null)
-            {
-                FollowUserButton.Visible = true;
-            }
-            else
-            {
-                UsersClass view_user = UsersClass.GetByID(Convert.ToInt32(ViewState["ViewUserID"]));
-
-                if (view_user.ID == current_user.ID)
-                {
-                    EditUserButton.Visible = true;
-                }
-                else
-                {
-                    KeyValuePair<string, object> follower_id_pair = new KeyValuePair<string, object>("FollowerID", current_user.ID);
-                    KeyValuePair<string, object> followed_id_pair = new KeyValuePair<string, object>("FollowedID", view_user.ID);
-                    DataTable followers_dt = FollowersClass.GetByProperties(follower_id_pair, followed_id_pair);
-
-                    if(followers_dt == null || followers_dt.Rows.Count ==0)
-                    {
-                        FollowUserButton.Visible = true;
-                    }
-                    else
-                    {
-                        UnfollowUserButton.Visible = true;
-                    }
-                }
-            }
-
-            FillPostsRepeater("submitted");
         }
+        else
+        {
+            UsersClass user = UsersClass.GetByID(Convert.ToInt32(userid));
+            if (user == null)
+            {
+                Response.Redirect("Home.aspx");
+            }
+            else
+            {
+                ViewState["ViewUserID"] = user.ID;
+            }
+        }
+
+        if (current_user == null) //guest viewing user profile
+        {
+            ProfileMyPostsTab.Visible = true;
+        }
+        else
+        {
+            UsersClass view_user = UsersClass.GetByID(Convert.ToInt32(ViewState["ViewUserID"]));
+
+            if (view_user.ID == current_user.ID) //User viewing his own profile
+            {
+                EditUserButton.Visible = true;
+                ProfileMyPostsTab.Visible = true;
+                ProfileSavedPostsTab.Visible = true;
+                ProfileDownvotedPostsTab.Visible = true;
+                ProfileUpvotedPostsTab.Visible = true;
+                ProfileMessagesTab.Visible = true;
+            }
+            else //user viewing other user profile
+            {
+
+                ProfileMyPostsTab.Visible = true;
+                ProfileConvoTab.Visible = true;
+                ProfileNewMessageTab.Visible = true;
+            }
+        }
+
+        FillPostsRepeater("submitted");
+
 
     }
 
@@ -107,6 +102,36 @@ public partial class ViewUser : System.Web.UI.Page
 
     }
 
+    public void FillMessagesRepeater()
+    {
+        UsersClass user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
+
+        if (user == null) Response.Redirect("Home.aspx");
+
+        DataTable user_messages = MessagesClass.GetByProperties(new KeyValuePair<string, object>("RecipientID", user.ID));
+
+        ProfileMessagesRepeater.DataSource = user_messages;
+        ProfileMessagesRepeater.DataBind();
+
+    }
+
+    public void FillConvoRepeater()
+    {
+
+        UsersClass user = UsersClass.GetByID(Convert.ToInt32(ViewState["ViewUserID"]));
+        UsersClass current_user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
+
+
+        if (current_user == null) Response.Redirect("Home.aspx");
+
+        DataTable conversation = current_user.GetConversationWith(user.ID);
+
+        ProfileConvoRepeater.DataSource = conversation;
+        ProfileConvoRepeater.DataBind();
+
+
+    }
+
     public void ClearActiveTab()
     {
 
@@ -114,6 +139,9 @@ public partial class ViewUser : System.Web.UI.Page
         GlobalFunctions.RemoveCssClass(ProfileSavedPostsTab, "active");
         GlobalFunctions.RemoveCssClass(ProfileUpvotedPostsTab, "active");
         GlobalFunctions.RemoveCssClass(ProfileDownvotedPostsTab, "active");
+        GlobalFunctions.RemoveCssClass(ProfileMessagesTab, "active");
+        GlobalFunctions.RemoveCssClass(ProfileConvoTab, "active");
+        GlobalFunctions.RemoveCssClass(ProfileNewMessageTab, "active");
 
     }
 
@@ -126,8 +154,69 @@ public partial class ViewUser : System.Web.UI.Page
         ClearActiveTab();
         GlobalFunctions.AddCssClass(anchor, "active");
 
+        user_convo_space.Visible = false;
+        user_messages_space.Visible = false;
+        user_posts_space.Visible = true;
+        new_message_space.Visible = false;
+
         FillPostsRepeater(post_type);
 
     }
+
+
+    protected void ProfileMessagesTab_ServerClick(object sender, EventArgs e)
+    {
+
+        HtmlAnchor anchor = (HtmlAnchor)sender;
+
+        ClearActiveTab();
+        GlobalFunctions.AddCssClass(anchor, "active");
+
+        user_convo_space.Visible = false;
+        user_messages_space.Visible = true;
+        user_posts_space.Visible = false;
+        new_message_space.Visible = false;
+
+        FillMessagesRepeater();
+
+    }
+
+    protected void ProfileConvoTab_ServerClick(object sender, EventArgs e)
+    {
+
+        HtmlAnchor anchor = (HtmlAnchor)sender;
+
+        ClearActiveTab();
+        GlobalFunctions.AddCssClass(anchor, "active");
+
+        user_convo_space.Visible = true;
+        user_messages_space.Visible = false;
+        user_posts_space.Visible = false;
+        new_message_space.Visible = false;
+
+        FillConvoRepeater();
+
+    }
+    protected void NewMessageTab_ServerClick(object sender, EventArgs e)
+    {
+
+        HtmlAnchor anchor = (HtmlAnchor)sender;
+
+        ClearActiveTab();
+        GlobalFunctions.AddCssClass(anchor, "active");
+
+        user_convo_space.Visible = false;
+        user_messages_space.Visible = false;
+        user_posts_space.Visible = false;
+        new_message_space.Visible = true;
+    }
+
+    protected void ProfileConvoRepeater_ItemDataBound(object sender, RepeaterItemEventArgs e)
+    {
+
+
+
+    }
+
 
 }

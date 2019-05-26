@@ -11,7 +11,8 @@ public class MessagesClass
 {
     public int ID { get; protected set; }
     public int SenderID, RecipientID;
-    public string Title, Body;
+    public bool IsRead;
+    public string Body;
     public DateTime SendDate;
 
     #region constructors
@@ -22,13 +23,13 @@ public class MessagesClass
     }
 
     protected MessagesClass(int ID, int SenderID,
-        int RecipientID, string Body, string Title, DateTime SendDate)
+        int RecipientID, string Body, bool IsRead, DateTime SendDate)
     {
         this.ID = ID;
         this.SenderID = SenderID;
         this.RecipientID = RecipientID;
         this.Body = Body;
-        this.Title = Title;
+        this.IsRead = IsRead;
         this.SendDate = SendDate;
     }
 
@@ -41,20 +42,20 @@ public class MessagesClass
             SenderID = Convert.ToInt32(dr["SenderID"]),
             RecipientID = Convert.ToInt32(dr["RecipientID"]),
             Body = dr["Body"].ToString(),
-            Title = dr["Title"].ToString(),
+            IsRead = Convert.ToBoolean(dr["IsRead"]),
             SendDate = Convert.ToDateTime(dr["SendDate"])
         };
         return obj;
     }
 
-    public static MessagesClass CreateNew(int SenderID, int RecipientID, string Title, string Body)
+    public static MessagesClass CreateNew(int SenderID, int RecipientID, string Body)
     {
         MessagesClass message = new MessagesClass
         {
             SenderID = SenderID,
             RecipientID = RecipientID,
             Body = Body,
-            Title = Title,
+            IsRead = false,
             SendDate = DateTime.Now
         };
         message.Insert();
@@ -73,10 +74,10 @@ public class MessagesClass
         }
 
         string sql_str = "INSERT INTO [Messages] " +
-            "([SenderID], [RecipientID], [Title], [Body], [SendDate]) " +
-            "VALUES ({0}, {1}, '{2}' , '{3}', #{4}#) ";
+            "([SenderID], [RecipientID], [IsRead], [Body], [SendDate]) " +
+            "VALUES ({0}, {1}, {2} , '{3}', #{4}#) ";
 
-        sql_str = string.Format(sql_str, this.SenderID, this.RecipientID, this.Title, this.Body, this.SendDate);
+        sql_str = string.Format(sql_str, this.SenderID, this.RecipientID, this.IsRead, this.Body, this.SendDate);
         Dbase.ChangeTable(sql_str);
 
         string get_id = "SELECT @@IDENTITY AS ID";
@@ -90,9 +91,9 @@ public class MessagesClass
     {
         string sql_str = "UPDATE [Messages] " +
             "SET [SenderID] = {0}, [RecipientID] = {1}, " +
-            "[Title] = '{2}',[Body] = '{3}', [SendDate] = #{4}#";
+            "[IsRead] = {2},[Body] = '{3}', [SendDate] = #{4}#";
         sql_str += " WHERE [ID]=" + this.ID;
-        sql_str = string.Format(sql_str, this.SenderID, this.RecipientID, this.Title, this.Body, this.SendDate);
+        sql_str = string.Format(sql_str, this.SenderID, this.RecipientID, this.IsRead, this.Body, this.SendDate);
         Dbase.ChangeTable(sql_str);
     }
 

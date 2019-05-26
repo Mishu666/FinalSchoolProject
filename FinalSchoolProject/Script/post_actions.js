@@ -195,9 +195,10 @@ function userLoggedInSuccessCallback(data) {
             let username = $("#EditUsernameInput").val();
             let bio = $("#EditBioInput").val();
             let confirm_pass = $("#EditConfirmPasswordInput").val();
-            let isprivate = $("#EditIsPrivateSwitch").prop("checked");
+            let new_password = $("#EditNewPasswordInput").val();
+            let new_password_confirm = $("#EditConfirmNewPasswordInput").val();
 
-            updateUserInfo(username, bio, isprivate, confirm_pass, updateUserInfoSuccessCallback);
+            updateUserInfo(username, bio, confirm_pass, new_password, new_password_confirm, updateUserInfoSuccessCallback);
 
         });
 
@@ -740,8 +741,14 @@ function updateUserInfoSuccessCallback(data) {
 
 }
 
-function updateUserInfo(username, bio, is_private, password_confirm, success_callback) {
-    var data = { "Username": username, "Bio": bio, "IsPrivate": is_private, "PasswordConfirm": password_confirm };
+function updateUserInfo(username, bio, password_confirm,new_pass, new_pass_confirm, success_callback) {
+    var data = {
+        "Username": username,
+        "Bio": bio,
+        "PasswordConfirm": password_confirm,
+        "NewPassword": new_pass,
+        "NewPasswordConfirm": new_pass_confirm
+    };
 
     $.ajax({
 
@@ -857,7 +864,6 @@ function clearEditUserInputs() {
     $("#EditUsernameInput").val($("#EditUsernameInput").data("default-value"));
     $("#EditBioInput").val($("#EditBioInput").data("default-value"));
     $("#EditConfirmPasswordInput").val("");
-    $("#EditIsPrivateSwitch").prop("checked", $("#EditIsPrivateSwitch").data("default-value"));
 }
 
 function clearEditUserWarnings() {

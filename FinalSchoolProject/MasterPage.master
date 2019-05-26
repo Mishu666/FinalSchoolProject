@@ -94,9 +94,11 @@
                     </a>
                     <div id="collapseAdminTools" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
-                            <a class="collapse-item" href="UserEditor.aspx">User Editor</a>
+                            <a class="collapse-item" href="UserEditor.aspx">Users Editor</a>
+                            <a class="collapse-item" href="ConsultPageEditor.aspx">Consult Pages Editor</a>
                         </div>
                     </div>
+
                 </li>
 
                 <!-- Divider -->
@@ -159,18 +161,6 @@
                         <i class="fa fa-bars"></i>
                     </button>
 
-                    <!-- Topbar Search -->
-                    <div class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-                        <div class="input-group">
-                            <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." style="height: 38px;"
-                                aria-label="Search" aria-describedby="basic-addon2">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" type="button">
-                                    <i class="fas fa-search fa-sm"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">

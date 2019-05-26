@@ -67,7 +67,7 @@
                         <%= page.Describtion %>
                     </div>
                 </div>
-                <div class="card-footer">
+                <div class="card-footer text-md-center">
                     <%= page.SubscriberCount %> members
                 </div>
             </div>

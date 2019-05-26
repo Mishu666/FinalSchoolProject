@@ -186,9 +186,10 @@ public class UsersService : System.Web.Services.WebService
             current.Response.StatusCode = 401;
             current.Response.End();
         }
-        int userID = Convert.ToInt32(Session["CurrentUserID"]);
 
+        int userID = Convert.ToInt32(Session["CurrentUserID"]);
         PostsClass post = PostsClass.GetByID(PostID);
+        UsersClass PostAuthor = UsersClass.GetByID(post.AuthorID);
 
         DataTable vote_dt = PostVotesClass.GetByProperties(
                 new KeyValuePair<string, object>("VotedPostID", PostID),
@@ -199,6 +200,8 @@ public class UsersService : System.Web.Services.WebService
         {
             PostVotesClass.CreateNew(userID, PostID, 1);
             post.UpvoteCount += 1;
+            PostAuthor.Points += 5;
+            PostAuthor.Update();
             post.Update();
             return post.UpvoteCount;
         }
@@ -210,6 +213,8 @@ public class UsersService : System.Web.Services.WebService
         {
             vote.Delete();
             post.UpvoteCount -= 1;
+            PostAuthor.Points -= 5;
+            PostAuthor.Update();
             post.Update();
 
         }
@@ -219,6 +224,8 @@ public class UsersService : System.Web.Services.WebService
             vote.Update();
             post.UpvoteCount += 1;
             post.DownvoteCount -= 1;
+            PostAuthor.Points += 10;
+            PostAuthor.Update();
             post.Update();
 
         }
@@ -237,8 +244,8 @@ public class UsersService : System.Web.Services.WebService
             current.Response.End();
         }
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
-
         PostsClass post = PostsClass.GetByID(PostID);
+        UsersClass PostAuthor = UsersClass.GetByID(post.AuthorID);
 
         DataTable vote_dt = PostVotesClass.GetByProperties(
                 new KeyValuePair<string, object>("VotedPostID", PostID),
@@ -249,6 +256,8 @@ public class UsersService : System.Web.Services.WebService
         {
             PostVotesClass.CreateNew(userID, PostID, -1);
             post.DownvoteCount += 1;
+            PostAuthor.Points -= 5;
+            PostAuthor.Update();
             post.Update();
             return post.DownvoteCount;
         }
@@ -259,6 +268,8 @@ public class UsersService : System.Web.Services.WebService
         {
             vote.Delete();
             post.DownvoteCount -= 1;
+            PostAuthor.Points += 5;
+            PostAuthor.Update();
             post.Update();
 
         }
@@ -268,6 +279,8 @@ public class UsersService : System.Web.Services.WebService
             vote.Update();
             post.DownvoteCount += 1;
             post.UpvoteCount -= 1;
+            PostAuthor.Points -= 10;
+            PostAuthor.Update();
             post.Update();
 
         }
@@ -290,8 +303,8 @@ public class UsersService : System.Web.Services.WebService
         }
 
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
-
         CommentsClass comment = CommentsClass.GetByID(CommentID);
+        UsersClass CommentAuthor = UsersClass.GetByID(comment.CommentorID);
 
         DataTable vote_dt = CommentVotesClass.GetByProperties(
                 new KeyValuePair<string, object>("VotedCommentID", CommentID),
@@ -302,6 +315,8 @@ public class UsersService : System.Web.Services.WebService
         {
             CommentVotesClass.CreateNew(userID, CommentID, 1);
             comment.UpvoteCount += 1;
+            CommentAuthor.Points += 1;
+            CommentAuthor.Update();
             comment.Update();
             return comment.UpvoteCount;
         }
@@ -313,6 +328,8 @@ public class UsersService : System.Web.Services.WebService
         {
             vote.Delete();
             comment.UpvoteCount -= 1;
+            CommentAuthor.Points -= 1;
+            CommentAuthor.Update();
             comment.Update();
 
         }
@@ -322,6 +339,8 @@ public class UsersService : System.Web.Services.WebService
             vote.Update();
             comment.UpvoteCount += 1;
             comment.DownvoteCount -= 1;
+            CommentAuthor.Points += 2;
+            CommentAuthor.Update();
             comment.Update();
 
         }
@@ -339,9 +358,10 @@ public class UsersService : System.Web.Services.WebService
             current.Response.StatusCode = 401;
             current.Response.End();
         }
-        int userID = Convert.ToInt32(Session["CurrentUserID"]);
 
+        int userID = Convert.ToInt32(Session["CurrentUserID"]);
         CommentsClass comment = CommentsClass.GetByID(CommentID);
+        UsersClass CommentAuthor = UsersClass.GetByID(comment.CommentorID);
 
         DataTable vote_dt = CommentVotesClass.GetByProperties(
                 new KeyValuePair<string, object>("VotedCommentID", CommentID),
@@ -352,6 +372,8 @@ public class UsersService : System.Web.Services.WebService
         {
             CommentVotesClass.CreateNew(userID, CommentID, -1);
             comment.DownvoteCount += 1;
+            CommentAuthor.Points -= 1;
+            CommentAuthor.Update();
             comment.Update();
             return comment.DownvoteCount;
         }
@@ -362,6 +384,8 @@ public class UsersService : System.Web.Services.WebService
         {
             vote.Delete();
             comment.DownvoteCount -= 1;
+            CommentAuthor.Points += 1;
+            CommentAuthor.Update();
             comment.Update();
 
         }
@@ -371,6 +395,8 @@ public class UsersService : System.Web.Services.WebService
             vote.Update();
             comment.DownvoteCount += 1;
             comment.UpvoteCount -= 1;
+            CommentAuthor.Points -= 2;
+            CommentAuthor.Update();
             comment.Update();
 
         }
@@ -436,8 +462,26 @@ public class UsersService : System.Web.Services.WebService
 
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
         PostsClass post = PostsClass.GetByID(PostID);
+        UsersClass PostAuthor = UsersClass.GetByID(post.AuthorID);
 
-        SavedPostsClass.CreateNew(userID, PostID);
+        DataTable save_dt = SavedPostsClass.GetByProperties(
+                new KeyValuePair<string, object>("SavedPostID", PostID),
+                new KeyValuePair<string, object>("SaverID", userID)
+            );
+
+        if (save_dt == null || save_dt.Rows.Count == 0)
+        {
+            PostAuthor.Points += 10;
+            SavedPostsClass.CreateNew(userID, PostID);
+            PostAuthor.Update();
+            return;
+        }
+
+        SavedPostsClass save = SavedPostsClass.FromDataRow(save_dt.Rows[0]);
+        save.Delete();
+        PostAuthor.Points -= 10;
+        PostAuthor.Update();
+
 
     }
 
@@ -591,7 +635,7 @@ public class UsersService : System.Web.Services.WebService
 
     [WebMethod(EnableSession = true)]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    private void UpdateUserInfo(string Username, string Bio, bool IsPrivate)
+    private void UpdateUserInfo(string Username, string Bio, string NewPassword)
     {
 
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
@@ -599,7 +643,7 @@ public class UsersService : System.Web.Services.WebService
 
         user.Username = Username;
         user.Bio = Bio;
-        user.IsPrivate = IsPrivate;
+        user.Password = NewPassword;
         user.Update();
 
     }
@@ -607,7 +651,7 @@ public class UsersService : System.Web.Services.WebService
 
     [WebMethod(EnableSession = true)]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public List<Warning> ValidateAndUpdateUserInfo(string Username, string Bio, bool IsPrivate, string PasswordConfirm)
+    public List<Warning> ValidateAndUpdateUserInfo(string Username, string Bio, string NewPassword, string NewPasswordConfirm, string PasswordConfirm)
     {
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
@@ -642,6 +686,21 @@ public class UsersService : System.Web.Services.WebService
             valid = false;
         }
 
+        if (!string.IsNullOrWhiteSpace(NewPassword) || !string.IsNullOrWhiteSpace(NewPasswordConfirm))
+        {
+            if (NewPassword != NewPasswordConfirm)
+            {
+                Warning w = new Warning();
+                w.Text = "Passwords do not match";
+                w.WarnControls = new List<string>();
+                w.WarnControls.Add("EditNewPasswordInput");
+                w.WarnControls.Add("EditConfirmNewPasswordInput");
+                warnings.Add(w);
+                valid = false;
+                NewPassword = user.Password;
+            }
+        }
+
         if (string.IsNullOrWhiteSpace(PasswordConfirm))
         {
 
@@ -659,10 +718,35 @@ public class UsersService : System.Web.Services.WebService
 
         if (valid)
         {
-            UpdateUserInfo(Username, Bio, IsPrivate);
+            UpdateUserInfo(Username, Bio, NewPassword);
         }
 
         return warnings;
 
     }
+
+    //------------------------------------------------------------------------------------------------------------
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public string SendMessage(int RecipientID, string Message)
+    {
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        List<Warning> warnings = new List<Warning>();
+        int userID = Convert.ToInt32(Session["CurrentUserID"]);
+        UsersClass user = UsersClass.GetByID(userID);
+
+        if (string.IsNullOrWhiteSpace(Message)) return "empty message";
+
+        MessagesClass msg = MessagesClass.CreateNew(userID, RecipientID, Message);
+        return "sent " + Message;
+
+    }
+
 }

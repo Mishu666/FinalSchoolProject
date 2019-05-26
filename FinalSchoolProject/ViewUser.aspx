@@ -14,24 +14,45 @@
 <asp:Content ID="Content3" ContentPlaceHolderID="main_content" runat="Server">
 
     <div id="content_space" class="overflow-hidden d-flex flex-row h-100 py-3 px-4">
+
+        <% UsersClass user = UsersClass.GetByID(Convert.ToInt32(ViewState["ViewUserID"])); %>
+
         <div id="main_space" class="card shadow-sm d-flex flex-column w-75 h-100 p-3">
 
             <ul class="nav nav-tabs">
                 <li class="nav-item">
-                    <a runat="server" class="nav-link active" id="ProfileMyPostsTab" data-post-type="submitted" onserverclick="ProfilePostsTab_ServerClick">Submitted</a>
+                    <a runat="server" class="nav-link active" id="ProfileMyPostsTab" visible="false" data-post-type="submitted"
+                        onserverclick="ProfilePostsTab_ServerClick">Submitted</a>
                 </li>
                 <li class="nav-item">
-                    <a runat="server" class="nav-link" id="ProfileSavedPostsTab" data-post-type="saved" onserverclick="ProfilePostsTab_ServerClick">Saved</a>
+                    <a runat="server" class="nav-link" id="ProfileSavedPostsTab" visible="false" data-post-type="saved"
+                        onserverclick="ProfilePostsTab_ServerClick">Saved</a>
                 </li>
                 <li class="nav-item">
-                    <a runat="server" class="nav-link" id="ProfileUpvotedPostsTab" data-post-type="upvoted" onserverclick="ProfilePostsTab_ServerClick">Upvoted</a>
+                    <a runat="server" class="nav-link" id="ProfileUpvotedPostsTab" visible="false" data-post-type="upvoted"
+                        onserverclick="ProfilePostsTab_ServerClick">Upvoted</a>
                 </li>
                 <li class="nav-item">
-                    <a runat="server" class="nav-link" id="ProfileDownvotedPostsTab" data-post-type="downvoted" onserverclick="ProfilePostsTab_ServerClick">Downvoted</a>
+                    <a runat="server" class="nav-link" id="ProfileDownvotedPostsTab" visible="false" data-post-type="downvoted"
+                        onserverclick="ProfilePostsTab_ServerClick">Downvoted</a>
+                </li>
+                <li class="nav-item">
+                    <a runat="server" class="nav-link" id="ProfileMessagesTab" visible="false"
+                        onserverclick="ProfileMessagesTab_ServerClick">Messages</a>
+                </li>
+                <li class="nav-item">
+                    <a runat="server" class="nav-link" id="ProfileConvoTab" visible="false"
+                        onserverclick="ProfileConvoTab_ServerClick">Conversation</a>
+                </li>
+
+                <li class="nav-item">
+                    <a runat="server" class="nav-link" id="ProfileNewMessageTab" visible="false"
+                        onserverclick="NewMessageTab_ServerClick">Write Message</a>
                 </li>
             </ul>
 
-            <div id="posts_space" class="d-flex flex-column pr-3 mt-3" style="overflow-y: scroll !important; overflow-x: hidden !important;">
+            <div id="user_posts_space" runat="server" class="d-flex flex-column pr-3 mt-3"
+                style="overflow-y: scroll !important; overflow-x: hidden !important;">
 
                 <asp:Repeater ID="ProfilePostsRepeater" runat="server">
                     <ItemTemplate>
@@ -41,14 +62,67 @@
 
             </div>
 
-        </div>
+            <div id="user_messages_space" runat="server" class="d-flex flex-column pr-3 mt-3"
+                style="overflow-y: scroll !important; overflow-x: hidden !important;" visible="false">
 
-        <% UsersClass user = UsersClass.GetByID(Convert.ToInt32(ViewState["ViewUserID"])); %>
+                <asp:Repeater ID="ProfileMessagesRepeater" runat="server">
+                    <ItemTemplate>
+                        <div class="card shadow-sm mb-3 w-100">
+                            <div class="card-text flex-column flex-row align-items-center justify-content-between">
+                                <div>New message from <%# Eval("Body") %></div>
+                                <div><%# Convert.ToDateTime(Eval("SendDate")).ToString() %></div>
+                            </div>
+                        </div>
+                    </ItemTemplate>
+                </asp:Repeater>
+
+            </div>
+
+            <div id="user_convo_space" runat="server" class="mt-3 w-100 pr-3" style="overflow-x: hidden !important; overflow-y: scroll !important;" visible="false">
+
+                <asp:Repeater ID="ProfileConvoRepeater" runat="server" OnItemDataBound="ProfileConvoRepeater_ItemDataBound">
+                    <ItemTemplate>
+                        <div id="message_card" runat="server" class="card shadow-sm mb-3 w-100">
+                            <div class="card-body">
+                                <div class="card-text">
+                                    <div><%# Eval("Body") %></div>
+                                </div>
+                            </div>
+                            <div class="card-footer d-flex flex-row align-items-center justify-content-between py-1">
+                                <div class="text-xs"><%# UsersClass.GetByID(Convert.ToInt32(Eval("SenderID"))).Username %></div>
+                                <div class="text-xs"><%# Convert.ToDateTime(Eval("SendDate")).ToString("dd/MM/yyyy HH:mm") %></div>
+                            </div>
+                        </div>
+                    </ItemTemplate>
+                </asp:Repeater>
+
+            </div>
+
+            <div id="new_message_space" runat="server" visible="false" class="d-flex flex-column justify-content-between align-items-baseline w-100 h-100">
+
+                <div class="input-group h-100 my-3">
+                    <textarea id="NewMessageInput" class="form-control" placeholder="Type your message here..." aria-label="New Message"
+                        style="resize: none;"></textarea>
+                </div>
+
+                <div id="NewMessageFooter" class="w-100">
+                    <button id="SendMessageButton" class="btn btn-primary" data-recipient-id='<%= Convert.ToInt32(ViewState["ViewUserID"]) %>'>
+                        Send<i class="fas fa-paper-plane ml-2"></i>
+                    </button>
+
+                    <label id="NewMessageLabel" class="text-success text-md-left ml-5"></label>
+                </div>
+
+            </div>
+
+        </div>
 
         <div id="user_space" class="card shadow-sm ml-3 d-flex flex-column h-100" style="width: 30% !important;">
             <img src="<%= user.ProfilePictureDir %>" alt="profile picture" onerror="this.remove();" class="card-img-top" />
             <div class="card-body" id="default_user_view">
-                <h5 class="card-title mr-1"><%= user.Username %>
+                <h5 class="card-title mr-1">
+
+                    <%= user.Username %>
 
                     <%
                         if (user.IsAdmin)
@@ -74,9 +148,9 @@
                     }
                 %>
 
-                <button id="EditUserButton" runat="server" visible="false" type="button" class="EditUserButton btn btn-primary">Edit<i class="far fa-edit ml-2"></i></button>
-                <button id="FollowUserButton" runat="server" visible="false" type="button" class="FollowUserButton btn btn-primary">Follow<i class="fas fa-plus ml-2"></i></button>
-                <button id="UnfollowUserButton" runat="server" visible="false" type="button" class="UnfollowUserButton btn btn-secondary">Following<i class="fas fa-check ml-2"></i></button>
+                <button id="EditUserButton" runat="server" visible="false" type="button" class="EditUserButton btn btn-primary">
+                    Edit<i class="far fa-edit ml-2"></i>
+                </button>
 
             </div>
             <div class="card-body" id="edit_user_view" style="display: none;">
@@ -88,19 +162,29 @@
 
                 <div class="input-group mb-3">
                     <textarea id="EditBioInput" class="form-control" placeholder="Username" aria-label="Username" rows="5"
-                       data-default-value="<%= user.Bio %>" aria-describedby="basic-addon-username"><%= user.Bio %></textarea>
+                        data-default-value="<%= user.Bio %>" aria-describedby="basic-addon-username"><%= user.Bio %></textarea>
                 </div>
 
-                <div class="input-group mb-3">
-                    <input id="EditConfirmPasswordInput" type="text" class="form-control" placeholder="Confirm password"
-                        aria-label="Confirm Password" aria-describedby="basic-addon-confirm-password">
-                </div>
-
-                <div class="custom-control custom-switch mb-3">
+<%--                <div class="custom-control custom-switch mb-3">
                     <input type="checkbox" class="custom-control-input" id="EditIsPrivateSwitch"
                         data-default-value="<%= user.IsPrivate %>" checked="<%= user.IsPrivate %>">
                     <label class="custom-control-label" for="EditIsPrivateSwitch">Private</label>
+                </div>--%>
+
+                <div class="input-group mb-3">
+                    <input id="EditNewPasswordInput" type="password" class="form-control" placeholder="New password"
+                        aria-label="New Password" aria-describedby="basic-addon-new-password">
                 </div>
+                <div class="input-group mb-3">
+                    <input id="EditConfirmNewPasswordInput" type="password" class="form-control" placeholder="Confirm new password"
+                        aria-label="Confirm new Password" aria-describedby="basic-addon-confirm-new-password">
+                </div>
+
+                <div class="input-group mb-3">
+                    <input id="EditConfirmPasswordInput" type="password" class="form-control" placeholder="Current password"
+                        aria-label="Confirm Password" aria-describedby="basic-addon-confirm-password">
+                </div>
+
 
                 <button id="CancelEditButton" type="button" class="btn btn-secondary">Cancel</button>
                 <button id="ConfirmEditButton" type="button" class="btn btn-primary">Confirm</button>
@@ -108,8 +192,7 @@
 
             </div>
             <div class="card-footer d-flex flex-row justify-content-around align-items-center">
-                <span><%= user.MyFollowersCount %> Followers</span>
-                <span><%= user.FollowingCount %> Following</span>
+                <span>Member since <%= user.CreationDate.ToShortDateString() %></span>
             </div>
         </div>
     </div>

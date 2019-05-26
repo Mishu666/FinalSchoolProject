@@ -1,56 +1,60 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Data;
+using System.Web;
 
 /// <summary>
-/// Summary description for FollowersClass
+/// Summary description for NotificationsClass
 /// </summary>
-public class FollowersClass
+public class NotificationsClass
 {
+
     public int ID { get; protected set; }
-    public int FollowerID, FollowedID;
-    public DateTime FollowDate;
+    public int UserID;
+    public string NotificationText;
+    public DateTime NotificationDate;
 
     #region constructors
 
-    protected FollowersClass()
+    protected NotificationsClass()
     {
 
     }
 
-    protected FollowersClass(int ID, int FollowerID, int FollowedID, DateTime FollowDate)
+    protected NotificationsClass(int ID, int UserID,
+        string NotificationText, DateTime NotificationDate)
     {
         this.ID = ID;
-        this.FollowerID = FollowerID;
-        this.FollowedID = FollowedID;
-        this.FollowDate = FollowDate;
+        this.UserID = UserID;
+        this.NotificationText = NotificationText;
+        this.NotificationDate = NotificationDate;
     }
 
-    public static FollowersClass FromDataRow(DataRow dr)
+    public static NotificationsClass FromDataRow(DataRow dr)
     {
         if (dr == null) return null;
-        FollowersClass obj = new FollowersClass
+        NotificationsClass obj = new NotificationsClass
         {
             ID = Convert.ToInt32(dr["ID"]),
-            FollowerID = Convert.ToInt32(dr["FollowerID"]),
-            FollowedID = Convert.ToInt32(dr["FollowedID"]),
-            FollowDate = Convert.ToDateTime(dr["FollowDate"])
+            UserID = Convert.ToInt32(dr["UserID"]),
+            NotificationText = dr["NotificationText"].ToString(),
+            NotificationDate = Convert.ToDateTime(dr["NotificationDate"])
         };
         return obj;
     }
 
-    public static FollowersClass CreateNew(int FollowerID, int FollowedID)
+    public static NotificationsClass CreateNew(int UserID, string NotificationText)
     {
-        FollowersClass follower = new FollowersClass
+        NotificationsClass post = new NotificationsClass
         {
-            FollowerID = FollowerID,
-            FollowedID = FollowedID,
-            FollowDate = DateTime.Now
+            UserID = UserID,
+            NotificationText = NotificationText,
+            NotificationDate = DateTime.Now
         };
-        follower.Insert();
-        return follower;
+
+        post.Insert();
+        return post;
     }
 
     #endregion
@@ -64,11 +68,11 @@ public class FollowersClass
             throw new Exception("already inserted");
         }
 
-        string sql_str = "INSERT INTO [Followers] " +
-            "([FollowerID], [FollowedID], [FollowDate]) " +
-            "VALUES ({0}, {1}, '{2}') ";
+        string sql_str = "INSERT INTO [SavedPosts] " +
+            "([UserID], [NotificationText], [NotificationDate]) " +
+            "VALUES ({0}, '{1}', #{2}#)";
 
-        sql_str = string.Format(sql_str, this.FollowerID, this.FollowedID, this.FollowDate);
+        sql_str = string.Format(sql_str, this.UserID, this.NotificationText, this.NotificationDate);
         Dbase.ChangeTable(sql_str);
 
         string get_id = "SELECT @@IDENTITY AS ID";
@@ -80,16 +84,16 @@ public class FollowersClass
 
     public void Update()
     {
-        string sql_str = "UPDATE [Followers] " +
-            "SET [FollowerID] = {0}, [FollowedID] = {1}, [FollowDate] = {2}";
+        string sql_str = "UPDATE [SavedPosts] " +
+            "SET [UserID]={0}, [NotificationText]='{1}', [NotificationDate]=#{2}#";
         sql_str += " WHERE [ID]=" + this.ID;
-        sql_str = string.Format(sql_str, this.FollowerID, this.FollowedID, this.FollowDate);
+        sql_str = string.Format(sql_str, this.UserID, this.NotificationText, this.NotificationDate);
         Dbase.ChangeTable(sql_str);
     }
 
     public void Delete()
     {
-        string sql_str = "DELETE FROM [Followers] WHERE [ID]=" + this.ID;
+        string sql_str = "DELETE FROM [SavedPosts] WHERE [ID]=" + this.ID;
         Dbase.ChangeTable(sql_str);
     }
     #endregion
@@ -98,13 +102,13 @@ public class FollowersClass
 
     public static DataTable GetAll()
     {
-        string sql_str = "SELECT * FROM [Followers]";
+        string sql_str = "SELECT * FROM [SavedPosts]";
         DataTable all = Dbase.SelectFromTable(sql_str);
 
         return all;
     }
 
-    public static FollowersClass GetByID(int ID)
+    public static NotificationsClass GetByID(int ID)
     {
         KeyValuePair<string, object> id_pair = new KeyValuePair<string, object>("ID", ID);
         DataTable obj = GetByProperties(id_pair);
@@ -113,7 +117,7 @@ public class FollowersClass
     }
     public static DataTable GetByProperties(params KeyValuePair<string, object>[] pairs)
     {
-        string sql_str = "SELECT * FROM [Followers]";
+        string sql_str = "SELECT * FROM [SavedPosts]";
         string prepend, append;
 
         if (pairs.Length > 0) sql_str += " WHERE ";
@@ -132,7 +136,7 @@ public class FollowersClass
                 prepend = "#";
                 append = "#";
             }
-            sql_str += "[{0}] = {1}{2}{3}";
+            sql_str += "[{0}]={1}{2}{3}";
             if (i < pairs.Length - 1) sql_str += " AND ";
 
             sql_str = string.Format(sql_str, pairs[i].Key, prepend, pairs[i].Value, append);
