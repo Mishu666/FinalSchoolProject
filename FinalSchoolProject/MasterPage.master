@@ -167,55 +167,6 @@
 
                         <asp:ContentPlaceHolder ID="nav_items_cph" runat="server"></asp:ContentPlaceHolder>
 
-                        <!-- Nav Item - Sort Direction-->
-
-                        <li class="nav-item dropdown no-arrow mx-1" visible="true">
-                            <a class="nav-link dropdown-toggle" href="#" id="sortDirectionDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-fw"></i>
-                            </a>
-                        </li>
-
-                        <!-- Nav Item - Sort -->
-
-                        <li class="nav-item dropdown no-arrow mx-1" visible="true">
-                            <a class="nav-link dropdown-toggle" id="sortDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-sort-amount-down fa-fw"></i>
-                            </a>
-                            <!-- Dropdown - Sort Options -->
-                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in w-auto" aria-labelledby="sortOptionsDropdown" id="sortOptions">
-                                <a class="dropdown-item d-flex align-items-center" id="sortByNew">New
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" id="sortByRating">Top
-                                </a>
-                            </div>
-                        </li>
-
-                        <li class="nav-item dropdown no-arrow mx-1" runat="server" visible="true">
-                            <div class="nav-link" id="sort_option_text">
-                                New
-                            </div>
-                        </li>
-
-                        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-                        <li class="nav-item dropdown no-arrow d-sm-none">
-                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-search fa-fw"></i>
-                            </a>
-                            <!-- Dropdown - Messages -->
-                            <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in" aria-labelledby="searchDropdown">
-                                <div class="form-inline mr-auto w-100 navbar-search">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-primary" type="button">
-                                                <i class="fas fa-search fa-sm"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-
                         <!-- Nav Item - Alerts -->
                         <li class="nav-item dropdown no-arrow mx-1">
                             <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -262,10 +213,6 @@
                                 <a class="dropdown-item" href="ViewUser.aspx">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Profile
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Settings
                                 </a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">

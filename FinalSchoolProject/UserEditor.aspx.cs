@@ -26,8 +26,18 @@ public partial class UserEditor : System.Web.UI.Page
     {
 
         DataTable dt = UsersClass.GetAll();
+        ViewState["UsersGVDataSource"] = dt;
         UsersGV.DataSource = dt;
         UsersGV.DataBind();
 
+    }
+
+
+    protected void UsersGV_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+        UsersGV.PageIndex = e.NewPageIndex;
+        DataTable dt = (DataTable)ViewState["UsersGVDataSource"];
+        UsersGV.DataSource = dt;
+        UsersGV.DataBind();
     }
 }

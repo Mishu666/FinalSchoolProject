@@ -77,7 +77,7 @@ public class CommentsClass
 
     #region sql functions
 
-    protected void Insert()
+    protected virtual void Insert()
     {
         string sql_str;
         if (ID != 0)
@@ -102,7 +102,7 @@ public class CommentsClass
         this.ID = Convert.ToInt32(dt.Rows[0]["ID"]);
     }
 
-    public void Update()
+    public virtual void Update()
     {
         string sql_str;
 

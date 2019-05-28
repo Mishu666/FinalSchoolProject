@@ -71,7 +71,7 @@ public class CommentRepliesClass : CommentsClass
 
     #region sql functions
 
-    protected new void Insert()
+    protected override void Insert()
     {
         string sql_str;
         if (ID != 0)
@@ -97,7 +97,7 @@ public class CommentRepliesClass : CommentsClass
         this.ID = Convert.ToInt32(dt.Rows[0]["ID"]);
     }
 
-    public new void Update()
+    public override void Update()
     {
         string sql_str;
         sql_str = "UPDATE [Comments] " +

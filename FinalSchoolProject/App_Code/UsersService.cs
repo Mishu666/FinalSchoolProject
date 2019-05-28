@@ -540,6 +540,9 @@ public class UsersService : System.Web.Services.WebService
     {
 
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
+        PostsClass post = PostsClass.GetByID(ParentPostID);
+        post.CommentCount += 1;
+        post.Update();
 
         CommentsClass.CreateNew(Body, userID, ParentPostID);
     }
@@ -589,6 +592,10 @@ public class UsersService : System.Web.Services.WebService
     {
 
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
+        CommentsClass comment = CommentsClass.GetByID(ParentCommentID);
+        PostsClass post = PostsClass.GetByID(comment.ParentPostID);
+        post.CommentCount += 1;
+        post.Update();
 
         CommentRepliesClass.CreateNew(Body, userID, ParentCommentID);
     }

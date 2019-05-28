@@ -12,11 +12,40 @@
     <!-- Nav Item - Add Post -->
 
     <li class="nav-item dropdown no-arrow mx-1" visible="true">
-        <a class="nav-link dropdown-toggle dismissable_popover" href="#" id="addPostInConsultPageButton" role="button" 
+        <a class="nav-link dropdown-toggle dismissable_popover" href="#" id="addPostInConsultPageButton" role="button"
             data-consult-page-id="<%= Convert.ToInt32(ViewState["PageID"]) %>"
             data-placement="top" data-content="you must log in to post">
             <i class="fas fa-plus"></i>
         </a>
+    </li>
+
+    <!-- Nav Item - Sort Direction-->
+
+    <li class="nav-item dropdown no-arrow mx-1" visible="true">
+        <a class="nav-link dropdown-toggle" href="#" id="sortDirectionDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-fw"></i>
+        </a>
+    </li>
+
+    <!-- Nav Item - Sort -->
+
+    <li class="nav-item dropdown no-arrow mx-1" visible="true">
+        <a class="nav-link dropdown-toggle" id="sortDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-sort-amount-down fa-fw"></i>
+        </a>
+        <!-- Dropdown - Sort Options -->
+        <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in w-auto" aria-labelledby="sortOptionsDropdown" id="sortOptions">
+            <a class="dropdown-item d-flex align-items-center" id="sortByNew">New
+            </a>
+            <a class="dropdown-item d-flex align-items-center" id="sortByRating">Top
+            </a>
+        </div>
+    </li>
+
+    <li class="nav-item dropdown no-arrow mx-1" runat="server" visible="true">
+        <div class="nav-link" id="sort_option_text">
+            New
+        </div>
     </li>
 
 </asp:Content>

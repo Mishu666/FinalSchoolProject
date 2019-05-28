@@ -15,12 +15,9 @@ $(document).ready(function () {
     }
 
     setSortDirection(sort_dir);
-
     setSortOption(sort_option);
 
-
     updateSort();
-
     updateCommentSort();
 
 
@@ -66,7 +63,7 @@ $(document).ready(function () {
     $(".collapse_children").on("click", function (e) {
 
         let comment_card = $(this).closest(".card.comment");
-        let child_space = comment_card.find(".child_comments_space");
+        let child_space = comment_card.find(".child_comments_space").first();
         if ($(this).hasClass("fa-chevron-up")) {
             $(this).removeClass("fa-chevron-up");
             $(this).addClass("fa-chevron-down");
@@ -85,7 +82,7 @@ $(document).ready(function () {
         let post_card = $(this).closest(".card.post");
         let post_id = post_card.data("post-id");
         DeletePost(post_id, DeletePostSuccessCallback);
-        post_card.hide(200, function() {
+        post_card.hide(200, function () {
             post_card.remove();
         });
 
@@ -174,7 +171,9 @@ function updateCommentSort() {
 
 
     comment_list.sort(compareFunction);
-    if (order === "ascending") comment_list.reverse();
+    if (order === "ascending") {
+        comment_list.reverse();
+    }
 
     for (let i = 0; i < comment_list.length; i++) {
         comment_list[i].parentNode.append(comment_list[i]);
@@ -314,7 +313,7 @@ function userLoggedInSuccessCallback(data) {
             e.preventDefault();
             var parent_card = $(this).closest(".card.post");
             var post_id = parent_card.data("post-id");
-            var save_btn = parent_card.find(".save_space");
+            var save_btn = parent_card.find(".save_space").first();
 
             save_btn.toggleClass("active_action");
 
@@ -326,10 +325,10 @@ function userLoggedInSuccessCallback(data) {
             e.preventDefault();
             var parent_card = $(this).closest(".card.post");
             var post_id = parent_card.data("post-id");
-            var upvote_btn = parent_card.find(".upvote_space");
-            var downvote_btn = parent_card.find(".downvote_space");
-            var upvote_counter = parent_card.find(".upvote_counter");
-            var downvote_counter = parent_card.find(".downvote_counter");
+            var upvote_btn = parent_card.find(".upvote_space").first();
+            var downvote_btn = parent_card.find(".downvote_space").first();
+            var upvote_counter = parent_card.find(".upvote_counter").first();
+            var downvote_counter = parent_card.find(".downvote_counter").first();
 
             if (upvote_btn.hasClass("active_action")) {
                 upvote_btn.removeClass("active_action");
@@ -357,10 +356,10 @@ function userLoggedInSuccessCallback(data) {
             e.preventDefault();
             var parent_card = $(this).closest(".card.post");
             var post_id = parent_card.data("post-id");
-            var upvote_btn = parent_card.find(".upvote_space");
-            var downvote_btn = parent_card.find(".downvote_space");
-            var upvote_counter = parent_card.find(".upvote_counter");
-            var downvote_counter = parent_card.find(".downvote_counter");
+            var upvote_btn = parent_card.find(".upvote_space").first();
+            var downvote_btn = parent_card.find(".downvote_space").first();
+            var upvote_counter = parent_card.find(".upvote_counter").first();
+            var downvote_counter = parent_card.find(".downvote_counter").first();
 
             if (downvote_btn.hasClass("active_action")) {
                 downvote_btn.removeClass("active_action");
@@ -391,10 +390,10 @@ function userLoggedInSuccessCallback(data) {
             e.preventDefault();
             var parent_card = $(this).closest(".card.comment");
             var comment_id = parent_card.data("comment-id");
-            var upvote_btn = parent_card.find(".comment_upvote_space");
-            var downvote_btn = parent_card.find(".comment_downvote_space");
-            var upvote_counter = parent_card.find(".comment_upvote_counter");
-            var downvote_counter = parent_card.find(".comment_downvote_counter");
+            var upvote_btn = parent_card.find(".comment_upvote_space").first();
+            var downvote_btn = parent_card.find(".comment_downvote_space").first();
+            var upvote_counter = parent_card.find(".comment_upvote_counter").first();
+            var downvote_counter = parent_card.find(".comment_downvote_counter").first();
 
             if (upvote_btn.hasClass("active_action")) {
                 upvote_btn.removeClass("active_action");
@@ -423,10 +422,10 @@ function userLoggedInSuccessCallback(data) {
             e.preventDefault();
             var parent_card = $(this).closest(".card.comment");
             var comment_id = parent_card.data("comment-id");
-            var upvote_btn = parent_card.find(".comment_upvote_space");
-            var downvote_btn = parent_card.find(".comment_downvote_space");
-            var upvote_counter = parent_card.find(".comment_upvote_counter");
-            var downvote_counter = parent_card.find(".comment_downvote_counter");
+            var upvote_btn = parent_card.find(".comment_upvote_space").first();
+            var downvote_btn = parent_card.find(".comment_downvote_space").first();
+            var upvote_counter = parent_card.find(".comment_upvote_counter").first();
+            var downvote_counter = parent_card.find(".comment_downvote_counter").first();
 
             if (downvote_btn.hasClass("active_action")) {
                 downvote_btn.removeClass("active_action");
@@ -741,7 +740,7 @@ function updateUserInfoSuccessCallback(data) {
 
 }
 
-function updateUserInfo(username, bio, password_confirm,new_pass, new_pass_confirm, success_callback) {
+function updateUserInfo(username, bio, password_confirm, new_pass, new_pass_confirm, success_callback) {
     var data = {
         "Username": username,
         "Bio": bio,

@@ -23,7 +23,7 @@ public partial class User_Controls_CommentControl : System.Web.UI.UserControl
 
         int VoterID = Convert.ToInt32(Session["CurrentUserID"]);
         DataTable comment_votes = CommentVotesClass.GetByProperties(
-            new KeyValuePair<string, object>("VotedcommentID", CommentID),
+            new KeyValuePair<string, object>("VotedCommentID", CommentID),
             new KeyValuePair<string, object>("VoterID", VoterID)
             );
 
@@ -34,18 +34,18 @@ public partial class User_Controls_CommentControl : System.Web.UI.UserControl
 
             if (vote_val == 1)
             {
-                GlobalFunctions.AddCssClass(comment_upvote_button, "active");
+                GlobalFunctions.AddCssClass(comment_upvote_button, "active_action");
             }
             else if (vote_val == -1)
             {
-                GlobalFunctions.AddCssClass(comment_downvote_button, "active");
+                GlobalFunctions.AddCssClass(comment_downvote_button, "active_action");
 
             }
         }
         else
         {
-            GlobalFunctions.RemoveCssClass(comment_upvote_button, "active");
-            GlobalFunctions.RemoveCssClass(comment_downvote_button, "active");
+            GlobalFunctions.RemoveCssClass(comment_upvote_button, "active_action");
+            GlobalFunctions.RemoveCssClass(comment_downvote_button, "active_action");
         }
     }
 

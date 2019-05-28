@@ -23,7 +23,11 @@
                 <asp:GridView ID="UsersInPageGV" runat="server" CssClass="table table-striped"></asp:GridView>
 
             </div>
-            <div id="MoveUsersButtonSpace" class="flex-grow-1 h-100"></div>
+            <div id="MoveUsersButtonSpace" class="flex-grow-1 h-100">
+
+                <asp:Button ID="KickFromPageButton" runat="server" Text="hi" />
+
+            </div>
             <div id="UsersNotInPageSection" class="h-100 ml-3" style="width: 45% !important;"></div>
 
         </div>
