@@ -15,7 +15,10 @@ public partial class MasterPage : System.Web.UI.MasterPage
     {
         if (!IsPostBack)
         {
-            BindConsultPagesRepeater();
+            BindAllConsultPagesRepeater();
+            
+            if(Session["Logged"] != null)
+                BindMyConsultPagesRepeater();
         }
     }
 
@@ -23,11 +26,19 @@ public partial class MasterPage : System.Web.UI.MasterPage
 
     #region page methods
     
-    private void BindConsultPagesRepeater()
+    private void BindAllConsultPagesRepeater()
     {
         DataTable pages = ConsultPagesClass.GetAll();
-        ConsultPagesRepeater.DataSource = pages;
-        ConsultPagesRepeater.DataBind();
+        AllConsultPagesRepeater.DataSource = pages;
+        AllConsultPagesRepeater.DataBind();
+    }
+
+    private void BindMyConsultPagesRepeater()
+    {
+        UsersClass user = UsersClass.GetByID((int)Session["CurrentUserID"]);
+        DataTable pages = user.GetMySubscibedPages();
+        MyConsultPagesRepeater.DataSource = pages;
+        MyConsultPagesRepeater.DataBind();
     }
 
     #endregion

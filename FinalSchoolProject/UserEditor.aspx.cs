@@ -14,7 +14,7 @@ public partial class UserEditor : System.Web.UI.Page
         {
             if (Session["Logged"] == null || (bool)Session["Logged"] == false || Session["CurrentUserIsAdmin"] == null || (bool)Session["CurrentUserIsAdmin"] == false)
             {
-                Response.Redirect("Home.aspx");
+                Response.Redirect("All.aspx");
             }
 
             FillUsersGV();

@@ -704,8 +704,11 @@ public class UsersService : System.Web.Services.WebService
                 w.WarnControls.Add("EditConfirmNewPasswordInput");
                 warnings.Add(w);
                 valid = false;
-                NewPassword = user.Password;
             }
+        }
+        else 
+        {
+            NewPassword = user.Password;
         }
 
         if (string.IsNullOrWhiteSpace(PasswordConfirm))

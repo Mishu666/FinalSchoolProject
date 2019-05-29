@@ -19,7 +19,7 @@ public partial class ViewUser : System.Web.UI.Page
         {
             if (Session["Logged"] == null || (bool)Session["Logged"] == false)
             {
-                Response.Redirect("Home.aspx");
+                Response.Redirect("All.aspx");
             }
             else
             {
@@ -31,7 +31,7 @@ public partial class ViewUser : System.Web.UI.Page
             UsersClass user = UsersClass.GetByID(Convert.ToInt32(userid));
             if (user == null)
             {
-                Response.Redirect("Home.aspx");
+                Response.Redirect("All.aspx");
             }
             else
             {
@@ -106,7 +106,7 @@ public partial class ViewUser : System.Web.UI.Page
     {
         UsersClass user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
 
-        if (user == null) Response.Redirect("Home.aspx");
+        if (user == null) Response.Redirect("All.aspx");
 
         DataTable user_messages = MessagesClass.GetByProperties(new KeyValuePair<string, object>("RecipientID", user.ID));
 
@@ -122,7 +122,7 @@ public partial class ViewUser : System.Web.UI.Page
         UsersClass current_user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
 
 
-        if (current_user == null) Response.Redirect("Home.aspx");
+        if (current_user == null) Response.Redirect("All.aspx");
 
         DataTable conversation = current_user.GetConversationWith(user.ID);
 

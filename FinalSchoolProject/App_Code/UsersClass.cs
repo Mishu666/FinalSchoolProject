@@ -209,6 +209,22 @@ public class UsersClass
 
     }
 
+    public DataTable GetMySubscibedPages()
+    {
+
+        string sql = "SELECT * FROM [ConsultPages] WHERE [ID] IN (SELECT [SubscribedPageID] FROM [Subscribtions] WHERE [SubscriberID]=" + this.ID + ")";
+        return Dbase.SelectFromTable(sql);
+
+    }
+
+    public DataTable GetUserSubscribedPosts()
+    {
+
+        string sql = "SELECT * FROM [Posts] WHERE [ConsultPageID] IN (SELECT [SubscribedPageID] FROM [Subscribtions] WHERE [SubscriberID]=" + this.ID + ")";
+        return Dbase.SelectFromTable(sql);
+
+    }
+
     public DataTable GetUserPosts()
     {
         string sql = "SELECT * FROM [Posts] WHERE [AuthorID]=" + this.ID;

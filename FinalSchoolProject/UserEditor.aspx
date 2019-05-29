@@ -13,7 +13,7 @@
     <div id="content_space" class="overflow-hidden d-flex flex-row h-100 py-3 px-4">
 
         <asp:GridView ID="UsersGV" BorderWidth="0" runat="server" AutoGenerateColumns="false" CssClass="table w-100" style="table-layout: fixed !important;" 
-            GridLines="None" HeaderStyle-CssClass="thead-dark" AlternatingRowStyle-CssClass="bg-gray-400" AllowPaging="true" PageSize="2" PagerSettings-FirstPageText="First"
+            GridLines="None" HeaderStyle-CssClass="thead-dark" AlternatingRowStyle-CssClass="bg-gray-400" AllowPaging="true" PageSize="15" PagerSettings-FirstPageText="First"
             PagerSettings-LastPageText="Last" PagerSettings-Mode="NumericFirstLast" PagerSettings-Position="Bottom" PagerSettings-PageButtonCount="5"
             OnPageIndexChanging="UsersGV_PageIndexChanging">
             <Columns>

@@ -143,6 +143,7 @@ public class PostsClass
         if (obj == null || obj.Rows.Count == 0) return null;
         else return FromDataRow(obj.Rows[0]);
     }
+
     public static DataTable GetByProperties(params KeyValuePair<string, object>[] pairs)
     {
         string sql_str = "SELECT * FROM [Posts]";

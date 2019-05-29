@@ -172,6 +172,7 @@
                     {
                 %>
 
+                <span class="font-weight-bold text-lg-center">Points: <%= user.Points %></span>
                 <p class="card-text"><%= user.Bio %></p>
 
                 <%
@@ -191,15 +192,9 @@
                 </div>
 
                 <div class="input-group mb-3">
-                    <textarea id="EditBioInput" class="form-control" placeholder="Username" aria-label="Username" rows="5"
+                    <textarea id="EditBioInput" class="form-control" placeholder="Username" aria-label="Username" rows="3"
                         data-default-value="<%= user.Bio %>" aria-describedby="basic-addon-username"><%= user.Bio %></textarea>
                 </div>
-
-                <%--                <div class="custom-control custom-switch mb-3">
-                    <input type="checkbox" class="custom-control-input" id="EditIsPrivateSwitch"
-                        data-default-value="<%= user.IsPrivate %>" checked="<%= user.IsPrivate %>">
-                    <label class="custom-control-label" for="EditIsPrivateSwitch">Private</label>
-                </div>--%>
 
                 <div class="input-group mb-3">
                     <input id="EditNewPasswordInput" type="password" class="form-control" placeholder="New password"
