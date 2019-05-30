@@ -14,7 +14,7 @@
                 if (Session["Logged"] != null && (bool)Session["Logged"] == true)
                 {
 
-                    UsersClass current_user = UsersClass.GetByID(post.AuthorID);
+                    UsersClass current_user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
             %>
 
             <div class="dropdown no-arrow">

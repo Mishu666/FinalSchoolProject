@@ -91,7 +91,7 @@ $(document).ready(function () {
 
 });
 
-//-----------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------------
 
 function sort_by_rating(a, b) {
 
@@ -116,6 +116,8 @@ function sort_by_name(a, b) {
     return a.innerHTML.toLowerCase().localeCompare(b.innerHTML.toLowerCase());
 }
 
+//----------------------------------------------------------------------------------------------------------------------------
+
 function setSortOption(new_option) {
 
     window.sessionStorage.setItem("sort_option", new_option.toLowerCase());
@@ -139,6 +141,8 @@ function setSortDirection(new_dir) {
 
 
 }
+
+//----------------------------------------------------------------------------------------------------------------------------
 
 function updateSort() {
     let post_list = $(".post").get();
@@ -180,7 +184,7 @@ function updateCommentSort() {
     }
 }
 
-//---------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------------
 
 function userLoggedInSuccessCallback(data) {
 
@@ -480,10 +484,25 @@ function userLoggedInSuccessCallback(data) {
     }
 }
 
-//--------------------------------------------------------------------------------------------
+function userLoggedIn(success_callback) {
 
-function downvoteSuccess(data) {
+    let data = {};
+
+    $.ajax({
+        method: "POST",
+        data: JSON.stringify(data),
+        dataType: "json",
+        contentType: "application/json; charset=utf-8 ",
+        url: "UsersService.asmx/UserLoggedIn",
+        error: function (r) {
+            console.log("error");
+            console.log(r.responseText);
+        },
+        success: success_callback
+    });
 }
+
+//----------------------------------------------------------------------------------------------------------------------------
 
 function upvoteSuccess(data) {
 
@@ -510,6 +529,11 @@ function Upvote(postID, success_callback) {
 
 }
 
+//----------------------------------------------------------------------------------------------------------------------------
+
+function downvoteSuccess(data) {
+}
+
 function Downvote(postID, success_callback) {
 
     var data = { "PostID": postID };
@@ -531,71 +555,10 @@ function Downvote(postID, success_callback) {
 
 }
 
-//-----------------------------------------------------------------------------------------
-
-function commentDownvoteSuccess(data) {
-    console.log(data.d);
-}
+//----------------------------------------------------------------------------------------------------------------------------
 
 function commentUpvoteSuccess(data) {
     console.log(data.d);
-}
-
-function createPostSuccess(data) {
-    let warnings = data.d;
-
-    for (let w of warnings) {
-        console.log(w);
-        let warning = createWarning(w.Text);
-        $("#add_post_warning_space").append(warning);
-        for (let wc of w.WarnControls) {
-            $("#" + wc).addClass("border-danger");
-
-        }
-    }
-
-    if (warnings.length === 0) {
-        console.log("added successfully");
-        window.location.reload();
-    }
-}
-
-function createNewCommentSuccess(data) {
-    let warnings = data.d;
-
-    for (let w of warnings) {
-        console.log(w);
-        let warning = createWarning(w.Text);
-        $("#add_comment_warning_space").append(warning);
-        for (let wc of w.WarnControls) {
-            $("#" + wc).addClass("border-danger");
-
-        }
-    }
-
-    if (warnings.length === 0) {
-        console.log("added successfully");
-        window.location.reload();
-    }
-}
-
-function createCommentReplySuccess(data) {
-    let warnings = data.d;
-
-    for (let w of warnings) {
-        console.log(w);
-        let warning = createWarning(w.Text);
-        $(".add_reply_warning_space").append(warning);
-        for (let wc of w.WarnControls) {
-            $("." + wc).addClass("border-danger");
-
-        }
-    }
-
-    if (warnings.length === 0) {
-        console.log("added successfully");
-        window.location.reload();
-    }
 }
 
 function CommentUpvote(commentID, success_callback) {
@@ -616,6 +579,12 @@ function CommentUpvote(commentID, success_callback) {
 
     });
 
+}
+
+//----------------------------------------------------------------------------------------------------------------------------
+
+function commentDownvoteSuccess(data) {
+    console.log(data.d);
 }
 
 function CommentDownvote(commentID, success_callback) {
@@ -641,6 +610,25 @@ function CommentDownvote(commentID, success_callback) {
 
 //----------------------------------------------------------------------------------------------------------------------------
 
+function createPostSuccess(data) {
+    let warnings = data.d;
+
+    for (let w of warnings) {
+        console.log(w);
+        let warning = createWarning(w.Text);
+        $("#add_post_warning_space").append(warning);
+        for (let wc of w.WarnControls) {
+            $("#" + wc).addClass("border-danger");
+
+        }
+    }
+
+    if (warnings.length === 0) {
+        console.log("added successfully");
+        window.location.reload();
+    }
+}
+
 function createPost(title, body, pageID, success_callback) {
     var data = { "title": title, "Body": body, "PageID": pageID };
 
@@ -660,24 +648,51 @@ function createPost(title, body, pageID, success_callback) {
     });
 }
 
-//function reportPost(postID, success_callback) {
-//    var data = { "PostID": postID };
+//----------------------------------------------------------------------------------------------------------------------------
 
-//    $.ajax({
+function reportPostSuccessCallback(data) {
 
-//        method: "POST",
-//        data: JSON.stringify(data),
-//        dataType: "json",
-//        contentType: "application/json; charset=utf-8 ",
-//        url: "UsersService.asmx/Downvote",
-//        error: function (r) {
-//            console.log("error");
-//            console.log(r.responseText);
-//        },
-//        success: success_callback
+}
 
-//    });
-//}
+function reportPost(postID, body, success_callback) {
+    var data = { "PostID": postID, "reportBody": body };
+
+    $.ajax({
+
+        method: "POST",
+        data: JSON.stringify(data),
+        dataType: "json",
+        contentType: "application/json; charset=utf-8 ",
+        url: "UsersService.asmx/ReportPost",
+        error: function (r) {
+            console.log("error");
+            console.log(r.responseText);
+        },
+        success: success_callback
+
+    });
+}
+
+//----------------------------------------------------------------------------------------------------------------------------
+
+function createNewCommentSuccess(data) {
+    let warnings = data.d;
+
+    for (let w of warnings) {
+        console.log(w);
+        let warning = createWarning(w.Text);
+        $("#add_comment_warning_space").append(warning);
+        for (let wc of w.WarnControls) {
+            $("#" + wc).addClass("border-danger");
+
+        }
+    }
+
+    if (warnings.length === 0) {
+        console.log("added successfully");
+        window.location.reload();
+    }
+}
 
 function createNewComment(body, post_id, success_callback) {
     var data = { "Body": body, "ParentPostID": post_id };
@@ -696,6 +711,27 @@ function createNewComment(body, post_id, success_callback) {
         success: success_callback
 
     });
+}
+
+//----------------------------------------------------------------------------------------------------------------------------
+
+function createCommentReplySuccess(data) {
+    let warnings = data.d;
+
+    for (let w of warnings) {
+        console.log(w);
+        let warning = createWarning(w.Text);
+        $(".add_reply_warning_space").append(warning);
+        for (let wc of w.WarnControls) {
+            $("." + wc).addClass("border-danger");
+
+        }
+    }
+
+    if (warnings.length === 0) {
+        console.log("added successfully");
+        window.location.reload();
+    }
 }
 
 function createCommentReply(body, parent_comment_id, success_callback) {
@@ -717,7 +753,7 @@ function createCommentReply(body, parent_comment_id, success_callback) {
     });
 }
 
-//-------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------------
 
 function updateUserInfoSuccessCallback(data) {
 
@@ -765,7 +801,7 @@ function updateUserInfo(username, bio, password_confirm, new_pass, new_pass_conf
     });
 }
 
-//-------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------------
 
 function SavePostSuccessCallback(data) {
 
@@ -791,7 +827,7 @@ function SavePost(post_id, success_callback) {
     });
 }
 
-//-------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------------
 
 function DeletePostSuccessCallback(data) {
 
@@ -819,7 +855,7 @@ function DeletePost(post_id, success_callback) {
 
 }
 
-//-------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------------
 
 function viewPostPage(ID) {
     if (!window.location.toString().includes("ViewPost")) {

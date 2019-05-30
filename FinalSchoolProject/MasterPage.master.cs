@@ -17,7 +17,7 @@ public partial class MasterPage : System.Web.UI.MasterPage
         {
             BindAllConsultPagesRepeater();
             
-            if(Session["Logged"] != null)
+            if(Session["Logged"] != null && (bool)Session["Logged"])
                 BindMyConsultPagesRepeater();
         }
     }
@@ -35,7 +35,8 @@ public partial class MasterPage : System.Web.UI.MasterPage
 
     private void BindMyConsultPagesRepeater()
     {
-        UsersClass user = UsersClass.GetByID((int)Session["CurrentUserID"]);
+        int user_id = Convert.ToInt32(Session["CurrentUserID"]);
+        UsersClass user = UsersClass.GetByID(user_id);
         DataTable pages = user.GetMySubscibedPages();
         MyConsultPagesRepeater.DataSource = pages;
         MyConsultPagesRepeater.DataBind();

@@ -12,6 +12,7 @@ public partial class ConsultPage : System.Web.UI.Page
     {
         if (!IsPostBack)
         {
+
             object page_id_obj = Request.QueryString["page-id"];
             if (page_id_obj == null) Response.Redirect("All.aspx");
             else

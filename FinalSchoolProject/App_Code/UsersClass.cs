@@ -16,17 +16,13 @@ public class UsersClass
     public DateTime DOB, CreationDate;
     public bool IsAdmin, IsSuspended;
 
-    #region constructors
-
     protected UsersClass()
     {
 
     }
 
-    protected UsersClass(int ID, int Flags, int Points,
-        string Username, string Password, string ProfilePictureDir, string Bio,
-        DateTime DOB, DateTime CreationDate,
-        bool IsAdmin, bool IsSuspended)
+    protected UsersClass(int ID, int Flags, int Points, string Username, string Password, string ProfilePictureDir,
+                         string Bio, DateTime DOB, DateTime CreationDate, bool IsAdmin, bool IsSuspended)
     {
         this.ID = ID;
         this.Flags = Flags;
@@ -81,10 +77,6 @@ public class UsersClass
 
     }
 
-    #endregion
-
-    #region sql functions
-
     protected void Insert()
     {
         if (ID != 0)
@@ -126,10 +118,6 @@ public class UsersClass
         string sql_str = "DELETE FROM [Users] WHERE [ID]=" + this.ID;
         Dbase.ChangeTable(sql_str);
     }
-
-    #endregion
-
-    #region select functions
 
     public static DataTable GetAll()
     {
@@ -190,10 +178,6 @@ public class UsersClass
         return FromDataRow(user_dt.Rows[0]);
     }
 
-    #endregion
-
-    #region utility functions
-
     public static bool UserNameTaken(string username)
     {
         string sql_str = "SELECT * FROM [Users] WHERE [Username]='{0}'";
@@ -207,6 +191,13 @@ public class UsersClass
         UsersClass user = GetByCredentials(username, password);
         return user != null;
 
+    }
+
+    public bool IsSubscribedTo(int PageID)
+    {
+        string sql = "SELECT * FROM [Subscribtions] WHERE [SubscribedPageID]=" + PageID + " AND [SubscriberID]=" + this.ID;
+        DataTable dt = Dbase.SelectFromTable(sql);
+        return dt.Rows.Count > 0;
     }
 
     public DataTable GetMySubscibedPages()
@@ -264,5 +255,4 @@ public class UsersClass
 
     }
 
-    #endregion
 }

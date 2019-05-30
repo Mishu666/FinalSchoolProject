@@ -49,7 +49,6 @@ public partial class ViewUser : System.Web.UI.Page
 
             if (view_user.ID == current_user.ID) //User viewing his own profile
             {
-                EditUserButton.Visible = true;
                 ProfileMyPostsTab.Visible = true;
                 ProfileSavedPostsTab.Visible = true;
                 ProfileDownvotedPostsTab.Visible = true;

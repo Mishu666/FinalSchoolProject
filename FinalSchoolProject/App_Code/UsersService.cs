@@ -413,9 +413,47 @@ public class UsersService : System.Web.Services.WebService
 
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
         PostsClass post = PostsClass.GetByID(PostID);
+        UsersClass author = UsersClass.GetByID(post.AuthorID);
 
-        //CONTINUE
+        author.Points -= 20;
+        author.Flags += 1;
+        author.Update();
 
+        PostReportsClass.CreateNew(userID, PostID, reportBody);
+    }
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public List<Warning> ValidateAndReportPost(int PostID, string reportBody)
+    {
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        List<Warning> warnings = new List<Warning>();
+        PostsClass reported_post = PostsClass.GetByID(PostID);
+        bool valid = true;
+
+        if (string.IsNullOrWhiteSpace(reportBody))
+        {
+            warnings.Add(new Warning("addPostTitle", "Report cannot be empty"));
+            valid = false;
+        }
+
+        if (reported_post == null)
+        {
+            valid = false;
+        }
+
+        if (valid)
+        {
+            ReportPost(PostID, reportBody);
+        }
+
+        return warnings;
     }
 
     //------------------------------------------------------------------------------------------------------------

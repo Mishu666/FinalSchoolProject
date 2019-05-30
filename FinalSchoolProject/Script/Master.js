@@ -40,11 +40,7 @@ $(document).ready(function () {
 
 });
 
-//----------------------------------------------------------------------------------------------------------
-
-function logoutUserSuccess(data) {
-    window.location.reload(false);
-}
+//----------------------------------------------------------------------------------------------------------------------------
 
 function validateAndLoginSuccess(data) {
     let warnings = data.d;
@@ -63,6 +59,29 @@ function validateAndLoginSuccess(data) {
         window.location.reload();
     }
 }
+
+function validateAndLogin(success_callback) {
+    let username = $("#loginInputUsername").val().trim();
+    let password = $("#loginInputPassword").val().trim();
+
+    let data = { "username": username, "password": password };
+
+    $.ajax({
+        method: "POST",
+        data: JSON.stringify(data),
+        dataType: "json",
+        contentType: "application/json; charset=utf-8 ",
+        url: "UsersService.asmx/ValidateAndLogin",
+        error: function (r) {
+            console.log("error");
+            console.log(r.responseText);
+        },
+        success: success_callback
+    });
+
+}
+
+//----------------------------------------------------------------------------------------------------------------------------
 
 function validateAndSignupSuccess(data) {
 
@@ -84,8 +103,6 @@ function validateAndSignupSuccess(data) {
     }
 
 }
-
-//----------------------------------------------------------------------------------------------------------
 
 function validateAndSignup(success_callback) {
 
@@ -111,43 +128,11 @@ function validateAndSignup(success_callback) {
 
 }
 
-function validateAndLogin(success_callback) {
-    let username = $("#loginInputUsername").val().trim();
-    let password = $("#loginInputPassword").val().trim();
 
-    let data = { "username": username, "password": password };
+//----------------------------------------------------------------------------------------------------------------------------
 
-    $.ajax({
-        method: "POST",
-        data: JSON.stringify(data),
-        dataType: "json",
-        contentType: "application/json; charset=utf-8 ",
-        url: "UsersService.asmx/ValidateAndLogin",
-        error: function (r) {
-            console.log("error");
-            console.log(r.responseText);
-        },
-        success: success_callback
-    });
-
-}
-
-function userLoggedIn(success_callback) {
-
-    let data = {};
-
-    $.ajax({
-        method: "POST",
-        data: JSON.stringify(data),
-        dataType: "json",
-        contentType: "application/json; charset=utf-8 ",
-        url: "UsersService.asmx/UserLoggedIn",
-        error: function (r) {
-            console.log("error");
-            console.log(r.responseText);
-        },
-        success: success_callback
-    });
+function logoutUserSuccess(data) {
+    window.location.reload(false);
 }
 
 function logoutUser(success_callback) {
@@ -168,7 +153,7 @@ function logoutUser(success_callback) {
     });
 }
 
-//----------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------------
 
 function clearLoginWarnings() {
     $("#login_warning_space .alert").remove();
@@ -189,6 +174,8 @@ function clearSignupModal() {
     $(".signup_textbox").val("");
     clearSignupWarnings();
 }
+
+//----------------------------------------------------------------------------------------------------------------------------
 
 function createWarning(message) {
     let warning = document.createElement("div");

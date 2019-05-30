@@ -42,7 +42,7 @@
         </div>
     </li>
 
-    <li class="nav-item dropdown no-arrow mx-1" runat="server" visible="true">
+    <li class="nav-item dropdown no-arrow mx-1">
         <div class="nav-link" id="sort_option_text">
             New
         </div>
@@ -93,9 +93,33 @@
                 <h1 class="card-header"><%= page.PageName %></h1>
                 <div class="card-body">
                     <div class="card-text">
-                        <%= page.Describtion %>
+                        <%= page.Description %>
                     </div>
                 </div>
+
+                <%
+                    if (Session["Logged"] != null && (bool)Session["Logged"])
+                    {
+                        UsersClass current_user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
+                        if (!current_user.IsSubscribedTo(page.ID))
+                        {
+                %>
+
+                <button id="SubscribeButton" type="button" class="btn btn-primary my-3">Subscribe</button>
+                
+                <%
+                        }
+                        else
+                        {
+                %>
+                
+                <button id="UnsubscribeButton" type="button" class="btn btn-secondary my-3">Unsubscribe</button>
+
+                <%
+                        }
+                    }
+                %>
+
                 <div class="card-footer text-md-center">
                     <%= page.SubscriberCount %> members
                 </div>

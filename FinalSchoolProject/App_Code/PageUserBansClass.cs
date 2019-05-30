@@ -11,9 +11,8 @@ public class NotificationsClass
 {
 
     public int ID { get; protected set; }
-    public int UserID;
-    public string NotificationText;
-    public DateTime NotificationDate;
+    public int BannedUserID,PageID;
+    public DateTime BanDate;
 
     #region constructors
 
@@ -22,13 +21,13 @@ public class NotificationsClass
 
     }
 
-    protected NotificationsClass(int ID, int UserID,
-        string NotificationText, DateTime NotificationDate)
+    protected NotificationsClass(int ID, int BannedUserID,
+        int PageID, DateTime BanDate)
     {
         this.ID = ID;
-        this.UserID = UserID;
-        this.NotificationText = NotificationText;
-        this.NotificationDate = NotificationDate;
+        this.BannedUserID = BannedUserID;
+        this.PageID = PageID;
+        this.BanDate = BanDate;
     }
 
     public static NotificationsClass FromDataRow(DataRow dr)
@@ -37,20 +36,20 @@ public class NotificationsClass
         NotificationsClass obj = new NotificationsClass
         {
             ID = Convert.ToInt32(dr["ID"]),
-            UserID = Convert.ToInt32(dr["UserID"]),
-            NotificationText = dr["NotificationText"].ToString(),
-            NotificationDate = Convert.ToDateTime(dr["NotificationDate"])
+            BannedUserID = Convert.ToInt32(dr["UserID"]),
+            PageID = Convert.ToInt32(dr["PageID"]),
+            BanDate = Convert.ToDateTime(dr["BanDate"])
         };
         return obj;
     }
 
-    public static NotificationsClass CreateNew(int UserID, string NotificationText)
+    public static NotificationsClass CreateNew(int UserID, int PageID)
     {
         NotificationsClass post = new NotificationsClass
         {
-            UserID = UserID,
-            NotificationText = NotificationText,
-            NotificationDate = DateTime.Now
+            BannedUserID = UserID,
+            PageID = PageID,
+            BanDate = DateTime.Now
         };
 
         post.Insert();
@@ -69,10 +68,10 @@ public class NotificationsClass
         }
 
         string sql_str = "INSERT INTO [SavedPosts] " +
-            "([UserID], [NotificationText], [NotificationDate]) " +
-            "VALUES ({0}, '{1}', #{2}#)";
+            "([BannedUserID], [PageID], [BanDate]) " +
+            "VALUES ({0}, {1}, #{2}#)";
 
-        sql_str = string.Format(sql_str, this.UserID, this.NotificationText, this.NotificationDate);
+        sql_str = string.Format(sql_str, this.BannedUserID, this.PageID, this.BanDate);
         Dbase.ChangeTable(sql_str);
 
         string get_id = "SELECT @@IDENTITY AS ID";
@@ -85,9 +84,9 @@ public class NotificationsClass
     public void Update()
     {
         string sql_str = "UPDATE [SavedPosts] " +
-            "SET [UserID]={0}, [NotificationText]='{1}', [NotificationDate]=#{2}#";
+            "SET [BannedUserID]={0}, [PageID]={1}, [BanDate]=#{2}#";
         sql_str += " WHERE [ID]=" + this.ID;
-        sql_str = string.Format(sql_str, this.UserID, this.NotificationText, this.NotificationDate);
+        sql_str = string.Format(sql_str, this.BannedUserID, this.PageID, this.BanDate);
         Dbase.ChangeTable(sql_str);
     }
 

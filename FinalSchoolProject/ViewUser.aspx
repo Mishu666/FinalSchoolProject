@@ -34,7 +34,7 @@
         </div>
     </li>
 
-    <li class="nav-item dropdown no-arrow mx-1" runat="server" visible="true">
+    <li class="nav-item dropdown no-arrow mx-1">
         <div class="nav-link" id="sort_option_text">
             New
         </div>
@@ -46,6 +46,7 @@
     <div id="content_space" class="overflow-hidden d-flex flex-row h-100 py-3 px-4">
 
         <% UsersClass user = UsersClass.GetByID(Convert.ToInt32(ViewState["ViewUserID"])); %>
+        <% UsersClass current_user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUser"])); %>
 
         <div id="main_space" class="card shadow-sm d-flex flex-column w-75 h-100 p-3">
 
@@ -179,9 +180,18 @@
                     }
                 %>
 
-                <button id="EditUserButton" runat="server" visible="false" type="button" class="EditUserButton btn btn-primary">
+                <% 
+                    if (current_user != null && current_user.ID == user.ID)
+                    {
+                %>
+
+                <button id="EditUserButton" type="button" class="btn btn-primary">
                     Edit<i class="far fa-edit ml-2"></i>
                 </button>
+
+                <%
+                    }
+                %>
 
             </div>
             <div class="card-body" id="edit_user_view" style="display: none;">
