@@ -46,7 +46,7 @@
     <div id="content_space" class="overflow-hidden d-flex flex-row h-100 py-3 px-4">
 
         <% UsersClass user = UsersClass.GetByID(Convert.ToInt32(ViewState["ViewUserID"])); %>
-        <% UsersClass current_user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUser"])); %>
+        <% UsersClass current_user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"])); %>
 
         <div id="main_space" class="card shadow-sm d-flex flex-column w-75 h-100 p-3">
 
@@ -174,7 +174,7 @@
                 %>
 
                 <span class="font-weight-bold text-lg-center">Points: <%= user.Points %></span>
-                <p class="card-text"><%= user.Bio %></p>
+                <div class="card-text"><%= user.Bio %></div>
 
                 <%
                     }
@@ -185,25 +185,23 @@
                     {
                 %>
 
-                <button id="EditUserButton" type="button" class="btn btn-primary">
+                <button id="EditUserButton" type="button" class="btn btn-primary mt-3">
                     Edit<i class="far fa-edit ml-2"></i>
                 </button>
 
                 <%
                     }
                 %>
-
             </div>
             <div class="card-body" id="edit_user_view" style="display: none;">
 
                 <div class="input-group mb-3">
                     <input id="EditUsernameInput" type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon-username"
-                        value="<%= user.Username %>" data-default-value="<%= user.Username %>">
+                        value="<%= user.Username %>">
                 </div>
 
-                <div class="input-group mb-3">
-                    <textarea id="EditBioInput" class="form-control" placeholder="Username" aria-label="Username" rows="3"
-                        data-default-value="<%= user.Bio %>" aria-describedby="basic-addon-username"><%= user.Bio %></textarea>
+                <div class="input-group mb-3 EditableAreaSpace">
+                    <div id="EditBioInput" class="form-control EditableArea" aria-describedby="basic-addon-username"><%= user.Bio %></div>
                 </div>
 
                 <div class="input-group mb-3">

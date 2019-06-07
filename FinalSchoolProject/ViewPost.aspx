@@ -5,6 +5,8 @@
     <script type="text/javascript" src="Script/post_actions.js"></script>
     <link rel="stylesheet" href="Style/post_actions.css" />
 
+    <script type="text/javascript" src="Script/ViewPost.js"></script>
+
 </asp:Content>
 
 <asp:Content ID="navbar_content" ContentPlaceHolderID="nav_items_cph" runat="server">
@@ -61,8 +63,8 @@
         <div class="card shadow-sm w-100 mb-3 hidden_comment" id="hidden_comment_card" style="display: none;">
             <div class="card-body">
 
-                <div class="input-group mb-3">
-                    <textarea id="addCommentBody" class="form-control" placeholder="Comment body"></textarea>
+                <div class="EditableAreaSpace mb-3">
+                    <div id="addCommentBody" class="EditableArea"></div>
                 </div>
 
                 <div id="add_comment_warning_space" class="w-100"></div>

@@ -88,7 +88,7 @@
             </div>
         </div>
 
-        <div id="page_info_space" class="ml-5 d-flex flex-column h-100 w-25">
+        <div id="page_info_space" class="ml-5 d-flex flex-column h-100" style="width: 30% !important;">
             <div class="card shadow-sm h-100">
                 <h1 class="card-header"><%= page.PageName %></h1>
                 <div class="card-body">

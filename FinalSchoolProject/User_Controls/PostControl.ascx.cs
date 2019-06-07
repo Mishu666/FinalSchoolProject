@@ -4,6 +4,7 @@ using System.Linq;
 using System.Data;
 using System.Web;
 using System.Web.UI;
+using System.IO;
 using System.Web.UI.WebControls;
 
 public partial class User_Controls_PostControl : System.Web.UI.UserControl

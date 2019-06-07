@@ -13,7 +13,7 @@ public class CommentsClass
     public int CommentorID, ParentPostID, UpvoteCount, DownvoteCount;
     public string Body;
     public DateTime CreationDate;
-    public bool IsRemoved, IsDeleted;
+    public bool IsRemoved, IsDeleted, IsEdited;
 
 
     #region constructors
@@ -25,7 +25,7 @@ public class CommentsClass
 
     protected CommentsClass(int ID, string Body,
         int CommentorID, int ParentPostID,
-        DateTime CreationDate, bool IsRemoved, bool IsDeleted)
+        DateTime CreationDate, bool IsRemoved, bool IsDeleted, bool IsEdited)
     {
         this.ID = ID;
         this.Body = Body;
@@ -34,6 +34,7 @@ public class CommentsClass
         this.CreationDate = CreationDate;
         this.IsRemoved = IsRemoved;
         this.IsDeleted = IsDeleted;
+        this.IsEdited = IsEdited;
     }
 
     public static CommentsClass FromDataRow(DataRow dr)
@@ -48,6 +49,7 @@ public class CommentsClass
             CreationDate = Convert.ToDateTime(dr["CreationDate"]),
             IsRemoved = Convert.ToBoolean(dr["IsRemoved"]),
             IsDeleted = Convert.ToBoolean(dr["IsDeleted"]),
+            IsEdited = Convert.ToBoolean(dr["IsEdited"]),
             DownvoteCount = Convert.ToInt32(dr["DownvoteCount"]),
             UpvoteCount = Convert.ToInt32(dr["UpvoteCount"])
 
@@ -66,7 +68,8 @@ public class CommentsClass
             ParentPostID = ParentPostID,
             CreationDate = DateTime.Now,
             IsRemoved = false,
-            IsDeleted = false
+            IsDeleted = false,
+            IsEdited = false
         };
 
         comment.Insert();
@@ -88,10 +91,10 @@ public class CommentsClass
 
         sql_str = "INSERT INTO [Comments] " +
             "([Body], [CommentorID], [ParentPostID], " +
-            "[UpvoteCount], [DownvoteCount], [CreationDate], [IsRemoved], [IsDeleted]) " +
-            "VALUES ('{0}',{1}, {2}, {3}, {4}, #{5}#, {6}, {7}) ";
+            "[UpvoteCount], [DownvoteCount], [CreationDate], [IsRemoved], [IsDeleted], [IsEdited]) " +
+            "VALUES ('{0}',{1}, {2}, {3}, {4}, #{5}#, {6}, {7}, {8}) ";
         sql_str = string.Format(sql_str, this.Body, this.CommentorID, this.ParentPostID,
-            this.UpvoteCount, this.DownvoteCount, this.CreationDate, this.IsRemoved, this.IsDeleted);
+            this.UpvoteCount, this.DownvoteCount, this.CreationDate, this.IsRemoved, this.IsDeleted, this.IsEdited);
 
         Dbase.ChangeTable(sql_str);
 
@@ -109,10 +112,10 @@ public class CommentsClass
         sql_str = "UPDATE [Comments] " +
             "SET [Body] = '{0}', [CommentorID] = {1}, [UpvoteCount] = {2}, [DownvoteCount] = {3}," +
             "[ParentPostID] = {4},[CreationDate] = #{5}#," +
-            "[IsRemoved] = {6}, [IsDeleted] = {7}";
+            "[IsRemoved] = {6}, [IsDeleted] = {7}, [IsEdited] = {8}";
         sql_str += " WHERE [ID]=" + this.ID;
         sql_str = string.Format(sql_str, this.Body, this.CommentorID, this.UpvoteCount, this.DownvoteCount,
-            this.ParentPostID, this.CreationDate, this.IsRemoved, this.IsDeleted);
+            this.ParentPostID, this.CreationDate, this.IsRemoved, this.IsDeleted, this.IsEdited);
 
         Dbase.ChangeTable(sql_str);
     }

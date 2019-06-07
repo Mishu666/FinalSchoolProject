@@ -12,7 +12,7 @@ public class PostsClass
     public int ID { get; protected set; }
     public int ConsultPageID, AuthorID, UpvoteCount, DownvoteCount, CommentCount;
     public string Title, Body;
-    public bool IsLocked, IsRemoved, IsDeleted;
+    public bool IsLocked, IsRemoved, IsDeleted, IsEdited;
     public DateTime CreationDate;
 
 
@@ -24,7 +24,7 @@ public class PostsClass
     }
 
     protected PostsClass(int ID, int ConsultPageID, int AuthorID, int UpvoteCount, int DownvoteCount, int CommentCount,
-        string Title, string Body, bool IsLocked, bool IsRemoved, bool IsDeleted, DateTime CreationDate)
+        string Title, string Body, bool IsLocked, bool IsRemoved, bool IsDeleted, bool IsEdited, DateTime CreationDate)
     {
         this.ID = ID;
         this.ConsultPageID = ConsultPageID;
@@ -37,6 +37,7 @@ public class PostsClass
         this.IsLocked = IsLocked;
         this.IsRemoved = IsRemoved;
         this.IsDeleted = IsDeleted;
+        this.IsEdited = IsEdited;
         this.CreationDate = CreationDate;
     }
 
@@ -56,6 +57,7 @@ public class PostsClass
             IsLocked = Convert.ToBoolean(dr["IsLocked"]),
             IsRemoved = Convert.ToBoolean(dr["IsRemoved"]),
             IsDeleted = Convert.ToBoolean(dr["IsDeleted"]),
+            IsEdited = Convert.ToBoolean(dr["IsEdited"]),
             CreationDate = Convert.ToDateTime(dr["CreationDate"])
         };
         return obj;
@@ -74,6 +76,7 @@ public class PostsClass
             Body = Body,
             IsLocked = false,
             IsDeleted = false,
+            IsEdited = false,
             IsRemoved = false,
             CreationDate = DateTime.Now
         };
@@ -94,12 +97,12 @@ public class PostsClass
 
         string sql_str = "INSERT INTO [Posts] " +
             "([ConsultPageID], [AuthorID], [UpvoteCount], [DownvoteCount], [CommentCount], [Title], [Body], " +
-            "[IsLocked], [IsRemoved],[IsDeleted], [CreationDate]) " +
-            "VALUES ({0}, {1}, {2}, {3}, {4}, '{5}', '{6}', {7}, {8},{9}, #{10}#) ";
+            "[IsLocked], [IsRemoved],[IsDeleted],[IsEdited], [CreationDate]) " +
+            "VALUES ({0}, {1}, {2}, {3}, {4}, '{5}', '{6}', {7}, {8},{9},{10}, #{11}#) ";
 
         sql_str = string.Format(sql_str, this.ConsultPageID, this.AuthorID,
             this.UpvoteCount, this.DownvoteCount, this.CommentCount, this.Title, this.Body, this.IsLocked,
-            this.IsRemoved,this.IsDeleted, this.CreationDate);
+            this.IsRemoved,this.IsDeleted, this.IsEdited, this.CreationDate);
         Dbase.ChangeTable(sql_str);
 
         string get_id = "SELECT @@IDENTITY AS ID";
@@ -114,11 +117,11 @@ public class PostsClass
         string sql_str = "UPDATE [Posts] " +
             "SET [ConsultPageID] = {0}, [AuthorID] = {1}, " +
             "[UpvoteCount] = {2}, [DownvoteCount] = {3}, [CommentCount] = {4}, [Title] = '{5}', [Body] = '{6}', " +
-            "[IsLocked] = {7}, [IsRemoved] = {8}, [IsDeleted]={9}, [CreationDate] = #{10}#";
+            "[IsLocked] = {7}, [IsRemoved] = {8}, [IsDeleted]={9},[IsEdited] = {10}, [CreationDate] = #{11}#";
         sql_str += " WHERE [ID]=" + this.ID;
         sql_str = string.Format(sql_str, this.ConsultPageID, this.AuthorID,
             this.UpvoteCount, this.DownvoteCount, this.CommentCount, this.Title, this.Body, this.IsLocked,
-            this.IsRemoved,this.IsDeleted, this.CreationDate);
+            this.IsRemoved,this.IsDeleted, this.IsEdited, this.CreationDate);
         Dbase.ChangeTable(sql_str);
     }
 

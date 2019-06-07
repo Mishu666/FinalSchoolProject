@@ -6,6 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Consult</title>
+
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/jquery/jquery.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.js"></script>
@@ -16,122 +17,131 @@
 
     <!-- Date picker js -->
     <script type="text/javascript" src="Script/bootstrap-datepicker.js"></script>
+
     <!-- Custom scripts for all pages-->
     <script src="Script/sb-admin-2.js"></script>
     <script type="text/javascript" src="Script/Master.js"></script>
+
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
+
     <!-- Custom styles for this template-->
     <link href="Style/sb-admin-2.css" rel="stylesheet">
     <link rel="stylesheet" href="Style/Master.css" />
+
     <!-- luxon datetime manipulation -->
     <script type="text/javascript" src="Script/luxon.js"></script>
+
     <!-- date picker css -->
     <link rel="stylesheet" href="Style/bootstrap-datepicker.css" />
     <link rel="icon" href="Images/logo.png" />
+
+    <!-- tinyMCE editor -->
+    <script src="https://cloud.tinymce.com/5/tinymce.min.js?apiKey=o9y6hm3e4pvyn0z324i259qv7hhoi7sl75h0wvgjiu84ic9i"></script>
+
+
     <asp:ContentPlaceHolder ID="head" runat="server">
     </asp:ContentPlaceHolder>
 </head>
 <body id="page-top" class="overflow-hidden" style="width: 100vw; height: 100vh;">
-    <form runat="server" class="h-100">
-    <!-- Page Wrapper -->
-    <div id="wrapper" class="h-100">
-        <!-- Sidebar -->
-        <ul class="navbar-nav bg-white sidebar sidebar-light accordion" id="accordionSidebar">
-            <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center text-gray-700"
-                href="All.aspx">
-                <div class="sidebar-brand-icon">
-                    <i class="fa fa-comments"></i>
-                </div>
-                <div class="sidebar-brand-text mx-3">
-                    Consult</div>
-            </a>
-            <!-- Divider -->
-            <hr class="sidebar-divider mt-0">
-            <% if (Session["Logged"] != null && (bool)Session["Logged"] && Session["CurrentUserIsAdmin"] != null && (bool)Session["CurrentUserIsAdmin"])
-               {
-            %>
-            <!--Nav item - Admin tools collapse menu-->
-            <li class="nav-item"><a class="nav-link collapsed" href="#" data-toggle="collapse"
-                data-target="#collapseAdminTools" aria-expanded="true" aria-controls="collapseAdminTools">
-                <i class="fas fa-fw fa-cog"></i><span>Admin Tools</span> </a>
-                <div id="collapseAdminTools" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="UserEditor.aspx">Users Editor</a> <a class="collapse-item"
-                            href="ConsultPageEditor.aspx">Consult Pages Editor</a>
+    <form runat="server" class="h-100 main_form">
+        <!-- Page Wrapper -->
+        <div id="wrapper" class="h-100">
+            <!-- Sidebar -->
+            <ul class="navbar-nav bg-white sidebar sidebar-light accordion" id="accordionSidebar">
+                <!-- Sidebar - Brand -->
+                <a class="sidebar-brand d-flex align-items-center justify-content-center text-gray-700"
+                    href="All.aspx">
+                    <div class="sidebar-brand-icon">
+                        <i class="fa fa-comments"></i>
                     </div>
-                </div>
-            </li>
-            <!-- Divider -->
-            <hr class="sidebar-divider">
-            <% } %>
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                Navigation
-            </div>
-            <!-- Nav Item - All -->
-            <li class="nav-item"><a class="nav-link" href="All.aspx"><i class="fas fa-fw fa-globe-americas">
-            </i><span>All</span> </a></li>
-            <% if (Session["Logged"] != null && (bool)Session["Logged"])
-               {
-            %>
-            <!-- Nav Item - Home -->
-            <li class="nav-item"><a class="nav-link" href="Home.aspx"><i class="fas fa-fw fa-home">
-            </i><span>Home</span> </a></li>
-            <%
-                }
-            %>
-            <!--Nav item - all consult pages collapse menu-->
-            <li class="nav-item"><a class="nav-link collapsed" href="#" data-toggle="collapse"
-                data-target="#collapsePages" aria-expanded="true" aria-controls="collapsePages">
-                <i class="fas fa-fw fa-folder"></i><span>All Consult Pages</span> </a>
-                <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-light py-2 collapse-inner rounded">
-                        <asp:Repeater ID="AllConsultPagesRepeater" runat="server">
-                            <ItemTemplate>
-                                <a class="collapse-item text-black-50" href="ConsultPage.aspx?page-id=<%# Eval("ID") %>">
-                                    <%# Eval("PageName") %></a>
-                            </ItemTemplate>
-                        </asp:Repeater>
+                    <div class="sidebar-brand-text mx-3">
+                        Consult
                     </div>
-                </div>
-            </li>
-            <% if (Session["Logged"] != null && (bool)Session["Logged"])
-               {
-            %>
-            <!--Nav item - my consult pages collapse menu-->
-            <li class="nav-item"><a class="nav-link collapsed" href="#" data-toggle="collapse"
-                data-target="#collapseMyPages" aria-expanded="true" aria-controls="collapseMyPages">
-                <i class="fas fa-fw fa-folder"></i><span>My Consult Pages</span> </a>
-                <div id="collapseMyPages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-light py-2 collapse-inner rounded">
-                        <asp:Repeater ID="MyConsultPagesRepeater" runat="server">
-                            <ItemTemplate>
-                                <a class="collapse-item text-black-50" href="ConsultPage.aspx?page-id=<%# Eval("ID") %>">
-                                    <%# Eval("PageName") %></a>
-                            </ItemTemplate>
-                        </asp:Repeater>
+                </a>
+                <!-- Divider -->
+                <hr class="sidebar-divider mt-0">
+                <% if (Session["Logged"] != null && (bool)Session["Logged"] && Session["CurrentUserIsAdmin"] != null && (bool)Session["CurrentUserIsAdmin"])
+                    {
+                %>
+                <!--Nav item - Admin tools collapse menu-->
+                <li class="nav-item"><a class="nav-link collapsed" href="#" data-toggle="collapse"
+                    data-target="#collapseAdminTools" aria-expanded="true" aria-controls="collapseAdminTools">
+                    <i class="fas fa-fw fa-cog"></i><span>Admin Tools</span> </a>
+                    <div id="collapseAdminTools" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                        <div class="bg-light py-2 collapse-inner rounded">
+                            <a class="collapse-item text-black-50" href="UserEditor.aspx">Users Editor</a>
+                            <a class="collapse-item text-black-50" href="ConsultPageEditor.aspx">Consult Pages Editor</a>
+                        </div>
                     </div>
+                </li>
+                <!-- Divider -->
+                <hr class="sidebar-divider">
+                <% } %>
+                <!-- Heading -->
+                <div class="sidebar-heading">
+                    Navigation
                 </div>
-            </li>
-            <%
-                }
-            %>
-            <!-- Sidebar Toggler (Sidebar) -->
-            <div class="text-center d-none d-md-inline">
-                <button class="rounded-circle border-0" onclick="return false;" id="sidebarToggle">
-                </button>
-            </div>
-        </ul>
-        <!-- End of Sidebar -->
-        <!-- Content Wrapper -->
-        <div id="content-wrapper" class="d-flex flex-column h-100">
-            <!-- Main Content -->
-            <!-- Topbar -->
-            <nav class="navbar navbar-expand navbar-light bg-white topbar static-top shadow">
+                <!-- Nav Item - All -->
+                <li class="nav-item"><a class="nav-link" href="All.aspx"><i class="fas fa-fw fa-globe-americas"></i><span>All</span> </a></li>
+                <% if (Session["Logged"] != null && (bool)Session["Logged"])
+                    {
+                %>
+                <!-- Nav Item - Home -->
+                <li class="nav-item"><a class="nav-link" href="Home.aspx"><i class="fas fa-fw fa-home"></i><span>Home</span> </a></li>
+                <%
+                    }
+                %>
+                <!--Nav item - all consult pages collapse menu-->
+                <li class="nav-item"><a class="nav-link collapsed" href="#" data-toggle="collapse"
+                    data-target="#collapsePages" aria-expanded="true" aria-controls="collapsePages">
+                    <i class="fas fa-fw fa-folder"></i><span>All Consult Pages</span> </a>
+                    <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                        <div class="bg-light py-2 collapse-inner rounded">
+                            <asp:Repeater ID="AllConsultPagesRepeater" runat="server">
+                                <ItemTemplate>
+                                    <a class="collapse-item text-black-50" href="ConsultPage.aspx?page-id=<%# Eval("ID") %>">
+                                        <%# Eval("PageName") %></a>
+                                </ItemTemplate>
+                            </asp:Repeater>
+                        </div>
+                    </div>
+                </li>
+                <% if (Session["Logged"] != null && (bool)Session["Logged"])
+                    {
+                %>
+                <!--Nav item - my consult pages collapse menu-->
+                <li class="nav-item"><a class="nav-link collapsed" href="#" data-toggle="collapse"
+                    data-target="#collapseMyPages" aria-expanded="true" aria-controls="collapseMyPages">
+                    <i class="fas fa-fw fa-folder"></i><span>My Consult Pages</span> </a>
+                    <div id="collapseMyPages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                        <div class="bg-light py-2 collapse-inner rounded">
+                            <asp:Repeater ID="MyConsultPagesRepeater" runat="server">
+                                <ItemTemplate>
+                                    <a class="collapse-item text-black-50" href="ConsultPage.aspx?page-id=<%# Eval("ID") %>">
+                                        <%# Eval("PageName") %></a>
+                                </ItemTemplate>
+                            </asp:Repeater>
+                        </div>
+                    </div>
+                </li>
+                <%
+                    }
+                %>
+                <!-- Sidebar Toggler (Sidebar) -->
+                <div class="text-center d-none d-md-inline">
+                    <button class="rounded-circle border-0" onclick="return false;" id="sidebarToggle">
+                    </button>
+                </div>
+            </ul>
+            <!-- End of Sidebar -->
+            <!-- Content Wrapper -->
+            <div id="content-wrapper" class="d-flex flex-column h-100">
+                <!-- Main Content -->
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar static-top shadow">
 
                     <!-- Sidebar Toggle (Topbar) -->
                     <button id="sidebarToggleTop" onclick="return false;" class="btn btn-link d-md-none rounded-circle mr-3 text-gray-700">
@@ -186,134 +196,130 @@
                     </ul>
 
                 </nav>
-            <!-- End of Topbar -->
-            <!-- Begin Page Content -->
-            <asp:ContentPlaceHolder ID="main_content" runat="server">
-            </asp:ContentPlaceHolder>
-            <!-- End of Page Content -->
+                <!-- End of Topbar -->
+                <!-- Begin Page Content -->
+                <asp:ContentPlaceHolder ID="main_content" runat="server">
+                </asp:ContentPlaceHolder>
+                <!-- End of Page Content -->
+            </div>
+            <!-- End of Content Wrapper -->
         </div>
-        <!-- End of Content Wrapper -->
-    </div>
-    <!-- End of Page Wrapper -->
-    <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top"><i class="fas fa-angle-up"></i>
-    </a>
-    <!-- Logout Modal-->
-    <div class="user">
-        <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="logoutModalLabel">
-                            Ready to Leave?</h5>
-                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        Select "Logout" below if you are ready to end your current session.</div>
-                    <div class="modal-footer">
-                        <button class="btn btn-secondary" type="button" data-dismiss="modal">
-                            Cancel</button>
-                        <asp:Button ID="LogoutConfirmButton" runat="server" CssClass="btn btn-primary" Text="Logout"
-                            OnClick="LogoutConfirmButton_Click" />
+        <!-- End of Page Wrapper -->
+        <!-- Scroll to Top Button-->
+        <a class="scroll-to-top rounded" href="#page-top"><i class="fas fa-angle-up"></i>
+        </a>
+        <!-- Logout Modal-->
+        <div class="user">
+            <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="logoutModalLabel">Ready to Leave?</h5>
+                            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Select "Logout" below if you are ready to end your current session.
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" type="button" data-dismiss="modal">
+                                Cancel</button>
+                            <asp:Button ID="LogoutConfirmButton" runat="server" CssClass="btn btn-primary" Text="Logout"
+                                OnClick="LogoutConfirmButton_Click" />
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <!-- End Of Logout Modal -->
-    <!-- Log In Modal-->
-    <div class="user">
-        <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="loginModalLabel">
-                            Log In</h5>
-                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <asp:TextBox runat="server" CssClass="login_textbox form-control form-control-user"
-                                ID="loginInputUsername" placeholder="Username"></asp:TextBox>
+        <!-- End Of Logout Modal -->
+        <!-- Log In Modal-->
+        <div class="user">
+            <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="loginModalLabel">Log In</h5>
+                            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
                         </div>
-                        <div class="form-group">
-                            <asp:TextBox TextMode="password" runat="server" CssClass="login_textbox form-control form-control-user"
-                                ID="loginInputPassword" placeholder="Password"></asp:TextBox>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <asp:TextBox runat="server" CssClass="login_textbox form-control form-control-user"
+                                    ID="loginInputUsername" placeholder="Username"></asp:TextBox>
+                            </div>
+                            <div class="form-group">
+                                <asp:TextBox TextMode="password" runat="server" CssClass="login_textbox form-control form-control-user"
+                                    ID="loginInputPassword" placeholder="Password"></asp:TextBox>
+                            </div>
                         </div>
-                    </div>
-                    <div id="login_warning_space">
-                    </div>
-                    <div class="text-center">
-                        <a class="small" href="#" data-dismiss="modal" data-toggle="modal" data-target="#signupModal">
-                            Create an Account!</a>
-                    </div>
-                    <br />
-                    <div class="modal-footer">
-                        <button class="btn btn-secondary" type="button" data-dismiss="modal">
-                            Cancel</button>
-                        <asp:Button runat="server" CssClass="btn btn-primary" ID="LogInSubmitButton" Text="Log In"
-                            OnClick="LoginSubmitButton_Click" />
+                        <div id="login_warning_space">
+                        </div>
+                        <div class="text-center">
+                            <a class="small" href="#" data-dismiss="modal" data-toggle="modal" data-target="#signupModal">Create an Account!</a>
+                        </div>
+                        <br />
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" type="button" data-dismiss="modal">
+                                Cancel</button>
+                            <asp:Button runat="server" CssClass="btn btn-primary" ID="LogInSubmitButton" Text="Log In"
+                                OnClick="LoginSubmitButton_Click" />
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <!-- Log In Modal -->
-    <!-- Sign Up Modal-->
-    <div class="user">
-        <div class="modal fade" id="signupModal" tabindex="-1" role="dialog" aria-labelledby="signupModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="signupModalLabel">
-                            Sign Up</h5>
-                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <asp:TextBox runat="server" CssClass="signup_textbox form-control form-control-user"
-                                ID="signupInputUsername" placeholder="Username"></asp:TextBox>
+        <!-- Log In Modal -->
+        <!-- Sign Up Modal-->
+        <div class="user">
+            <div class="modal fade" id="signupModal" tabindex="-1" role="dialog" aria-labelledby="signupModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="signupModalLabel">Sign Up</h5>
+                            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
                         </div>
-                        <div class="form-group">
-                            <asp:TextBox runat="server" TextMode="password" class="signup_textbox form-control form-control-user"
-                                ID="signupInputPassword" placeholder="Password"></asp:TextBox>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <asp:TextBox runat="server" CssClass="signup_textbox form-control form-control-user"
+                                    ID="signupInputUsername" placeholder="Username"></asp:TextBox>
+                            </div>
+                            <div class="form-group">
+                                <asp:TextBox runat="server" TextMode="password" class="signup_textbox form-control form-control-user"
+                                    ID="signupInputPassword" placeholder="Password"></asp:TextBox>
+                            </div>
+                            <div class="form-group">
+                                <asp:TextBox runat="server" TextMode="password" class="signup_textbox form-control form-control-user"
+                                    ID="signupInputPasswordConfirm" placeholder="Confirm password"></asp:TextBox>
+                            </div>
+                            <div class="form-group">
+                                <asp:TextBox runat="server" CssClass="signup_textbox form-control form-control-user"
+                                    data-provide="datepicker" ID="signupInputDOB" placeholder="Date of birth"></asp:TextBox>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <asp:TextBox runat="server" TextMode="password" class="signup_textbox form-control form-control-user"
-                                ID="signupInputPasswordConfirm" placeholder="Confirm password"></asp:TextBox>
+                        <div id="signup_warning_space">
                         </div>
-                        <div class="form-group">
-                            <asp:TextBox runat="server" CssClass="signup_textbox form-control form-control-user"
-                                data-provide="datepicker" ID="signupInputDOB" placeholder="Date of birth"></asp:TextBox>
+                        <div class="text-center">
+                            <a class="small" href="#" data-dismiss="modal" data-toggle="modal" data-target="#loginModal">Already have an account? Log in!</a>
                         </div>
-                    </div>
-                    <div id="signup_warning_space">
-                    </div>
-                    <div class="text-center">
-                        <a class="small" href="#" data-dismiss="modal" data-toggle="modal" data-target="#loginModal">
-                            Already have an account? Log in!</a>
-                    </div>
-                    <br />
-                    <div class="modal-footer">
-                        <button class="btn btn-secondary" type="button" data-dismiss="modal">
-                            Cancel</button>
-                        <asp:Button runat="server" CssClass="btn btn-primary" ID="SignUpSubmitButton" Text="Sign Up"
-                            OnClick="SignupSubmitButton_Click" />
+                        <br />
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" type="button" data-dismiss="modal">
+                                Cancel</button>
+                            <asp:Button runat="server" CssClass="btn btn-primary" ID="SignUpSubmitButton" Text="Sign Up"
+                                OnClick="SignupSubmitButton_Click" />
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <!-- Sign Up Modal -->
+        <!-- Sign Up Modal -->
     </form>
 </body>
 </html>

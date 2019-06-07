@@ -1,4 +1,7 @@
-﻿/* custom scrollbar */
+﻿p {
+    margin-bottom: 0;
+}
+/* custom scrollbar */
 
 /* width */
 ::-webkit-scrollbar {
@@ -16,7 +19,7 @@
     background: #858796;
 }
 
-/* Handle on hover */
+    /* Handle on hover */
     ::-webkit-scrollbar-thumb:hover {
         background: #5a5c69;
     }

@@ -182,13 +182,34 @@ public class UsersService : System.Web.Services.WebService
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
             HttpContext current = HttpContext.Current;
-            current.Response.Status = "invalid login information";
             current.Response.StatusCode = 401;
             current.Response.End();
         }
 
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
         PostsClass post = PostsClass.GetByID(PostID);
+
+        if (post == null)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        if (post.IsDeleted)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        if (post.IsRemoved)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
         UsersClass PostAuthor = UsersClass.GetByID(post.AuthorID);
 
         DataTable vote_dt = PostVotesClass.GetByProperties(
@@ -207,7 +228,6 @@ public class UsersService : System.Web.Services.WebService
         }
 
         PostVotesClass vote = PostVotesClass.FromDataRow(vote_dt.Rows[0]);
-
 
         if (vote.VoteValue == 1)
         {
@@ -245,6 +265,28 @@ public class UsersService : System.Web.Services.WebService
         }
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
         PostsClass post = PostsClass.GetByID(PostID);
+
+        if (post == null)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        if (post.IsDeleted)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        if (post.IsRemoved)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
         UsersClass PostAuthor = UsersClass.GetByID(post.AuthorID);
 
         DataTable vote_dt = PostVotesClass.GetByProperties(
@@ -297,13 +339,34 @@ public class UsersService : System.Web.Services.WebService
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
             HttpContext current = HttpContext.Current;
-            current.Response.Status = "invalid login information";
             current.Response.StatusCode = 401;
             current.Response.End();
         }
 
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
         CommentsClass comment = CommentsClass.GetByID(CommentID);
+
+        if (comment == null)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        if (comment.IsDeleted)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        if (comment.IsRemoved)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
         UsersClass CommentAuthor = UsersClass.GetByID(comment.CommentorID);
 
         DataTable vote_dt = CommentVotesClass.GetByProperties(
@@ -322,7 +385,6 @@ public class UsersService : System.Web.Services.WebService
         }
 
         CommentVotesClass vote = CommentVotesClass.FromDataRow(vote_dt.Rows[0]);
-
 
         if (vote.VoteValue == 1)
         {
@@ -361,6 +423,28 @@ public class UsersService : System.Web.Services.WebService
 
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
         CommentsClass comment = CommentsClass.GetByID(CommentID);
+
+        if (comment == null)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        if (comment.IsDeleted)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        if (comment.IsRemoved)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
         UsersClass CommentAuthor = UsersClass.GetByID(comment.CommentorID);
 
         DataTable vote_dt = CommentVotesClass.GetByProperties(
@@ -434,17 +518,20 @@ public class UsersService : System.Web.Services.WebService
         }
 
         List<Warning> warnings = new List<Warning>();
-        PostsClass reported_post = PostsClass.GetByID(PostID);
+        PostsClass post = PostsClass.GetByID(PostID);
+
+        if (post == null)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
         bool valid = true;
 
         if (string.IsNullOrWhiteSpace(reportBody))
         {
             warnings.Add(new Warning("addPostTitle", "Report cannot be empty"));
-            valid = false;
-        }
-
-        if (reported_post == null)
-        {
             valid = false;
         }
 
@@ -471,19 +558,245 @@ public class UsersService : System.Web.Services.WebService
 
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
         PostsClass post = PostsClass.GetByID(PostID);
-        UsersClass post_author = UsersClass.GetByID(post.AuthorID);
 
-        if (post.AuthorID != userID || post_author.IsAdmin == false)
+        if (post == null)
         {
             HttpContext current = HttpContext.Current;
             current.Response.StatusCode = 401;
             current.Response.End();
         }
 
-        post.Delete();
+        if (post.IsDeleted)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        if (post.IsRemoved)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        if (post.AuthorID != userID)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        post.IsDeleted = true;
+        post.Update();
 
     }
 
+    //------------------------------------------------------------------------------------------------------------
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public void RemovePost(int PostID)
+    {
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        int userID = Convert.ToInt32(Session["CurrentUserID"]);
+        PostsClass post = PostsClass.GetByID(PostID);
+
+        if (post == null)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        if (post.IsDeleted)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        if (post.IsRemoved)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        UsersClass current_user = UsersClass.GetByID(userID);
+
+        if (post.AuthorID == userID || current_user.IsAdmin == false)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        post.IsRemoved = true;
+        post.Update();
+
+    }
+
+    //------------------------------------------------------------------------------------------------------------
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public void DeleteComment(int CommentID)
+    {
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        int userID = Convert.ToInt32(Session["CurrentUserID"]);
+        CommentsClass comment = CommentsClass.GetByID(CommentID);
+
+        if (comment == null)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        if (comment.IsDeleted)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        if (comment.IsRemoved)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        if (comment.CommentorID != userID)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        comment.IsDeleted = true;
+        comment.Update();
+
+    }
+
+    //------------------------------------------------------------------------------------------------------------
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public void RemoveComment(int CommentID)
+    {
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        int userID = Convert.ToInt32(Session["CurrentUserID"]);
+        CommentsClass comment = CommentsClass.GetByID(CommentID);
+
+        if (comment == null)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        if (comment.IsDeleted)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        if (comment.IsRemoved)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        UsersClass current_user = UsersClass.GetByID(userID);
+
+        if (comment.CommentorID == userID || current_user.IsAdmin == false)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        comment.IsRemoved = true;
+        comment.Update();
+
+    }
+
+    //------------------------------------------------------------------------------------------------------------
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public void LockPost(int PostID)
+    {
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        int userID = Convert.ToInt32(Session["CurrentUserID"]);
+        PostsClass post = PostsClass.GetByID(PostID);
+
+        if (post == null)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        if (post.IsDeleted)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        if (post.IsRemoved)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        if (post.IsLocked)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        UsersClass post_author = UsersClass.GetByID(post.AuthorID);
+
+        if (post_author.IsAdmin == false)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        post.IsLocked = true;
+        post.Update();
+
+    }
 
     //------------------------------------------------------------------------------------------------------------
 
@@ -500,6 +813,14 @@ public class UsersService : System.Web.Services.WebService
 
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
         PostsClass post = PostsClass.GetByID(PostID);
+
+        if (post == null)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
         UsersClass PostAuthor = UsersClass.GetByID(post.AuthorID);
 
         DataTable save_dt = SavedPostsClass.GetByProperties(
@@ -522,7 +843,6 @@ public class UsersService : System.Web.Services.WebService
 
 
     }
-
 
     //------------------------------------------------------------------------------------------------------------
 
@@ -579,10 +899,10 @@ public class UsersService : System.Web.Services.WebService
 
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
         PostsClass post = PostsClass.GetByID(ParentPostID);
+        CommentsClass.CreateNew(Body, userID, ParentPostID);
         post.CommentCount += 1;
         post.Update();
 
-        CommentsClass.CreateNew(Body, userID, ParentPostID);
     }
 
     [WebMethod(EnableSession = true)]
@@ -632,10 +952,10 @@ public class UsersService : System.Web.Services.WebService
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
         CommentsClass comment = CommentsClass.GetByID(ParentCommentID);
         PostsClass post = PostsClass.GetByID(comment.ParentPostID);
+        CommentRepliesClass.CreateNew(Body, userID, ParentCommentID);
         post.CommentCount += 1;
         post.Update();
 
-        CommentRepliesClass.CreateNew(Body, userID, ParentCommentID);
     }
 
     [WebMethod(EnableSession = true)]
@@ -693,7 +1013,6 @@ public class UsersService : System.Web.Services.WebService
 
     }
 
-
     [WebMethod(EnableSession = true)]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     public List<Warning> ValidateAndUpdateUserInfo(string Username, string Bio, string NewPassword, string NewPasswordConfirm, string PasswordConfirm)
@@ -744,7 +1063,7 @@ public class UsersService : System.Web.Services.WebService
                 valid = false;
             }
         }
-        else 
+        else
         {
             NewPassword = user.Password;
         }
@@ -767,6 +1086,134 @@ public class UsersService : System.Web.Services.WebService
         if (valid)
         {
             UpdateUserInfo(Username, Bio, NewPassword);
+        }
+
+        return warnings;
+
+    }
+
+    //------------------------------------------------------------------------------------------------------------
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    private void EditPost(int PostID, string Body)
+    {
+        PostsClass post = PostsClass.GetByID(PostID);
+
+        post.Body = Body;
+        post.IsEdited = true;
+        post.Update();
+
+    }
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public List<Warning> ValidateAndEditPost(int PostID, string Body)
+    {
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        List<Warning> warnings = new List<Warning>();
+        PostsClass post = PostsClass.GetByID(PostID);
+        bool valid = true;
+
+        if (post == null)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        if (post.IsDeleted)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        if (post.IsRemoved)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        if (string.IsNullOrWhiteSpace(Body))
+        {
+            warnings.Add(new Warning("EditableArea", "Post cannot be empty"));
+            valid = false;
+        }
+
+        if (valid)
+        {
+            EditPost(PostID, Body);
+        }
+
+        return warnings;
+
+    }
+
+    //------------------------------------------------------------------------------------------------------------
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    private void EditComment(int CommentID, string Body)
+    {
+        CommentsClass comment = CommentsClass.GetByID(CommentID);
+
+        comment.Body = Body;
+        comment.IsEdited = true;
+        comment.Update();
+
+    }
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public List<Warning> ValidateAndEditComment(int CommentID, string Body)
+    {
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        List<Warning> warnings = new List<Warning>();
+        CommentsClass comment = CommentsClass.GetByID(CommentID);
+        bool valid = true;
+
+        if (comment == null)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        if (comment.IsDeleted)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        if (comment.IsRemoved)
+        {
+            HttpContext current = HttpContext.Current;
+            current.Response.StatusCode = 401;
+            current.Response.End();
+        }
+
+        if (string.IsNullOrWhiteSpace(Body))
+        {
+            warnings.Add(new Warning("EditableArea", "Comment cannot be empty"));
+            valid = false;
+        }
+
+        if (valid)
+        {
+            EditComment(CommentID, Body);
         }
 
         return warnings;

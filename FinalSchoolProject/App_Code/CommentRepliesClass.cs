@@ -20,7 +20,7 @@ public class CommentRepliesClass : CommentsClass
 
     protected CommentRepliesClass(int ID, string Body,
         int CommentorID, int ParentPostID, int ParentCommentID,
-        DateTime CreationDate, bool IsRemoved, bool IsDeleted) : base(ID, Body, CommentorID, ParentPostID, CreationDate, IsRemoved, IsDeleted)
+        DateTime CreationDate, bool IsRemoved, bool IsDeleted, bool IsEdited) : base(ID, Body, CommentorID, ParentPostID, CreationDate, IsRemoved, IsDeleted, IsEdited)
     {
         this.ParentCommentID = ParentCommentID;
     }
@@ -37,6 +37,7 @@ public class CommentRepliesClass : CommentsClass
             CreationDate = Convert.ToDateTime(dr["CreationDate"]),
             IsRemoved = Convert.ToBoolean(dr["IsRemoved"]),
             IsDeleted = Convert.ToBoolean(dr["IsDeleted"]),
+            IsEdited = Convert.ToBoolean(dr["IsEdited"]),
             DownvoteCount = Convert.ToInt32(dr["DownvoteCount"]),
             UpvoteCount = Convert.ToInt32(dr["UpvoteCount"])
 
@@ -60,7 +61,8 @@ public class CommentRepliesClass : CommentsClass
             ParentCommentID = ParentCommentID,
             CreationDate = DateTime.Now,
             IsRemoved = false,
-            IsDeleted = false
+            IsDeleted = false,
+            IsEdited = false
         };
 
         comment.Insert();
@@ -82,10 +84,10 @@ public class CommentRepliesClass : CommentsClass
 
         sql_str = "INSERT INTO [Comments] " +
             "([Body], [CommentorID], [ParentPostID], [ParentCommentID], " +
-            "[UpvoteCount], [DownvoteCount], [CreationDate], [IsRemoved], [IsDeleted]) " +
-            "VALUES ('{0}',{1}, {2}, {3}, {4}, {5}, #{6}#, {7}, {8}) ";
+            "[UpvoteCount], [DownvoteCount], [CreationDate], [IsRemoved], [IsDeleted], [IsEdited]) " +
+            "VALUES ('{0}',{1}, {2}, {3}, {4}, {5}, #{6}#, {7}, {8}, {9}) ";
         sql_str = string.Format(sql_str, this.Body, this.CommentorID, this.ParentPostID,
-            this.ParentCommentID, this.UpvoteCount, this.DownvoteCount, this.CreationDate, this.IsRemoved, this.IsDeleted);
+            this.ParentCommentID, this.UpvoteCount, this.DownvoteCount, this.CreationDate, this.IsRemoved, this.IsDeleted, this.IsEdited);
 
 
         Dbase.ChangeTable(sql_str);
@@ -103,10 +105,10 @@ public class CommentRepliesClass : CommentsClass
         sql_str = "UPDATE [Comments] " +
             "SET [Body] = '{0}', [CommentorID] = {1}, [UpvoteCount] = {2}, [DownvoteCount] = {3}," +
             "[ParentPostID] = {4}, [ParentCommentID] = {5}, [CreationDate] = #{6}#," +
-            "[IsRemoved] = {7}, [IsDeleted] = {8}";
+            "[IsRemoved] = {7}, [IsDeleted] = {8}, [IsEdited] = {9}";
         sql_str += " WHERE [ID]=" + this.ID;
         sql_str = string.Format(sql_str, this.Body, this.CommentorID, this.UpvoteCount, this.DownvoteCount,
-            this.ParentPostID, this.ParentCommentID, this.CreationDate, this.IsRemoved, this.IsDeleted);
+            this.ParentPostID, this.ParentCommentID, this.CreationDate, this.IsRemoved, this.IsDeleted, this.IsEdited);
 
         Dbase.ChangeTable(sql_str);
     }

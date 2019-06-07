@@ -1,5 +1,21 @@
 ﻿$(document).ready(function () {
 
+
+    tinymce.init({
+        selector: '.EditableArea',
+        width: '100%',
+        height: 300,
+        resize: false,
+        branding: false,
+        menubar: false,
+        plugins: [
+            'advlist autolink lists link image charmap print preview anchor',
+            'searchreplace visualblocks code fullscreen emoticons directionality',
+            'insertdatetime media table paste code help wordcount'
+        ],
+        toolbar: 'link bold italic forecolor backcolor emoticons | bullist numlist | alignleft aligncenter alignright alignjustify ltr rtl'
+    });
+
     $("#SendMessageButton").on("click", function (e) {
         e.preventDefault();
 

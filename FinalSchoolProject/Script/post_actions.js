@@ -52,7 +52,7 @@ $(document).ready(function () {
     $(".post").on("click", function (e) {
         console.log(e.target);
         if (!$(e.target).hasClass("card-footer") && !$(e.target).hasClass("dropdown") &&
-            !$(e.target).parents().hasClass("card-footer") && !$(e.target).parents().hasClass("dropdown")) {
+            !$(e.target).parents().hasClass("card-footer") && !$(e.target).parents().hasClass("dropdown") && !$(e.target).parents().hasClass("edit_post_view")) {
 
             viewPostPage($(this).data("post-id"));
 
@@ -60,31 +60,108 @@ $(document).ready(function () {
 
     });
 
-    $(".collapse_children").on("click", function (e) {
-
-        let comment_card = $(this).closest(".card.comment");
-        let child_space = comment_card.find(".child_comments_space").first();
-        if ($(this).hasClass("fa-chevron-up")) {
-            $(this).removeClass("fa-chevron-up");
-            $(this).addClass("fa-chevron-down");
-            child_space.hide(200);
-        }
-        else if ($(this).hasClass("fa-chevron-down")) {
-            $(this).removeClass("fa-chevron-down");
-            $(this).addClass("fa-chevron-up");
-            child_space.show(200);
-        }
-    });
-
     $(".DeletePostButton").on("click", function (e) {
 
         e.preventDefault();
         let post_card = $(this).closest(".card.post");
         let post_id = post_card.data("post-id");
+        let post_title = post_card.find(".post_title").first();
+        let post_text = post_card.find(".post_text").first();
+        let post_menu = post_card.find(".post_menu").first();
+        let post_author_name = post_card.find(".post_author_name").first();
+
         DeletePost(post_id, DeletePostSuccessCallback);
-        post_card.hide(200, function () {
-            post_card.remove();
-        });
+
+        post_menu.remove();
+        post_title.removeClass("text-gray-900");
+        post_title.addClass("text-danger");
+        post_title.text("[deleted]");
+        post_text.addClass("text-danger");
+        post_text.text("[deleted]");
+        post_card.data("isdeleted", "true");
+        post_author_name.replaceWith("<span class='text-danger post_author_name'>[deleted]</span>");
+
+
+    });
+
+    $(".RemovePostButton").on("click", function (e) {
+
+        e.preventDefault();
+        let post_card = $(this).closest(".card.post");
+        let post_id = post_card.data("post-id");
+        let post_title = post_card.find(".post_title").first();
+        let post_text = post_card.find(".post_text").first();
+        let post_menu = post_card.find(".post_menu").first();
+        let post_author_name = post_card.find(".post_author_name").first();
+
+        RemovePost(post_id, RemovePostSuccessCallback);
+
+        post_menu.remove();
+        post_title.removeClass("text-gray-900");
+        post_title.addClass("text-danger");
+        post_title.text("[removed]");
+        post_text.addClass("text-danger");
+        post_text.text("[removed]");
+        post_card.data("isremoved", "true");
+        post_author_name.replaceWith("<span class='text-danger post_author_name'>[removed]</span>");
+
+
+    });
+
+    $(".LockPostButton").on("click", function (e) {
+
+        e.preventDefault();
+        let post_card = $(this).closest(".card.post");
+        let post_id = post_card.data("post-id");
+
+        LockPost(post_id, LockPostSuccessCallback);
+
+    });
+
+    $(".EditPostButton").on("click", function (e) {
+
+        e.preventDefault();
+        let post_card = $(this).closest(".card.post");
+        let edit_post_view = post_card.find(".edit_post_view").first();
+        let default_post_view = post_card.find(".default_post_view").first();
+
+        default_post_view.hide();
+        edit_post_view.show(200);
+        $("#hidden_comment_card").hide(200);
+        $(".hidden_reply").hide(200);
+
+    });
+
+    $(".ConfirmPostEditButton").on("click", function (e) {
+
+        let post_card = $(this).closest(".card.post");
+        let post_id = post_card.data("post-id");
+
+        EditPost(post_id, tinymce.activeEditor.getContent(), EditPostSuccessCallback);
+    });
+
+    $(".CancelPostEditButton").on("click", function (e) {
+
+        e.preventDefault();
+        let post_card = $(this).closest(".card.post");
+        let edit_post_view = post_card.find(".edit_post_view").first();
+        let default_post_view = post_card.find(".default_post_view").first();
+
+        $(".main_form")[0].reset();
+        edit_post_view.hide();
+        default_post_view.show();
+
+    });
+
+    $(".ReportPostButton").on("click", function (e) {
+
+        e.preventDefault();
+        //let post_card = $(this).closest(".card.post");
+        //let post_id = post_card.data("post-id");
+        //DeletePost(post_id, DeletePostSuccessCallback);
+        //post_card.hide(200, function () {
+        //    post_card.remove();
+        //});
 
 
     });
@@ -196,7 +273,7 @@ function userLoggedInSuccessCallback(data) {
             clearEditUserWarnings();
 
             let username = $("#EditUsernameInput").val();
-            let bio = $("#EditBioInput").val();
+            let bio = tinymce.activeEditor.getContent();
             let confirm_pass = $("#EditConfirmPasswordInput").val();
             let new_password = $("#EditNewPasswordInput").val();
             let new_password_confirm = $("#EditConfirmNewPasswordInput").val();
@@ -215,7 +292,7 @@ function userLoggedInSuccessCallback(data) {
 
         });
 
-        $(".EditUserButton").on("click", function (e) {
+        $("#EditUserButton").on("click", function (e) {
             e.preventDefault();
             $("#default_user_view").hide();
             $("#edit_user_view").show();
@@ -228,6 +305,12 @@ function userLoggedInSuccessCallback(data) {
 
             let comment_card = $(this).closest(".card.comment");
             let hidden_card = comment_card.find(".card.hidden_reply").first();
+            let edit_post_view = $(".edit_post_view").first();
+            let default_post_view = $(".default_post_view").first();
+
+            default_post_view.show();
+            edit_post_view.hide();
+            $("#hidden_comment_card").hide(200);
 
             if (hidden_card.css("display") === "none") {
                 $(".hidden_reply").hide(200);
@@ -264,6 +347,12 @@ function userLoggedInSuccessCallback(data) {
         $("#addOriginalCommentButton").on("click", function (e) {
 
             e.preventDefault();
+
+            let edit_post_view = $(".edit_post_view").first();
+            let default_post_view = $(".default_post_view").first();
+
+            default_post_view.show();
+            edit_post_view.hide();
             $("#hidden_comment_card").show(200);
             $(".hidden_reply").hide(200);
 
@@ -273,7 +362,7 @@ function userLoggedInSuccessCallback(data) {
 
             e.preventDefault();
             clearAddPostWarnings();
-            let body = $("#addCommentBody").val();
+            let body = tinymce.activeEditor.getContent()
             let pageID = $(this).data("page-id");
             createNewComment(body, pageID, createNewCommentSuccess);
 
@@ -333,10 +422,34 @@ function userLoggedInSuccessCallback(data) {
             var downvote_btn = parent_card.find(".downvote_space").first();
             var upvote_counter = parent_card.find(".upvote_counter").first();
             var downvote_counter = parent_card.find(".downvote_counter").first();
+            var current_rating = parseInt(parent_card.data("rating"));
+            var isdeleted = parent_card.data("isdeleted").toLowerCase() === "true";
+            var isremoved = parent_card.data("isremoved").toLowerCase() === "true";
+
+            if (isdeleted) {
+                upvote_btn.removeAttr("data-content");
+                upvote_btn.popover({
+                    trigger: "focus",
+                    content: "cannot upvote a deleted post"
+                });
+                upvote_btn.popover("show");
+                return;
+            }
+
+            if (isremoved) {
+                upvote_btn.removeAttr("data-content");
+                upvote_btn.popover({
+                    trigger: "focus",
+                    content: "cannot upvote a removed post"
+                });
+                upvote_btn.popover("show");
+                return;
+            }
 
             if (upvote_btn.hasClass("active_action")) {
                 upvote_btn.removeClass("active_action");
                 upvote_counter.text(parseInt(upvote_counter.text()) - 1);
+                parent_card.data("rating", current_rating - 1);
             }
             else {
                 if (downvote_btn.hasClass("active_action")) {
@@ -344,11 +457,13 @@ function userLoggedInSuccessCallback(data) {
                     upvote_btn.addClass("active_action");
                     upvote_counter.text(parseInt(upvote_counter.text()) + 1);
                     downvote_counter.text(parseInt(downvote_counter.text()) - 1);
+                    parent_card.data("rating", current_rating + 2);
 
                 }
                 else {
                     upvote_btn.addClass("active_action");
                     upvote_counter.text(parseInt(upvote_counter.text()) + 1);
+                    parent_card.data("rating", current_rating + 1);
                 }
             }
 
@@ -364,10 +479,34 @@ function userLoggedInSuccessCallback(data) {
             var downvote_btn = parent_card.find(".downvote_space").first();
             var upvote_counter = parent_card.find(".upvote_counter").first();
             var downvote_counter = parent_card.find(".downvote_counter").first();
+            var current_rating = parseInt(parent_card.data("rating"));
+            var isdeleted = parent_card.data("isdeleted").toLowerCase() === "true";
+            var isremoved = parent_card.data("isremoved").toLowerCase() === "true";
+
+            if (isdeleted) {
+                downvote_btn.removeAttr("data-content");
+                downvote_btn.popover({
+                    trigger: "focus",
+                    content: "cannot downvote a deleted post"
+                });
+                downvote_btn.popover("show");
+                return;
+            }
+
+            if (isremoved) {
+                downvote_btn.removeAttr("data-content");
+                downvote_btn.popover({
+                    trigger: "focus",
+                    content: "cannot dpwnvote a removed post"
+                });
+                downvote_btn.popover("show");
+                return;
+            }
 
             if (downvote_btn.hasClass("active_action")) {
                 downvote_btn.removeClass("active_action");
                 downvote_counter.text(parseInt(downvote_counter.text()) - 1);
+                parent_card.data("rating", (current_rating + 1).toString());
             }
             else {
                 if (upvote_btn.hasClass("active_action")) {
@@ -375,11 +514,13 @@ function userLoggedInSuccessCallback(data) {
                     downvote_btn.addClass("active_action");
                     downvote_counter.text(parseInt(downvote_counter.text()) + 1);
                     upvote_counter.text(parseInt(upvote_counter.text()) - 1);
+                    parent_card.data("rating", (current_rating - 2).toString());
 
                 }
                 else {
                     downvote_btn.addClass("active_action");
                     downvote_counter.text(parseInt(downvote_counter.text()) + 1);
+                    parent_card.data("rating", (current_rating - 1).toString());
                 }
             }
 
@@ -398,10 +539,34 @@ function userLoggedInSuccessCallback(data) {
             var downvote_btn = parent_card.find(".comment_downvote_space").first();
             var upvote_counter = parent_card.find(".comment_upvote_counter").first();
             var downvote_counter = parent_card.find(".comment_downvote_counter").first();
+            var current_rating = parseInt(parent_card.data("rating"));
+            var isdeleted = parent_card.data("isdeleted").toLowerCase() === "true";
+            var isremoved = parent_card.data("isremoved").toLowerCase() === "true";
+
+            if (isdeleted) {
+                upvote_btn.removeAttr("data-content");
+                upvote_btn.popover({
+                    trigger: "focus",
+                    content: "cannot upvote a deleted post"
+                });
+                upvote_btn.popover("show");
+                return;
+            }
+
+            if (isremoved) {
+                upvote_btn.removeAttr("data-content");
+                upvote_btn.popover({
+                    trigger: "focus",
+                    content: "cannot upvote a removed comment"
+                });
+                upvote_btn.popover("show");
+                return;
+            }
 
             if (upvote_btn.hasClass("active_action")) {
                 upvote_btn.removeClass("active_action");
                 upvote_counter.text(parseInt(upvote_counter.text()) - 1);
+                parent_card.data("rating", (current_rating - 1).toString());
             }
             else {
                 if (downvote_btn.hasClass("active_action")) {
@@ -409,11 +574,13 @@ function userLoggedInSuccessCallback(data) {
                     upvote_btn.addClass("active_action");
                     upvote_counter.text(parseInt(upvote_counter.text()) + 1);
                     downvote_counter.text(parseInt(downvote_counter.text()) - 1);
+                    parent_card.data("rating", (current_rating + 2).toString());
 
                 }
                 else {
                     upvote_btn.addClass("active_action");
                     upvote_counter.text(parseInt(upvote_counter.text()) + 1);
+                    parent_card.data("rating", (current_rating + 1).toString());
                 }
             }
 
@@ -430,10 +597,34 @@ function userLoggedInSuccessCallback(data) {
             var downvote_btn = parent_card.find(".comment_downvote_space").first();
             var upvote_counter = parent_card.find(".comment_upvote_counter").first();
             var downvote_counter = parent_card.find(".comment_downvote_counter").first();
+            var current_rating = parseInt(parent_card.data("rating"));
+            var isdeleted = parent_card.data("isdeleted").toLowerCase() === "true";
+            var isremoved = parent_card.data("isremoved").toLowerCase() === "true";
+
+            if (isdeleted) {
+                downvote_btn.removeAttr("data-content");
+                downvote_btn.popover({
+                    trigger: "focus",
+                    content: "cannot downvote a deleted post"
+                });
+                downvote_btn.popover("show");
+                return;
+            }
+
+            if (isremoved) {
+                downvote_btn.removeAttr("data-content");
+                downvote_btn.popover({
+                    trigger: "focus",
+                    content: "cannot downvote a removed comment"
+                });
+                downvote_btn.popover("show");
+                return;
+            }
 
             if (downvote_btn.hasClass("active_action")) {
                 downvote_btn.removeClass("active_action");
                 downvote_counter.text(parseInt(downvote_counter.text()) - 1);
+                parent_card.data("rating", (current_rating + 1).toString());
             }
             else {
                 if (upvote_btn.hasClass("active_action")) {
@@ -441,11 +632,13 @@ function userLoggedInSuccessCallback(data) {
                     downvote_btn.addClass("active_action");
                     downvote_counter.text(parseInt(downvote_counter.text()) + 1);
                     upvote_counter.text(parseInt(upvote_counter.text()) - 1);
+                    parent_card.data("rating", (current_rating - 2).toString());
 
                 }
                 else {
                     downvote_btn.addClass("active_action");
                     downvote_counter.text(parseInt(downvote_counter.text()) + 1);
+                    parent_card.data("rating", (current_rating - 1).toString());
                 }
             }
 
@@ -675,6 +868,46 @@ function reportPost(postID, body, success_callback) {
 
 //----------------------------------------------------------------------------------------------------------------------------
 
+function EditPostSuccessCallback(data) {
+
+    let warnings = data.d;
+
+    if (warnings.length === 0) {
+        console.log("added successfully");
+        window.location.reload();
+    }
+    else {
+
+        $(".EditPostWarningSpace").text("Post cannot be empty");
+        $(".EditPostWarningSpace").show();
+
+    }
+
+}
+
+function EditPost(postID, body, success_callback) {
+
+    var data = { "Body": body, "PostID": postID };
+
+    $.ajax({
+
+        method: "POST",
+        data: JSON.stringify(data),
+        dataType: "json",
+        contentType: "application/json; charset=utf-8 ",
+        url: "UsersService.asmx/ValidateAndEditPost",
+        error: function (r) {
+            console.log("error");
+            console.log(r.responseText);
+        },
+        success: success_callback
+
+    });
+
+}
+
+//----------------------------------------------------------------------------------------------------------------------------
+
 function createNewCommentSuccess(data) {
     let warnings = data.d;
 
@@ -857,11 +1090,69 @@ function DeletePost(post_id, success_callback) {
 
 //----------------------------------------------------------------------------------------------------------------------------
 
+function RemovePostSuccessCallback(data) {
+
+}
+
+function RemovePost(post_id, success_callback) {
+
+
+    var data = { "PostID": post_id };
+
+    $.ajax({
+
+        method: "POST",
+        data: JSON.stringify(data),
+        dataType: "json",
+        contentType: "application/json; charset=utf-8 ",
+        url: "UsersService.asmx/RemovePost",
+        error: function (r) {
+            console.log("error");
+            console.log(r.responseText);
+        },
+        success: success_callback
+
+    });
+
+}
+
+//----------------------------------------------------------------------------------------------------------------------------
+
+function LockPostSuccessCallback(data) {
+
+}
+
+function LockPost(post_id, success_callback) {
+
+
+    var data = { "PostID": post_id };
+
+    $.ajax({
+
+        method: "POST",
+        data: JSON.stringify(data),
+        dataType: "json",
+        contentType: "application/json; charset=utf-8 ",
+        url: "UsersService.asmx/LockPost",
+        error: function (r) {
+            console.log("error");
+            console.log(r.responseText);
+        },
+        success: success_callback
+
+    });
+
+}
+
+//----------------------------------------------------------------------------------------------------------------------------
+
 function viewPostPage(ID) {
     if (!window.location.toString().includes("ViewPost")) {
         window.location.href = "ViewPost.aspx?post-id=" + ID;
     }
 }
+
+//----------------------------------------------------------------------------------------------------------------------------
 
 function clearAddPostWarnings() {
     $("#add_post_warning_space .alert").remove();
@@ -896,9 +1187,7 @@ function clearAddReplyInputs() {
 }
 
 function clearEditUserInputs() {
-    $("#EditUsernameInput").val($("#EditUsernameInput").data("default-value"));
-    $("#EditBioInput").val($("#EditBioInput").data("default-value"));
-    $("#EditConfirmPasswordInput").val("");
+    $(".main_form")[0].reset();
 }
 
 function clearEditUserWarnings() {
