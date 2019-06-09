@@ -17,6 +17,15 @@ using System.Globalization;
 public class UsersService : System.Web.Services.WebService
 {
 
+    private void Abort()
+    {
+        HttpResponse res = HttpContext.Current.Response;
+        res.StatusCode = 401;
+        res.End();
+    }
+
+    //------------------------------------------------------------------------------------------------------------
+
     [WebMethod(EnableSession = true)]
     public void LogOutUser()
     {
@@ -181,9 +190,7 @@ public class UsersService : System.Web.Services.WebService
     {
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
@@ -191,23 +198,17 @@ public class UsersService : System.Web.Services.WebService
 
         if (post == null)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         if (post.IsDeleted)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         if (post.IsRemoved)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         UsersClass PostAuthor = UsersClass.GetByID(post.AuthorID);
@@ -259,32 +260,24 @@ public class UsersService : System.Web.Services.WebService
     {
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
         PostsClass post = PostsClass.GetByID(PostID);
 
         if (post == null)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         if (post.IsDeleted)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         if (post.IsRemoved)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         UsersClass PostAuthor = UsersClass.GetByID(post.AuthorID);
@@ -338,9 +331,7 @@ public class UsersService : System.Web.Services.WebService
     {
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
@@ -348,23 +339,17 @@ public class UsersService : System.Web.Services.WebService
 
         if (comment == null)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         if (comment.IsDeleted)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         if (comment.IsRemoved)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         UsersClass CommentAuthor = UsersClass.GetByID(comment.CommentorID);
@@ -416,9 +401,7 @@ public class UsersService : System.Web.Services.WebService
     {
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
@@ -426,23 +409,17 @@ public class UsersService : System.Web.Services.WebService
 
         if (comment == null)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         if (comment.IsDeleted)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         if (comment.IsRemoved)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         UsersClass CommentAuthor = UsersClass.GetByID(comment.CommentorID);
@@ -512,9 +489,7 @@ public class UsersService : System.Web.Services.WebService
     {
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         List<Warning> warnings = new List<Warning>();
@@ -522,9 +497,7 @@ public class UsersService : System.Web.Services.WebService
 
         if (post == null)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         bool valid = true;
@@ -551,9 +524,7 @@ public class UsersService : System.Web.Services.WebService
     {
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
@@ -561,32 +532,15 @@ public class UsersService : System.Web.Services.WebService
 
         if (post == null)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
-        }
-
-        if (post.IsDeleted)
-        {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
-        }
-
-        if (post.IsRemoved)
-        {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         if (post.AuthorID != userID)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
+        post.AuthorID = 0;
         post.IsDeleted = true;
         post.Update();
 
@@ -600,9 +554,7 @@ public class UsersService : System.Web.Services.WebService
     {
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
@@ -610,35 +562,18 @@ public class UsersService : System.Web.Services.WebService
 
         if (post == null)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
-        }
-
-        if (post.IsDeleted)
-        {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
-        }
-
-        if (post.IsRemoved)
-        {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();      
         }
 
         UsersClass current_user = UsersClass.GetByID(userID);
         bool IsMod = current_user.IsModeratorFor(post.ConsultPageID);
 
-        if (post.AuthorID == userID || (current_user.IsAdmin == false && !IsMod))
+        if (post.AuthorID != userID && current_user.IsAdmin == false && !IsMod)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
+        post.AuthorID = 0;
         post.IsRemoved = true;
         post.Update();
 
@@ -652,9 +587,7 @@ public class UsersService : System.Web.Services.WebService
     {
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
@@ -662,32 +595,15 @@ public class UsersService : System.Web.Services.WebService
 
         if (comment == null)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
-        }
-
-        if (comment.IsDeleted)
-        {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
-        }
-
-        if (comment.IsRemoved)
-        {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         if (comment.CommentorID != userID)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
+        comment.CommentorID = 0;
         comment.IsDeleted = true;
         comment.Update();
 
@@ -701,9 +617,7 @@ public class UsersService : System.Web.Services.WebService
     {
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
@@ -711,36 +625,19 @@ public class UsersService : System.Web.Services.WebService
 
         if (comment == null)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
-        }
-
-        if (comment.IsDeleted)
-        {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
-        }
-
-        if (comment.IsRemoved)
-        {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         UsersClass current_user = UsersClass.GetByID(userID);
         PostsClass ParentPost = PostsClass.GetByID(comment.ParentPostID);
         bool IsPageMod = current_user.IsModeratorFor(ParentPost.ConsultPageID);
 
-        if (comment.CommentorID == userID || (current_user.IsAdmin == false && !IsPageMod))
+        if (comment.CommentorID != userID && current_user.IsAdmin == false && !IsPageMod)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
+        comment.CommentorID = 0;
         comment.IsRemoved = true;
         comment.Update();
 
@@ -754,9 +651,7 @@ public class UsersService : System.Web.Services.WebService
     {
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
@@ -764,9 +659,7 @@ public class UsersService : System.Web.Services.WebService
 
         if (page == null)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         UsersClass current_user = UsersClass.GetByID(userID);
@@ -795,9 +688,7 @@ public class UsersService : System.Web.Services.WebService
     {
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
@@ -805,30 +696,22 @@ public class UsersService : System.Web.Services.WebService
 
         if (post == null)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         if (post.IsDeleted)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         if (post.IsRemoved)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         if (post.IsLocked)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         UsersClass post_author = UsersClass.GetByID(post.AuthorID);
@@ -836,9 +719,7 @@ public class UsersService : System.Web.Services.WebService
 
         if (post_author.IsAdmin == false && !IsMod)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         post.IsLocked = true;
@@ -854,9 +735,7 @@ public class UsersService : System.Web.Services.WebService
     {
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
@@ -864,9 +743,7 @@ public class UsersService : System.Web.Services.WebService
 
         if (post == null)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         UsersClass PostAuthor = UsersClass.GetByID(post.AuthorID);
@@ -911,9 +788,7 @@ public class UsersService : System.Web.Services.WebService
     {
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         List<Warning> warnings = new List<Warning>();
@@ -947,7 +822,7 @@ public class UsersService : System.Web.Services.WebService
 
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
         PostsClass post = PostsClass.GetByID(ParentPostID);
-        CommentsClass.CreateNew(Body, userID, ParentPostID);
+        CommentsClass.CreateNew(Body, userID, ParentPostID, 0);
         post.CommentCount += 1;
         post.Update();
 
@@ -959,9 +834,7 @@ public class UsersService : System.Web.Services.WebService
     {
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         List<Warning> warnings = new List<Warning>();
@@ -970,9 +843,7 @@ public class UsersService : System.Web.Services.WebService
 
         if (post == null)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
             valid = false;
         }
 
@@ -998,11 +869,11 @@ public class UsersService : System.Web.Services.WebService
     {
 
         int userID = Convert.ToInt32(Session["CurrentUserID"]);
-        CommentsClass comment = CommentsClass.GetByID(ParentCommentID);
-        PostsClass post = PostsClass.GetByID(comment.ParentPostID);
-        CommentRepliesClass.CreateNew(Body, userID, ParentCommentID);
-        post.CommentCount += 1;
-        post.Update();
+        CommentsClass parent_comment = CommentsClass.GetByID(ParentCommentID);
+        PostsClass parent_post = PostsClass.GetByID(parent_comment.ParentPostID);
+        CommentsClass.CreateNew(Body, userID, ParentCommentID, parent_post.ID);
+        parent_post.CommentCount += 1;
+        parent_post.Update();
 
     }
 
@@ -1012,9 +883,7 @@ public class UsersService : System.Web.Services.WebService
     {
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         List<Warning> warnings = new List<Warning>();
@@ -1023,9 +892,7 @@ public class UsersService : System.Web.Services.WebService
 
         if (comment == null)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
             valid = false;
 
         }
@@ -1067,9 +934,7 @@ public class UsersService : System.Web.Services.WebService
     {
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         List<Warning> warnings = new List<Warning>();
@@ -1160,9 +1025,7 @@ public class UsersService : System.Web.Services.WebService
     {
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         List<Warning> warnings = new List<Warning>();
@@ -1171,23 +1034,17 @@ public class UsersService : System.Web.Services.WebService
 
         if (post == null)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         if (post.IsDeleted)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         if (post.IsRemoved)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         if (string.IsNullOrWhiteSpace(Body))
@@ -1225,9 +1082,7 @@ public class UsersService : System.Web.Services.WebService
     {
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         List<Warning> warnings = new List<Warning>();
@@ -1236,23 +1091,17 @@ public class UsersService : System.Web.Services.WebService
 
         if (comment == null)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         if (comment.IsDeleted)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         if (comment.IsRemoved)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         if (string.IsNullOrWhiteSpace(Body))
@@ -1278,9 +1127,7 @@ public class UsersService : System.Web.Services.WebService
     {
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
         List<Warning> warnings = new List<Warning>();
@@ -1303,12 +1150,27 @@ public class UsersService : System.Web.Services.WebService
     {
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
-            HttpResponse res = HttpContext.Current.Response;
-            res.StatusCode = 401;
-            res.End();
+            Abort();
         }
 
-        //CONTINUE
+        UsersClass user = UsersClass.GetByID(UserID);
+
+        DataTable posts_dt = user.GetUserPosts();
+        foreach(DataRow dt in posts_dt.Rows)
+        {
+            DeletePost((int)dt["ID"]);
+        }
+
+        DataTable comments_dt = user.GetUserComments();
+        foreach (DataRow dt in comments_dt.Rows)
+        {
+            DeleteComment((int)dt["ID"]);
+        }
+
+        user.Delete();
+
+        if (UserID == (int)Session["CurrentUserID"])
+            LogOutUser();
 
         return "deleted successfully";
 

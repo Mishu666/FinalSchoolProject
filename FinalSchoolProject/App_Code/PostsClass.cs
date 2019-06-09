@@ -48,7 +48,6 @@ public class PostsClass
         {
             ID = Convert.ToInt32(dr["ID"]),
             ConsultPageID = Convert.ToInt32(dr["ConsultPageID"]),
-            AuthorID = Convert.ToInt32(dr["AuthorID"]),
             UpvoteCount = Convert.ToInt32(dr["UpvoteCount"]),
             DownvoteCount = Convert.ToInt32(dr["DownvoteCount"]),
             CommentCount = Convert.ToInt32(dr["CommentCount"]),
@@ -60,6 +59,10 @@ public class PostsClass
             IsEdited = Convert.ToBoolean(dr["IsEdited"]),
             CreationDate = Convert.ToDateTime(dr["CreationDate"])
         };
+
+
+        obj.AuthorID = Convert.IsDBNull(dr["AuthorID"]) ? 0 : Convert.ToInt32(dr["AuthorID"]);
+
         return obj;
     }
 
@@ -95,12 +98,14 @@ public class PostsClass
             throw new Exception("already inserted");
         }
 
+        string AuthorID_str = this.AuthorID == 0 ? "Null" : this.AuthorID.ToString();
+
         string sql_str = "INSERT INTO [Posts] " +
             "([ConsultPageID], [AuthorID], [UpvoteCount], [DownvoteCount], [CommentCount], [Title], [Body], " +
             "[IsLocked], [IsRemoved],[IsDeleted],[IsEdited], [CreationDate]) " +
             "VALUES ({0}, {1}, {2}, {3}, {4}, '{5}', '{6}', {7}, {8},{9},{10}, #{11}#) ";
 
-        sql_str = string.Format(sql_str, this.ConsultPageID, this.AuthorID,
+        sql_str = string.Format(sql_str, this.ConsultPageID, AuthorID_str,
             this.UpvoteCount, this.DownvoteCount, this.CommentCount, this.Title, this.Body, this.IsLocked,
             this.IsRemoved,this.IsDeleted, this.IsEdited, this.CreationDate);
         Dbase.ChangeTable(sql_str);
@@ -114,12 +119,15 @@ public class PostsClass
 
     public void Update()
     {
+
+        string AuthorID_str = this.AuthorID == 0 ? "Null" : this.AuthorID.ToString();
+
         string sql_str = "UPDATE [Posts] " +
             "SET [ConsultPageID] = {0}, [AuthorID] = {1}, " +
             "[UpvoteCount] = {2}, [DownvoteCount] = {3}, [CommentCount] = {4}, [Title] = '{5}', [Body] = '{6}', " +
             "[IsLocked] = {7}, [IsRemoved] = {8}, [IsDeleted]={9},[IsEdited] = {10}, [CreationDate] = #{11}#";
         sql_str += " WHERE [ID]=" + this.ID;
-        sql_str = string.Format(sql_str, this.ConsultPageID, this.AuthorID,
+        sql_str = string.Format(sql_str, this.ConsultPageID, AuthorID_str,
             this.UpvoteCount, this.DownvoteCount, this.CommentCount, this.Title, this.Body, this.IsLocked,
             this.IsRemoved,this.IsDeleted, this.IsEdited, this.CreationDate);
         Dbase.ChangeTable(sql_str);

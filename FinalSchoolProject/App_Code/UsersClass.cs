@@ -245,6 +245,12 @@ public class UsersClass
 
     }
 
+    public DataTable GetUserComments()
+    {
+        string sql = "SELECT * FROM [Comments] WHERE [CommentorID]=" + this.ID;
+        return Dbase.SelectFromTable(sql);
+    }
+
     public DataTable GetUserPosts()
     {
         string sql = "SELECT * FROM [Posts] WHERE [AuthorID]=" + this.ID;

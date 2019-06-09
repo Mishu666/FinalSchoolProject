@@ -8,7 +8,7 @@
         let userid = parseInt($(this).data("user-id"));
         DeleteUser(userid, DeleteUserSuccessCallback);
 
-    })
+    });
 
 });
 

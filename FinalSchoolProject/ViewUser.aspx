@@ -206,9 +206,13 @@
                     if (current_user != null && current_user.ID == user.ID)
                     {
                 %>
-
+                
                 <button id="EditUserButton" type="button" class="btn btn-primary mt-3">
-                    Edit<i class="far fa-edit ml-2"></i>
+                    <i class="far fa-edit mr-2"></i>Edit
+                </button>
+                
+                <button id="DeleteUserButton" type="button" class="btn btn-danger mt-3" data-user-id='<%= (int)Session["CurrentUserID"] %>'>
+                    <i class="fas fa-times mr-2"></i>Delete
                 </button>
 
                 <%

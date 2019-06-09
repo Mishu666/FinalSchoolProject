@@ -2,9 +2,6 @@
 
 $(document).ready(function () {
 
-    clearLoginModal();
-    clearSignupModal();
-
     $('#signupInputDOB').datepicker({
         autoclose: true,
         format: "dd/mm/yyyy"
@@ -12,14 +9,24 @@ $(document).ready(function () {
 
     $("#LogInSubmitButton").on("click", function (e) {
         e.preventDefault();
-        clearLoginWarnings();
-        validateAndLogin(validateAndLoginSuccess);
+
+        let username = $("#loginInputUsername").val().trim();
+        let password = $("#loginInputPassword").val().trim();
+
+        validateAndLogin(username, password, validateAndLoginSuccess);
+
     });
 
     $("#SignUpSubmitButton").on("click", function (e) {
         e.preventDefault();
-        clearSignupWarnings();
+
+        let username = $("#signupInputUsername").val().trim();
+        let password = $("#signupInputPassword").val().trim();
+        let password_confirm = $("#signupInputPasswordConfirm").val().trim();
+        let DOB = $("#signupInputDOB").val().trim();
+
         validateAndSignup(validateAndSignupSuccess);
+
     });
 
     $("#LogoutConfirmButton").on("click", function (e) {
@@ -28,11 +35,11 @@ $(document).ready(function () {
     });
 
     $("#loginModal").on("hidden.bs.modal", function (e) {
-        clearLoginModal();
+        resetForm();
     });
 
     $("#signupModal").on("hidden.bs.modal", function (e) {
-        clearSignupModal();
+        resetForm();
     });
 
     $("#profile_picture").on("error", function () {
@@ -61,11 +68,9 @@ function validateAndLoginSuccess(data) {
     }
 }
 
-function validateAndLogin(success_callback) {
-    let username = $("#loginInputUsername").val().trim();
-    let password = $("#loginInputPassword").val().trim();
+function validateAndLogin(username, pass,success_callback) {
 
-    let data = { "username": username, "password": password };
+    let data = { "username": username, "password": pass };
 
     $.ajax({
         method: "POST",
@@ -105,12 +110,7 @@ function validateAndSignupSuccess(data) {
 
 }
 
-function validateAndSignup(success_callback) {
-
-    let username = $("#signupInputUsername").val().trim();
-    let password = $("#signupInputPassword").val().trim();
-    let password_confirm = $("#signupInputPasswordConfirm").val().trim();
-    let DOB = $("#signupInputDOB").val().trim();
+function validateAndSignup(username, password, password_confirm, DOB, success_callback) {
 
     let data = { "username": username, "password": password,"pass_confirm":password_confirm, "DOBstr": DOB };
 
@@ -153,29 +153,7 @@ function logoutUser(success_callback) {
         success: success_callback
     });
 }
-
-//----------------------------------------------------------------------------------------------------------------------------
-
-function clearLoginWarnings() {
-    $("#login_warning_space .alert").remove();
-    $(".login_textbox").removeClass("border-danger");
-}
-
-function clearLoginModal() {
-    $(".login_textbox").val("");
-    clearLoginWarnings();
-}
-
-function clearSignupWarnings() {
-    $("#signup_warning_space .alert").remove();
-    $(".signup_textbox").removeClass("border-danger");
-}
-
-function clearSignupModal() {
-    $(".signup_textbox").val("");
-    clearSignupWarnings();
-}
-
+1
 //----------------------------------------------------------------------------------------------------------------------------
 
 function createWarning(message) {

@@ -38,7 +38,43 @@
         let recipient_id = $(this).data("recipient-id");
         SendMessage(recipient_id, msg, SendMessageSuccessCallback);
 
-    });    
+    });
+
+    $("#DeleteUserButton").on("click", function (e) {
+        e.preventDefault();
+        let userid = parseInt($(this).data("user-id"));
+
+        DeleteUser(userid, DeleteUserSuccessCallback);
+
+    });
+
+    $("#ConfirmEditButton").on("click", function (e) {
+        e.preventDefault();
+        resetForm();
+
+        let username = $("#EditUsernameInput").val();
+        let bio = tinymce.activeEditor.getContent();
+        let confirm_pass = $("#EditConfirmPasswordInput").val();
+        let new_password = $("#EditNewPasswordInput").val();
+        let new_password_confirm = $("#EditConfirmNewPasswordInput").val();
+
+        updateUserInfo(username, bio, confirm_pass, new_password, new_password_confirm, updateUserInfoSuccessCallback);
+
+    });
+
+    $("#CancelEditButton").on("click", function (e) {
+        e.preventDefault();
+        $("#edit_user_view").hide();
+        $("#default_user_view").show();
+        resetForm();
+
+    });
+
+    $("#EditUserButton").on("click", function (e) {
+        e.preventDefault();
+        $("#default_user_view").hide();
+        $("#edit_user_view").show();
+    });
 
 });
 
@@ -46,8 +82,7 @@
 
 function SendMessageSuccessCallback(data) {
     console.log(data.d);
-
-    $(".main_form")[0].reset();
+    resetForm();
 
     if (data.d === "empty message") {
         $("#NewMessageLabel").removeClass("text-success");
@@ -81,4 +116,79 @@ function SendMessage(RecipientID, msg, success_callback) {
 
     });
 
+}
+
+//-------------------------------------------------------------------------------------------------
+
+function DeleteUserSuccessCallback(data) {
+    window.location = "All.aspx";
+}
+
+function DeleteUser(userid, success_callback) {
+
+    data = { "UserID": userid };
+
+    $.ajax({
+
+        method: "POST",
+        data: JSON.stringify(data),
+        dataType: "json",
+        contentType: "application/json; charset=utf-8 ",
+        url: "UsersService.asmx/DeleteUser",
+        error: function (r) {
+            console.log("error");
+            console.log(r.responseText);
+        },
+        success: success_callback
+
+    });
+
+}
+
+//----------------------------------------------------------------------------------------------------------------------------
+
+function updateUserInfoSuccessCallback(data) {
+
+    let warnings = data.d;
+
+    for (let w of warnings) {
+        console.log(w);
+        let warning = createWarning(w.Text);
+        $("#edit_user_warning_space").append(warning);
+        for (let wc of w.WarnControls) {
+            $("." + wc).addClass("border-danger");
+
+        }
+    }
+
+    if (warnings.length === 0) {
+        console.log("added successfully");
+        window.location.reload();
+    }
+
+}
+
+function updateUserInfo(username, bio, password_confirm, new_pass, new_pass_confirm, success_callback) {
+    var data = {
+        "Username": username,
+        "Bio": bio,
+        "PasswordConfirm": password_confirm,
+        "NewPassword": new_pass,
+        "NewPasswordConfirm": new_pass_confirm
+    };
+
+    $.ajax({
+
+        method: "POST",
+        data: JSON.stringify(data),
+        dataType: "json",
+        contentType: "application/json; charset=utf-8 ",
+        url: "UsersService.asmx/ValidateAndUpdateUserInfo",
+        error: function (r) {
+            console.log("error");
+            console.log(r.responseText);
+        },
+        success: success_callback
+
+    });
 }

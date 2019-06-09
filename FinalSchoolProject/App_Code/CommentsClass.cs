@@ -10,7 +10,7 @@ using System.Data;
 public class CommentsClass
 {
     public int ID { get; protected set; }
-    public int CommentorID, ParentPostID, UpvoteCount, DownvoteCount;
+    public int CommentorID, ParentPostID, UpvoteCount, DownvoteCount, ParentCommentID;
     public string Body;
     public DateTime CreationDate;
     public bool IsRemoved, IsDeleted, IsEdited;
@@ -24,7 +24,7 @@ public class CommentsClass
     }
 
     protected CommentsClass(int ID, string Body,
-        int CommentorID, int ParentPostID,
+        int CommentorID, int ParentPostID, int ParentCommentID,
         DateTime CreationDate, bool IsRemoved, bool IsDeleted, bool IsEdited)
     {
         this.ID = ID;
@@ -35,6 +35,7 @@ public class CommentsClass
         this.IsRemoved = IsRemoved;
         this.IsDeleted = IsDeleted;
         this.IsEdited = IsEdited;
+        this.ParentCommentID = ParentCommentID;
     }
 
     public static CommentsClass FromDataRow(DataRow dr)
@@ -43,8 +44,6 @@ public class CommentsClass
         CommentsClass obj = new CommentsClass
         {
             ID = Convert.ToInt32(dr["ID"]),
-            CommentorID = Convert.ToInt32(dr["CommentorID"]),
-            ParentPostID = Convert.ToInt32(dr["ParentPostID"]),
             Body = dr["Body"].ToString(),
             CreationDate = Convert.ToDateTime(dr["CreationDate"]),
             IsRemoved = Convert.ToBoolean(dr["IsRemoved"]),
@@ -55,11 +54,14 @@ public class CommentsClass
 
         };
 
+        obj.CommentorID = Convert.IsDBNull(dr["CommentorID"]) ? 0 : Convert.ToInt32(dr["CommentorID"]);
+        obj.ParentPostID = Convert.IsDBNull(dr["ParentPostID"]) ? 0 : Convert.ToInt32(dr["ParentPostID"]);
+
         return obj;
     }
 
     public static CommentsClass CreateNew(string Body,
-        int CommentorID, int ParentPostID)
+        int CommentorID, int ParentPostID, int ParentCommentID)
     {
         CommentsClass comment = new CommentsClass
         {
@@ -67,6 +69,7 @@ public class CommentsClass
             CommentorID = CommentorID,
             ParentPostID = ParentPostID,
             CreationDate = DateTime.Now,
+            ParentCommentID = ParentCommentID,
             IsRemoved = false,
             IsDeleted = false,
             IsEdited = false
@@ -82,18 +85,20 @@ public class CommentsClass
 
     protected virtual void Insert()
     {
-        string sql_str;
         if (ID != 0)
         {
             throw new Exception("already inserted");
         }
 
+        string ParentCommentID_str = this.ParentCommentID == 0 ? "Null" : this.ParentCommentID.ToString();
+        string CommentorID_str = this.CommentorID == 0 ? "Null" : this.CommentorID.ToString();
 
-        sql_str = "INSERT INTO [Comments] " +
-            "([Body], [CommentorID], [ParentPostID], " +
+        string sql_str = "INSERT INTO [Comments] " +
+            "([Body], [CommentorID], [ParentPostID], [ParentCommentID], " +
             "[UpvoteCount], [DownvoteCount], [CreationDate], [IsRemoved], [IsDeleted], [IsEdited]) " +
-            "VALUES ('{0}',{1}, {2}, {3}, {4}, #{5}#, {6}, {7}, {8}) ";
-        sql_str = string.Format(sql_str, this.Body, this.CommentorID, this.ParentPostID,
+            "VALUES ('{0}',{1}, {2}, {3}, {4}, {5}, #{6}#, {7}, {8}, {9}) ";
+
+        sql_str = string.Format(sql_str, this.Body, CommentorID_str, this.ParentPostID, ParentCommentID_str,
             this.UpvoteCount, this.DownvoteCount, this.CreationDate, this.IsRemoved, this.IsDeleted, this.IsEdited);
 
         Dbase.ChangeTable(sql_str);
@@ -107,15 +112,18 @@ public class CommentsClass
 
     public virtual void Update()
     {
-        string sql_str;
 
-        sql_str = "UPDATE [Comments] " +
+        string ParentCommentID_str = this.ParentCommentID == 0 ? "Null" : this.ParentCommentID.ToString();
+        string CommentorID_str = this.CommentorID == 0 ? "Null" : this.CommentorID.ToString();
+
+        string sql_str = "UPDATE [Comments] " +
             "SET [Body] = '{0}', [CommentorID] = {1}, [UpvoteCount] = {2}, [DownvoteCount] = {3}," +
-            "[ParentPostID] = {4},[CreationDate] = #{5}#," +
-            "[IsRemoved] = {6}, [IsDeleted] = {7}, [IsEdited] = {8}";
+            "[ParentPostID] = {4},[ParentCommentID] = {5}, [CreationDate] = #{6}#," +
+            "[IsRemoved] = {7}, [IsDeleted] = {8}, [IsEdited] = {9}";
         sql_str += " WHERE [ID]=" + this.ID;
-        sql_str = string.Format(sql_str, this.Body, this.CommentorID, this.UpvoteCount, this.DownvoteCount,
-            this.ParentPostID, this.CreationDate, this.IsRemoved, this.IsDeleted, this.IsEdited);
+
+        sql_str = string.Format(sql_str, this.Body, CommentorID_str, this.UpvoteCount, this.DownvoteCount,
+            this.ParentPostID, ParentCommentID_str, this.CreationDate, this.IsRemoved, this.IsDeleted, this.IsEdited);
 
         Dbase.ChangeTable(sql_str);
     }

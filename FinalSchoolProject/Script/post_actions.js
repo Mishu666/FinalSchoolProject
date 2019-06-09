@@ -60,112 +60,6 @@ $(document).ready(function () {
 
     });
 
-    $(".DeletePostButton").on("click", function (e) {
-
-        e.preventDefault();
-        let post_card = $(this).closest(".card.post");
-        let post_id = post_card.data("post-id");
-        let post_title = post_card.find(".post_title").first();
-        let post_text = post_card.find(".post_text").first();
-        let post_menu = post_card.find(".post_menu").first();
-        let post_author_name = post_card.find(".post_author_name").first();
-
-        DeletePost(post_id, DeletePostSuccessCallback);
-
-        post_menu.remove();
-        post_title.removeClass("text-gray-900");
-        post_title.addClass("text-danger");
-        post_title.text("[deleted]");
-        post_text.addClass("text-danger");
-        post_text.text("[deleted]");
-        post_card.data("isdeleted", "true");
-        post_author_name.replaceWith("<span class='text-danger post_author_name'>[deleted]</span>");
-
-
-    });
-
-    $(".RemovePostButton").on("click", function (e) {
-
-        e.preventDefault();
-        let post_card = $(this).closest(".card.post");
-        let post_id = post_card.data("post-id");
-        let post_title = post_card.find(".post_title").first();
-        let post_text = post_card.find(".post_text").first();
-        let post_menu = post_card.find(".post_menu").first();
-        let post_author_name = post_card.find(".post_author_name").first();
-
-        RemovePost(post_id, RemovePostSuccessCallback);
-
-        post_menu.remove();
-        post_title.removeClass("text-gray-900");
-        post_title.addClass("text-danger");
-        post_title.text("[removed]");
-        post_text.addClass("text-danger");
-        post_text.text("[removed]");
-        post_card.data("isremoved", "true");
-        post_author_name.replaceWith("<span class='text-danger post_author_name'>[removed]</span>");
-
-
-    });
-
-    $(".LockPostButton").on("click", function (e) {
-
-        e.preventDefault();
-        let post_card = $(this).closest(".card.post");
-        let post_id = post_card.data("post-id");
-
-        LockPost(post_id, LockPostSuccessCallback);
-
-    });
-
-    $(".EditPostButton").on("click", function (e) {
-
-        e.preventDefault();
-        let post_card = $(this).closest(".card.post");
-        let edit_post_view = post_card.find(".edit_post_view").first();
-        let default_post_view = post_card.find(".default_post_view").first();
-
-        default_post_view.hide();
-        edit_post_view.show(200);
-        $("#hidden_comment_card").hide(200);
-        $(".hidden_reply").hide(200);
-
-    });
-
-    $(".ConfirmPostEditButton").on("click", function (e) {
-
-        let post_card = $(this).closest(".card.post");
-        let post_id = post_card.data("post-id");
-
-        EditPost(post_id, tinymce.activeEditor.getContent(), EditPostSuccessCallback);
-    });
-
-    $(".CancelPostEditButton").on("click", function (e) {
-
-        e.preventDefault();
-        let post_card = $(this).closest(".card.post");
-        let edit_post_view = post_card.find(".edit_post_view").first();
-        let default_post_view = post_card.find(".default_post_view").first();
-
-        $(".main_form")[0].reset();
-        edit_post_view.hide();
-        default_post_view.show();
-
-    });
-
-    $(".ReportPostButton").on("click", function (e) {
-
-        e.preventDefault();
-        //let post_card = $(this).closest(".card.post");
-        //let post_id = post_card.data("post-id");
-        //DeletePost(post_id, DeletePostSuccessCallback);
-        //post_card.hide(200, function () {
-        //    post_card.remove();
-        //});
-
-
-    });
-
 });
 
 //----------------------------------------------------------------------------------------------------------------------------
@@ -267,50 +161,16 @@ function userLoggedInSuccessCallback(data) {
 
     if (data.d === true) {
 
-        $("#ConfirmEditButton").on("click", function (e) {
-            e.preventDefault();
-
-            clearEditUserWarnings();
-
-            let username = $("#EditUsernameInput").val();
-            let bio = tinymce.activeEditor.getContent();
-            let confirm_pass = $("#EditConfirmPasswordInput").val();
-            let new_password = $("#EditNewPasswordInput").val();
-            let new_password_confirm = $("#EditConfirmNewPasswordInput").val();
-
-            updateUserInfo(username, bio, confirm_pass, new_password, new_password_confirm, updateUserInfoSuccessCallback);
-
-        });
-
-        $("#CancelEditButton").on("click", function (e) {
-            e.preventDefault();
-            $("#edit_user_view").hide();
-            $("#default_user_view").show();
-
-            clearEditUserInputs();
-            clearEditUserWarnings();
-
-        });
-
-        $("#EditUserButton").on("click", function (e) {
-            e.preventDefault();
-            $("#default_user_view").hide();
-            $("#edit_user_view").show();
-        });
-
         $(".reply_button").on("click", function (e) {
             e.preventDefault();
-            clearAddReplyInputs();
-            clearAddReplyWarnings();
 
             let comment_card = $(this).closest(".card.comment");
             let hidden_card = comment_card.find(".card.hidden_reply").first();
             let edit_post_view = $(".edit_post_view").first();
             let default_post_view = $(".default_post_view").first();
 
-            default_post_view.show();
-            edit_post_view.hide();
-            $("#hidden_comment_card").hide(200);
+            closeActiveEditors();
+            resetForm();
 
             if (hidden_card.css("display") === "none") {
                 $(".hidden_reply").hide(200);
@@ -326,7 +186,6 @@ function userLoggedInSuccessCallback(data) {
         $(".confirm_reply_button").on("click", function (e) {
 
             e.preventDefault();
-            clearAddCommentWarnings();
             let comment_card = $(this).closest(".card.comment");
             let body = tinymce.activeEditor.getContent();
             let ParentCommentID = comment_card.data("comment-id");
@@ -339,10 +198,8 @@ function userLoggedInSuccessCallback(data) {
             e.preventDefault();
             let hidden_card = $(this).closest(".card.hidden_reply");
             hidden_card.hide(200);
-            clearAddReplyInputs();
-            clearAddReplyWarnings();
+            resetForm();
         });
-
 
         $("#addOriginalCommentButton").on("click", function (e) {
 
@@ -351,54 +208,8 @@ function userLoggedInSuccessCallback(data) {
             let edit_post_view = $(".edit_post_view").first();
             let default_post_view = $(".default_post_view").first();
 
-            default_post_view.show();
-            edit_post_view.hide();
+            closeActiveEditors();
             $("#hidden_comment_card").show(200);
-            $(".hidden_reply").hide(200);
-
-        });
-
-        $("#confirm_comment_button").on("click", function (e) {
-
-            e.preventDefault();
-            clearAddPostWarnings();
-            let body = tinymce.activeEditor.getContent();
-            let pageID = $(this).data("page-id");
-            createNewComment(body, pageID, createNewCommentSuccess);
-
-        });
-
-        $("#cancel_comment_button").on("click", function (e) {
-
-            e.preventDefault();
-            $("#hidden_comment_card").hide(200);
-            clearAddCommentInputs();
-            clearAddCommentWarnings();
-        });
-
-        $("#addPostInConsultPageButton").on("click", function (e) {
-
-            e.preventDefault();
-            $("#hidden_post_card").show(200);
-
-        });
-
-        $("#cancel_post_button").on("click", function (e) {
-
-            e.preventDefault();
-            $("#hidden_post_card").hide(200);
-            clearAddPostInputs();
-            clearAddPostWarnings();
-        });
-
-        $("#confirm_post_button").on("click", function (e) {
-
-            e.preventDefault();
-            clearAddPostWarnings();
-            let title = $("#addPostTitle").val();
-            let body = $("#addPostBody").val();
-            let pageID = $(this).data("page-id");
-            createPost(title, body, pageID, createPostSuccess);
 
         });
 
@@ -803,337 +614,6 @@ function CommentDownvote(commentID, success_callback) {
 
 //----------------------------------------------------------------------------------------------------------------------------
 
-function createPostSuccess(data) {
-    let warnings = data.d;
-
-    for (let w of warnings) {
-        console.log(w);
-        let warning = createWarning(w.Text);
-        $("#add_post_warning_space").append(warning);
-        for (let wc of w.WarnControls) {
-            $("#" + wc).addClass("border-danger");
-
-        }
-    }
-
-    if (warnings.length === 0) {
-        console.log("added successfully");
-        window.location.reload();
-    }
-}
-
-function createPost(title, body, pageID, success_callback) {
-    var data = { "title": title, "Body": body, "PageID": pageID };
-
-    $.ajax({
-
-        method: "POST",
-        data: JSON.stringify(data),
-        dataType: "json",
-        contentType: "application/json; charset=utf-8 ",
-        url: "UsersService.asmx/ValidateAndCreatePost",
-        error: function (r) {
-            console.log("error");
-            console.log(r.responseText);
-        },
-        success: success_callback
-
-    });
-}
-
-//----------------------------------------------------------------------------------------------------------------------------
-
-function reportPostSuccessCallback(data) {
-
-}
-
-function reportPost(postID, body, success_callback) {
-    var data = { "PostID": postID, "reportBody": body };
-
-    $.ajax({
-
-        method: "POST",
-        data: JSON.stringify(data),
-        dataType: "json",
-        contentType: "application/json; charset=utf-8 ",
-        url: "UsersService.asmx/ReportPost",
-        error: function (r) {
-            console.log("error");
-            console.log(r.responseText);
-        },
-        success: success_callback
-
-    });
-}
-
-//----------------------------------------------------------------------------------------------------------------------------
-
-function EditPostSuccessCallback(data) {
-
-    let warnings = data.d;
-
-    if (warnings.length === 0) {
-        console.log("added successfully");
-        window.location.reload();
-    }
-    else {
-
-        $(".EditPostWarningSpace").text("Post cannot be empty");
-        $(".EditPostWarningSpace").show();
-
-    }
-
-}
-
-function EditPost(postID, body, success_callback) {
-
-    var data = { "Body": body, "PostID": postID };
-
-    $.ajax({
-
-        method: "POST",
-        data: JSON.stringify(data),
-        dataType: "json",
-        contentType: "application/json; charset=utf-8 ",
-        url: "UsersService.asmx/ValidateAndEditPost",
-        error: function (r) {
-            console.log("error");
-            console.log(r.responseText);
-        },
-        success: success_callback
-
-    });
-
-}
-
-//----------------------------------------------------------------------------------------------------------------------------
-
-function createNewCommentSuccess(data) {
-    let warnings = data.d;
-
-    if (warnings.length === 0) {
-        console.log("added successfully");
-        window.location.reload();
-    }
-    else {
-        $("#add_comment_warning_space").text(warnings[0].Text);
-        $("#add_comment_warning_space").show();
-    }
-}
-
-function createNewComment(body, post_id, success_callback) {
-    var data = { "Body": body, "ParentPostID": post_id };
-
-    $.ajax({
-
-        method: "POST",
-        data: JSON.stringify(data),
-        dataType: "json",
-        contentType: "application/json; charset=utf-8 ",
-        url: "UsersService.asmx/ValidateAndCreateComment",
-        error: function (r) {
-            console.log("error");
-            console.log(r.responseText);
-        },
-        success: success_callback
-
-    });
-}
-
-//----------------------------------------------------------------------------------------------------------------------------
-
-function createCommentReplySuccess(data) {
-    let warnings = data.d;
-
-    if (warnings.length === 0) {
-        console.log("added successfully");
-        window.location.reload();
-    }
-    else {
-        $(".add_reply_warning_space").text(warnings[0].Text);
-        $(".add_reply_warning_space").show();
-    }
-}
-
-function createCommentReply(body, parent_comment_id, success_callback) {
-    var data = { "Body": body, "ParentCommentID": parent_comment_id };
-
-    $.ajax({
-
-        method: "POST",
-        data: JSON.stringify(data),
-        dataType: "json",
-        contentType: "application/json; charset=utf-8 ",
-        url: "UsersService.asmx/ValidateAndCreateCommentReply",
-        error: function (r) {
-            console.log("error");
-            console.log(r.responseText);
-        },
-        success: success_callback
-
-    });
-}
-
-//----------------------------------------------------------------------------------------------------------------------------
-
-function updateUserInfoSuccessCallback(data) {
-
-    let warnings = data.d;
-
-    for (let w of warnings) {
-        console.log(w);
-        let warning = createWarning(w.Text);
-        $("#edit_user_warning_space").append(warning);
-        for (let wc of w.WarnControls) {
-            $("." + wc).addClass("border-danger");
-
-        }
-    }
-
-    if (warnings.length === 0) {
-        console.log("added successfully");
-        window.location.reload();
-    }
-
-}
-
-function updateUserInfo(username, bio, password_confirm, new_pass, new_pass_confirm, success_callback) {
-    var data = {
-        "Username": username,
-        "Bio": bio,
-        "PasswordConfirm": password_confirm,
-        "NewPassword": new_pass,
-        "NewPasswordConfirm": new_pass_confirm
-    };
-
-    $.ajax({
-
-        method: "POST",
-        data: JSON.stringify(data),
-        dataType: "json",
-        contentType: "application/json; charset=utf-8 ",
-        url: "UsersService.asmx/ValidateAndUpdateUserInfo",
-        error: function (r) {
-            console.log("error");
-            console.log(r.responseText);
-        },
-        success: success_callback
-
-    });
-}
-
-//----------------------------------------------------------------------------------------------------------------------------
-
-function SavePostSuccessCallback(data) {
-
-}
-
-function SavePost(post_id, success_callback) {
-
-    var data = { "PostID": post_id };
-
-    $.ajax({
-
-        method: "POST",
-        data: JSON.stringify(data),
-        dataType: "json",
-        contentType: "application/json; charset=utf-8 ",
-        url: "UsersService.asmx/SavePost",
-        error: function (r) {
-            console.log("error");
-            console.log(r.responseText);
-        },
-        success: success_callback
-
-    });
-}
-
-//----------------------------------------------------------------------------------------------------------------------------
-
-function DeletePostSuccessCallback(data) {
-
-}
-
-function DeletePost(post_id, success_callback) {
-
-
-    var data = { "PostID": post_id };
-
-    $.ajax({
-
-        method: "POST",
-        data: JSON.stringify(data),
-        dataType: "json",
-        contentType: "application/json; charset=utf-8 ",
-        url: "UsersService.asmx/DeletePost",
-        error: function (r) {
-            console.log("error");
-            console.log(r.responseText);
-        },
-        success: success_callback
-
-    });
-
-}
-
-//----------------------------------------------------------------------------------------------------------------------------
-
-function RemovePostSuccessCallback(data) {
-
-}
-
-function RemovePost(post_id, success_callback) {
-
-
-    var data = { "PostID": post_id };
-
-    $.ajax({
-
-        method: "POST",
-        data: JSON.stringify(data),
-        dataType: "json",
-        contentType: "application/json; charset=utf-8 ",
-        url: "UsersService.asmx/RemovePost",
-        error: function (r) {
-            console.log("error");
-            console.log(r.responseText);
-        },
-        success: success_callback
-
-    });
-
-}
-
-//----------------------------------------------------------------------------------------------------------------------------
-
-function LockPostSuccessCallback(data) {
-
-}
-
-function LockPost(post_id, success_callback) {
-
-
-    var data = { "PostID": post_id };
-
-    $.ajax({
-
-        method: "POST",
-        data: JSON.stringify(data),
-        dataType: "json",
-        contentType: "application/json; charset=utf-8 ",
-        url: "UsersService.asmx/LockPost",
-        error: function (r) {
-            console.log("error");
-            console.log(r.responseText);
-        },
-        success: success_callback
-
-    });
-
-}
-
-//----------------------------------------------------------------------------------------------------------------------------
-
 function viewPostPage(ID) {
     if (!window.location.toString().includes("ViewPost")) {
         window.location.href = "ViewPost.aspx?post-id=" + ID;
@@ -1142,44 +622,18 @@ function viewPostPage(ID) {
 
 //----------------------------------------------------------------------------------------------------------------------------
 
-function clearAddPostWarnings() {
-    $("#add_post_warning_space .alert").remove();
-    $("#addPostTitle").removeClass("border-danger");
-    $("#addPostBody").removeClass("border-danger");
+function closeActiveEditors() {
+
+    $("#hidden_post_card").hide();
+    $(".edit_post_view").hide();
+    $(".default_post_view").show();
+    $("#hidden_comment_card").hide();
+    $(".edit_comment_view").hide();
+    $(".default_comment_view").show();
 }
 
-function clearAddPostInputs() {
-
-    $("#addPostTitle").val("");
-    $("#addPostBody").val("");
-}
-
-function clearAddCommentWarnings() {
-    $("#add_comment_warning_space .alert").remove();
-    $("#addCommentBody").removeClass("border-danger");
-}
-
-function clearAddCommentInputs() {
-
-    $("#addCommentBody").val("");
-}
-
-function clearAddReplyWarnings() {
-    $(".add_reply_warning_space .alert").remove();
-    $(".addReplyBody").removeClass("border-danger");
-}
-
-function clearAddReplyInputs() {
-
-    $(".addReplyBody").val("");
-}
-
-function clearEditUserInputs() {
+function resetForm() {
     $(".main_form")[0].reset();
-}
-
-function clearEditUserWarnings() {
-    $("#edit_user_warning_space .alert").remove();
-    $("#EditBioInput").removeClass("border-danger");
-    $("#EditConfirmPasswordInput").removeClass("border-danger");
+    $(".alert-danger").remove();
+    $(".border-danger").removeClass("border-danger");
 }

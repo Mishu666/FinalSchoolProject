@@ -52,7 +52,7 @@
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Delete">
                     <ItemTemplate>
-                        <button type="button" class="DeleteUserButton btn btn-link" data-user-id='<%# Bind("ID") %>'>Delete</button>
+                        <button type="button" class="DeleteUserButton btn btn-link" data-user-id='<%# Eval("ID") %>'>Delete</button>
                     </ItemTemplate>
                 </asp:TemplateField>
             </Columns>

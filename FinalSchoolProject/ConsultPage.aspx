@@ -65,7 +65,7 @@
                         <input id="addPostTitle" type="text" class="form-control" placeholder="Title" aria-label="Username">
                     </div>
                     <div class="input-group mb-3">
-                        <textarea id="addPostBody" class="form-control" placeholder="Post body"></textarea>
+                        <div id="addPostBody" class="form-control"></div>
                     </div>
 
                     <div id="add_post_warning_space" class="w-100"></div>
