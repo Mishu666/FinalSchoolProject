@@ -328,7 +328,7 @@ function userLoggedInSuccessCallback(data) {
             e.preventDefault();
             clearAddCommentWarnings();
             let comment_card = $(this).closest(".card.comment");
-            let body = comment_card.find(".addReplyBody").first().val();
+            let body = tinymce.activeEditor.getContent();
             let ParentCommentID = comment_card.data("comment-id");
             createCommentReply(body, ParentCommentID, createCommentReplySuccess);
 
@@ -362,7 +362,7 @@ function userLoggedInSuccessCallback(data) {
 
             e.preventDefault();
             clearAddPostWarnings();
-            let body = tinymce.activeEditor.getContent()
+            let body = tinymce.activeEditor.getContent();
             let pageID = $(this).data("page-id");
             createNewComment(body, pageID, createNewCommentSuccess);
 
@@ -911,19 +911,13 @@ function EditPost(postID, body, success_callback) {
 function createNewCommentSuccess(data) {
     let warnings = data.d;
 
-    for (let w of warnings) {
-        console.log(w);
-        let warning = createWarning(w.Text);
-        $("#add_comment_warning_space").append(warning);
-        for (let wc of w.WarnControls) {
-            $("#" + wc).addClass("border-danger");
-
-        }
-    }
-
     if (warnings.length === 0) {
         console.log("added successfully");
         window.location.reload();
+    }
+    else {
+        $("#add_comment_warning_space").text(warnings[0].Text);
+        $("#add_comment_warning_space").show();
     }
 }
 
@@ -951,19 +945,13 @@ function createNewComment(body, post_id, success_callback) {
 function createCommentReplySuccess(data) {
     let warnings = data.d;
 
-    for (let w of warnings) {
-        console.log(w);
-        let warning = createWarning(w.Text);
-        $(".add_reply_warning_space").append(warning);
-        for (let wc of w.WarnControls) {
-            $("." + wc).addClass("border-danger");
-
-        }
-    }
-
     if (warnings.length === 0) {
         console.log("added successfully");
         window.location.reload();
+    }
+    else {
+        $(".add_reply_warning_space").text(warnings[0].Text);
+        $(".add_reply_warning_space").show();
     }
 }
 

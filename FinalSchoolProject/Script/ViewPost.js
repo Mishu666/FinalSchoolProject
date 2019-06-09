@@ -214,7 +214,7 @@ function EditCommentSuccessCallback(data) {
     }
     else {
 
-        $(".EditCommentWarningSpace").text("Comment cannot be empty");
+        $(".EditCommentWarningSpace").text(warnings[0].Text);
         $(".EditCommentWarningSpace").show();
 
     }

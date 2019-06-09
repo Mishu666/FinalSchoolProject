@@ -67,10 +67,10 @@
                     <div id="addCommentBody" class="EditableArea"></div>
                 </div>
 
-                <div id="add_comment_warning_space" class="w-100"></div>
-                <div id="add_comment_footer" class="d-flex flex-row justify-content-end">
+                <div id="add_comment_footer" class="d-flex flex-row justify-content-start">
                     <button class="btn btn-secondary mr-2" id="cancel_comment_button">Cancel</button>
                     <button class="btn btn-primary" id="confirm_comment_button" data-page-id='<%= ViewState["PostID"].ToString() %>'>Submit</button>
+                    <span id="add_comment_warning_space" class="text-danger ml-3" style="display: none;"></span>
                 </div>
             </div>
         </div>

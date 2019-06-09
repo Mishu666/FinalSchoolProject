@@ -103,7 +103,7 @@ public class ConsultPagesClass
 
     public static DataTable GetAll()
     {
-        string sql_str = "SELECT * FROM [ConsultPages]";
+        string sql_str = "SELECT * FROM [ConsultPages] ORDER BY [PageName] ASC";
         DataTable all = Dbase.SelectFromTable(sql_str);
 
         return all;

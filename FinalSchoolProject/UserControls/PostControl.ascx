@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="PostControl.ascx.cs" Inherits="User_Controls_PostControl" ClassName="User_Controls_PostControl" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="PostControl.ascx.cs" Inherits="PostControl" ClassName="User_Controls_PostControl" %>
 <%@ Import Namespace="System.IO" %>
 
 <% PostsClass post = PostsClass.GetByID(PostID); %>
@@ -56,6 +56,7 @@
                 {
 
                     UsersClass current_user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
+                    bool IsMod = current_user.IsModeratorFor(post.ConsultPageID);
             %>
 
             <div class="post_menu dropdown no-arrow">
@@ -66,7 +67,7 @@
                     x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(17px, 19px, 0px);">
 
                     <%
-                        if (current_user.IsAdmin && current_user.ID != post.AuthorID)
+                        if ((IsMod || current_user.IsAdmin) && current_user.ID != post.AuthorID)
                         {
                     %>
 
@@ -77,7 +78,7 @@
                     %>
 
                     <%
-                        if (current_user.IsAdmin)
+                        if (current_user.IsAdmin || IsMod)
                         {
                     %>
 
@@ -170,7 +171,7 @@
             <%  if (post.IsDeleted)
                 {
             %>
-            
+
             <span class="text-danger post_author_name">[deleted]</span>
 
             <%

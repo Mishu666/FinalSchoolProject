@@ -38,7 +38,7 @@ public partial class ViewPost : System.Web.UI.Page
 
     private void DisplayComment(CommentsClass comment)
     {
-        User_Controls_CommentControl comment_control = (User_Controls_CommentControl)LoadControl("~/User_Controls/CommentControl.ascx");
+        CommentControl comment_control = (CommentControl)LoadControl("~/UserControls/CommentControl.ascx");
         comment_control.CommentID = comment.ID;
         comment_space.Controls.Add(comment_control);
 

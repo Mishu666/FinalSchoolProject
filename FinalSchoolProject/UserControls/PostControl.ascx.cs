@@ -7,7 +7,7 @@ using System.Web.UI;
 using System.IO;
 using System.Web.UI.WebControls;
 
-public partial class User_Controls_PostControl : System.Web.UI.UserControl
+public partial class PostControl : System.Web.UI.UserControl
 {
     public int PostID { get; set; }
     protected void Page_PreRender(object sender, EventArgs e)

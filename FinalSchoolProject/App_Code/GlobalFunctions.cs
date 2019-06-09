@@ -27,7 +27,7 @@ public static class GlobalFunctions
         {
             return Math.Round((final / 1000000000), 1).ToString() + " B";
         }
-        else return "a heckuva lot";
+        else return "1T+";
     }
 
     public static void AddCssClass(WebControl control, string classname)

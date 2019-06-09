@@ -50,9 +50,9 @@
         <!-- Page Wrapper -->
         <div id="wrapper" class="h-100">
             <!-- Sidebar -->
-            <ul class="navbar-nav bg-white sidebar sidebar-light accordion" id="accordionSidebar">
+            <ul class="navbar-nav bg-primary sidebar sidebar-dark accordion" id="accordionSidebar">
                 <!-- Sidebar - Brand -->
-                <a class="sidebar-brand d-flex align-items-center justify-content-center text-gray-700"
+                <a class="sidebar-brand d-flex align-items-center justify-content-center text-light"
                     href="All.aspx">
                     <div class="sidebar-brand-icon">
                         <i class="fa fa-comments"></i>
@@ -105,6 +105,10 @@
                                     <a class="collapse-item text-black-50" href="ConsultPage.aspx?page-id=<%# Eval("ID") %>">
                                         <%# Eval("PageName") %></a>
                                 </ItemTemplate>
+                                <FooterTemplate>
+                                    <asp:Label ID="defaultItem" runat="server" CssClass="collapse-item"
+                                        Visible='<%# AllConsultPagesRepeater.Items.Count == 0 %>' Text="No pages found" />
+                                </FooterTemplate>
                             </asp:Repeater>
                         </div>
                     </div>
@@ -123,6 +127,10 @@
                                     <a class="collapse-item text-black-50" href="ConsultPage.aspx?page-id=<%# Eval("ID") %>">
                                         <%# Eval("PageName") %></a>
                                 </ItemTemplate>
+                                <FooterTemplate>
+                                    <asp:Label ID="defaultItem" runat="server" CssClass="collapse-item"
+                                        Visible='<%# MyConsultPagesRepeater.Items.Count == 0 %>' Text="No page subscibtions" />
+                                </FooterTemplate>
                             </asp:Repeater>
                         </div>
                     </div>

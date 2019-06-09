@@ -47,6 +47,7 @@
 
         <% UsersClass user = UsersClass.GetByID(Convert.ToInt32(ViewState["ViewUserID"])); %>
         <% UsersClass current_user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"])); %>
+        <% bool IsMod = user.IsModerator(); %>
 
         <div id="main_space" class="card shadow-sm d-flex flex-column w-75 h-100 p-3">
 
@@ -93,23 +94,42 @@
 
             </div>
 
-            <div id="user_messages_space" runat="server" class="d-flex flex-column pr-3 mt-3"
+            <div id="user_messages_space" runat="server" class="d-flex flex-column pr-3 mt-3 h-100"
                 style="overflow-y: scroll !important; overflow-x: hidden !important;" visible="false">
+                
+                <div class="accordion" id="MessagesAccordion">
 
-                <asp:Repeater ID="ProfileMessagesRepeater" runat="server">
-                    <ItemTemplate>
-                        <div class="card shadow-sm mb-3 w-100">
-                            <div class="card-text flex-column flex-row align-items-center justify-content-between">
-                                <div>New message from <%# Eval("Body") %></div>
-                                <div><%# Convert.ToDateTime(Eval("SendDate")).ToString() %></div>
+                    <asp:Repeater ID="ProfileMessagesRepeater" runat="server">
+                        <ItemTemplate>
+                            <div class="card shadow-sm mb-3">
+                                <div class="card-header d-flex flex-row justify-content-between align-items-baseline" id="heading_<%# Container.ItemIndex %>">
+                                    <h2 class="mb-0">
+                                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse_<%# Container.ItemIndex %>" 
+                                            aria-expanded="true" aria-controls="collapse_<%# Container.ItemIndex %>">
+                                            Message From <%# Eval("Username") %>
+                                        </button>
+                                    </h2>
+                                    <span class="text-md"><%# Eval("SendDate") %></span>
+                                </div>
+
+                                <div id="collapse_<%# Container.ItemIndex %>" class="collapse" 
+                                    aria-labelledby="heading_<%# Container.ItemIndex %>" data-parent="#MessagesAccordion">
+                                    <div class="card-body">
+                                        <%# Eval("Body") %>
+                                    </div>
+                                    <div class="card-footer">
+                                        <a class="btn btn-link" href='ViewUser.aspx?user-id=<%# Eval("SenderID") %>'>View Sender</a>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </ItemTemplate>
-                </asp:Repeater>
+                        </ItemTemplate>
+                    </asp:Repeater>
+                </div>
+
 
             </div>
 
-            <div id="user_convo_space" runat="server" class="mt-3 w-100 pr-3" style="overflow-x: hidden !important; overflow-y: scroll !important;" visible="false">
+            <div id="user_convo_space" runat="server" class="mt-3 w-100 pr-3 h-100" style="overflow-x: hidden !important; overflow-y: scroll !important;" visible="false">
 
                 <asp:Repeater ID="ProfileConvoRepeater" runat="server" OnItemDataBound="ProfileConvoRepeater_ItemDataBound">
                     <ItemTemplate>
@@ -131,9 +151,8 @@
 
             <div id="new_message_space" runat="server" visible="false" class="d-flex flex-column justify-content-between align-items-baseline w-100 h-100">
 
-                <div class="input-group h-100 my-3">
-                    <textarea id="NewMessageInput" class="form-control" placeholder="Type your message here..." aria-label="New Message"
-                        style="resize: none;"></textarea>
+                <div class="input-group h-100 my-3 EditableAreaSpace">
+                    <div id="NewMessageInput" class="form-control h-100" aria-describedby="basic-addon-new-messagge"></div>
                 </div>
 
                 <div id="NewMessageFooter" class="w-100">
@@ -160,7 +179,18 @@
                         {
                     %>
 
-                    <span id="admin_badge" class="badge badge-dark">admin</span>
+                    <span id="admin_badge" class="badge badge-success">admin</span>
+
+                    <%
+                        }
+                    %>
+
+                    <%
+                        if (IsMod)
+                        {
+                    %>
+
+                    <span id="mod_badge" class="badge badge-danger">mod</span>
 
                     <%
                         }
@@ -168,17 +198,9 @@
 
                 </h5>
 
-                <%
-                    if (!string.IsNullOrWhiteSpace(user.Bio))
-                    {
-                %>
-
                 <span class="font-weight-bold text-lg-center">Points: <%= user.Points %></span>
-                <div class="card-text"><%= user.Bio %></div>
 
-                <%
-                    }
-                %>
+                <div class="card-text" style="overflow-y: auto !important; overflow-x: hidden !important; max-height: 5rem;"><%= user.Bio %></div>
 
                 <% 
                     if (current_user != null && current_user.ID == user.ID)
@@ -192,6 +214,22 @@
                 <%
                     }
                 %>
+
+                <span class="text-lg mt-3 d-block">Moderated Pages:</span>
+                <ul class="list-group pr-3" style="height: 30% !important; overflow-y: visible !important;">
+                    <asp:Repeater ID="ModeratedPagesRepeater" runat="server">
+                        <ItemTemplate>
+                            <li class="list-group-item d-flex justify-content-between align-items-center"><%# Eval("PageName") %>
+                                <span class="badge badge-secondary badge-pill"><%# GlobalFunctions.FormatNumber(Convert.ToInt32(Eval("SubscriberCount"))) %> members</span>
+                            </li>
+                        </ItemTemplate>
+                        <FooterTemplate>
+                            <asp:Label ID="NoPagesLabel" runat="server" CssClass="list-group-item d-flex justify-content-between align-items-center"
+                                Visible='<%# ModeratedPagesRepeater.Items.Count == 0 %>' Text="None" />
+                        </FooterTemplate>
+                    </asp:Repeater>
+                </ul>
+
             </div>
             <div class="card-body" id="edit_user_view" style="display: none;">
 

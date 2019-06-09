@@ -1,10 +1,11 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="CommentControl.ascx.cs" Inherits="User_Controls_CommentControl" ClassName="User_Controls_CommentControl" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="~/UserControls/CommentControl.ascx.cs" Inherits="CommentControl" %>
+
 
 <% CommentsClass comment = CommentsClass.GetByID(CommentID); %>
 
-<div class='card shadow-sm mt-2 mb-3 comment' data-rating='<%= comment.UpvoteCount - comment.DownvoteCount %>'
+<div class='card shadow-sm mt-2 mb-3 comment border-top-0 border-bottom-0 border-right-0 border-primary' data-rating='<%= comment.UpvoteCount - comment.DownvoteCount %>'
     data-comment-id='<%= comment.ID %>' data-date='<%= comment.CreationDate.ToString("dd/MM/yyyy HH:mm:ss") %>'
-    data-isremoved="<%= comment.IsRemoved %>" data-isdeleted="<%= comment.IsDeleted %>">
+    data-isremoved="<%= comment.IsRemoved %>" data-isdeleted="<%= comment.IsDeleted %>" style="border-width: 3px;">
     <div class='card-body d-flex flex-row justify-content-between align-items-center'>
 
         <%
@@ -45,6 +46,8 @@
             {
 
                 UsersClass current_user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
+                PostsClass post = PostsClass.GetByID(comment.ParentPostID);
+                bool IsMod = current_user.IsModeratorFor(post.ConsultPageID);
         %>
 
         <div class="comment_menu dropdown no-arrow">
@@ -55,7 +58,7 @@
                 x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(17px, 19px, 0px);">
 
                 <%
-                    if (current_user.IsAdmin && current_user.ID != comment.CommentorID)
+                    if ((IsMod || current_user.IsAdmin) && current_user.ID != comment.CommentorID)
                     {
                 %>
 
@@ -84,6 +87,16 @@
         <%
             }
         %>
+
+        <div class="edit_comment_view" style="display: none;">
+            <div class="EditableAreaSpace mb-3">
+                <div class="EditableArea"><%= comment.Body %></div>
+            </div>
+            <button type="button" class="CancelCommentEditButton btn btn-secondary">Cancel</button>
+            <button type="button" class="ConfirmCommentEditButton btn btn-primary">Confirm</button>
+            <span class="EditCommentWarningSpace text-danger ml-3" style="display: none;"></span>
+        </div>
+
     </div>
     <div class="d-flex flex-column justify-content-between align-items-start text-gray-700 card-footer w-100" id="comment_footer">
         <div class="d-flex flex-row justify-content-between align-items-center w-100">
@@ -149,10 +162,10 @@
                         <div class="EditableArea addReplyBody"></div>
                     </div>
 
-                    <div class="w-100 add_reply_warning_space"></div>
                     <div class="d-flex flex-row justify-content-start add_reply_footer">
                         <button class="btn btn-secondary mr-2 cancel_reply_button">Cancel</button>
                         <button class="btn btn-primary confirm_reply_button">Submit</button>
+                        <span class="add_reply_warning_space text-danger ml-3" style="display: none;"></span>
                     </div>
                 </div>
             </div>

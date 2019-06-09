@@ -13,6 +13,8 @@ public partial class Home : System.Web.UI.Page
 
         if (!IsPostBack)
         {
+            if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+                Response.Redirect("All.aspx");
             BindHomePostRepeater();
         }
 
@@ -24,8 +26,8 @@ public partial class Home : System.Web.UI.Page
 
     public void BindHomePostRepeater()
     {
-        UsersClass user = UsersClass.GetByID((int)Session["CurrentUserID"]);
-        DataTable allpostsdt = user.GetUserSubscribedPosts();
+        UsersClass user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
+        DataTable allpostsdt = user.GetPostsInSubscibedPages();
         HomePostRepeater.DataSource = allpostsdt;
         HomePostRepeater.DataBind();
 

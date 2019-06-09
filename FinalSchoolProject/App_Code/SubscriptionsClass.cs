@@ -5,50 +5,50 @@ using System.Web;
 using System.Data;
 
 /// <summary>
-/// Summary description for Subscribtions
+/// Summary description for Subscriptions
 /// </summary>
-public class SubscribtionsClass
+public class SubscriptionsClass
 {
     public int ID { get; protected set; }
-    public int SubscriberID, SubscribedPageID;
-    public DateTime SubscribtionDate;
+    public int SubscriberID, PageID;
+    public DateTime SubscriptionDate;
 
     #region constructors
 
-    protected SubscribtionsClass()
+    protected SubscriptionsClass()
     {
 
     }
 
-    protected SubscribtionsClass(int ID, int SubscriberID,
-        int SubscribedPageID, DateTime SubscribtionDate)
+    protected SubscriptionsClass(int ID, int SubscriberID,
+        int PageID, DateTime SubscriptionDate)
     {
         this.ID = ID;
         this.SubscriberID = SubscriberID;
-        this.SubscribedPageID = SubscribedPageID;
-        this.SubscribtionDate = SubscribtionDate;
+        this.PageID = PageID;
+        this.SubscriptionDate = SubscriptionDate;
     }
 
-    public static SubscribtionsClass FromDataRow(DataRow dr)
+    public static SubscriptionsClass FromDataRow(DataRow dr)
     {
         if (dr == null) return null;
-        SubscribtionsClass obj = new SubscribtionsClass
+        SubscriptionsClass obj = new SubscriptionsClass
         {
             ID = Convert.ToInt32(dr["ID"]),
             SubscriberID = Convert.ToInt32(dr["SubscriberID"]),
-            SubscribedPageID = Convert.ToInt32(dr["SubscribedPageID"]),
-            SubscribtionDate = Convert.ToDateTime(dr["SubscribtionDate"])
+            PageID = Convert.ToInt32(dr["PageID"]),
+            SubscriptionDate = Convert.ToDateTime(dr["SubscriptionDate"])
         };
         return obj;
     }
 
-    public static SubscribtionsClass CreateNew(int SubscriberID, int SubscribedPageID)
+    public static SubscriptionsClass CreateNew(int SubscriberID, int PageID)
     {
-        SubscribtionsClass sub = new SubscribtionsClass
+        SubscriptionsClass sub = new SubscriptionsClass
         {
             SubscriberID = SubscriberID,
-            SubscribedPageID = SubscribedPageID,
-            SubscribtionDate = DateTime.Now
+            PageID = PageID,
+            SubscriptionDate = DateTime.Now
         };
         sub.Insert();
         return sub;
@@ -65,11 +65,11 @@ public class SubscribtionsClass
             throw new Exception("already inserted");
         }
 
-        string sql_str = "INSERT INTO [Subscribtions] " +
-            "([SubscriberID], [SubscribedPageID], [SubscribtionDate]) " +
-            "VALUES ({0}, {1}, #{3}#) ";
+        string sql_str = "INSERT INTO [Subscriptions] " +
+            "([SubscriberID], [PageID], [SubscriptionDate]) " +
+            "VALUES ({0}, {1}, #{2}#) ";
 
-        sql_str = string.Format(sql_str, this.SubscriberID, this.SubscribedPageID, this.SubscribtionDate);
+        sql_str = string.Format(sql_str, this.SubscriberID, this.PageID, this.SubscriptionDate);
         Dbase.ChangeTable(sql_str);
 
         string get_id = "SELECT @@IDENTITY AS ID";
@@ -81,16 +81,16 @@ public class SubscribtionsClass
 
     public void Update()
     {
-        string sql_str = "UPDATE [Subscribtions] " +
-            "SET [SubscriberID] = {0}, [SubscribedPageID] = {1}, [SubscribtionDate] = #{3}#";
+        string sql_str = "UPDATE [Subscriptions] " +
+            "SET [SubscriberID] = {0}, [PageID] = {1}, [SubscriptionDate] = #{2}#";
         sql_str += " WHERE [ID]=" + this.ID;
-        sql_str = string.Format(sql_str, this.SubscriberID, this.SubscribedPageID, this.SubscribtionDate);
+        sql_str = string.Format(sql_str, this.SubscriberID, this.PageID, this.SubscriptionDate);
         Dbase.ChangeTable(sql_str);
     }
 
     public void Delete()
     {
-        string sql_str = "DELETE FROM [Subscribtions] WHERE [ID]=" + this.ID;
+        string sql_str = "DELETE FROM [Subscriptions] WHERE [ID]=" + this.ID;
         Dbase.ChangeTable(sql_str);
     }
     #endregion
@@ -99,13 +99,13 @@ public class SubscribtionsClass
 
     public static DataTable GetAll()
     {
-        string sql_str = "SELECT * FROM [Subscribtions]";
+        string sql_str = "SELECT * FROM [Subscriptions]";
         DataTable all = Dbase.SelectFromTable(sql_str);
 
         return all;
     }
 
-    public static SubscribtionsClass GetByID(int ID)
+    public static SubscriptionsClass GetByID(int ID)
     {
         KeyValuePair<string, object> id_pair = new KeyValuePair<string, object>("ID", ID);
         DataTable obj = GetByProperties(id_pair);
@@ -114,7 +114,7 @@ public class SubscribtionsClass
     }
     public static DataTable GetByProperties(params KeyValuePair<string, object>[] pairs)
     {
-        string sql_str = "SELECT * FROM [Subscribtions]";
+        string sql_str = "SELECT * FROM [Subscriptions]";
         string prepend, append;
 
         if (pairs.Length > 0) sql_str += " WHERE ";

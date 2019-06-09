@@ -65,6 +65,7 @@ public partial class ViewUser : System.Web.UI.Page
         }
 
         FillPostsRepeater("submitted");
+        FillModeratedPagesRepeater();
 
 
     }
@@ -101,13 +102,24 @@ public partial class ViewUser : System.Web.UI.Page
 
     }
 
+    public void FillModeratedPagesRepeater()
+    {
+
+        UsersClass user = UsersClass.GetByID(Convert.ToInt32(ViewState["ViewUserID"]));
+        DataTable pages = user.GetMyModeratedPages();
+
+        ModeratedPagesRepeater.DataSource = pages;
+        ModeratedPagesRepeater.DataBind();
+
+    }
+
     public void FillMessagesRepeater()
     {
         UsersClass user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
 
         if (user == null) Response.Redirect("All.aspx");
 
-        DataTable user_messages = MessagesClass.GetByProperties(new KeyValuePair<string, object>("RecipientID", user.ID));
+        DataTable user_messages = user.GetMessages();
 
         ProfileMessagesRepeater.DataSource = user_messages;
         ProfileMessagesRepeater.DataBind();
@@ -162,7 +174,6 @@ public partial class ViewUser : System.Web.UI.Page
 
     }
 
-
     protected void ProfileMessagesTab_ServerClick(object sender, EventArgs e)
     {
 
@@ -212,8 +223,6 @@ public partial class ViewUser : System.Web.UI.Page
 
     protected void ProfileConvoRepeater_ItemDataBound(object sender, RepeaterItemEventArgs e)
     {
-
-
 
     }
 

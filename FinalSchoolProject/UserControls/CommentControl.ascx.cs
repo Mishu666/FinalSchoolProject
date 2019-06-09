@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using System.Data;
 using System.Web.UI;
+using System.Data;
 using System.Web.UI.WebControls;
 
-public partial class User_Controls_CommentControl : System.Web.UI.UserControl
+public partial class CommentControl : System.Web.UI.UserControl
 {
     public int CommentID { get; set; }
 
@@ -55,10 +55,9 @@ public partial class User_Controls_CommentControl : System.Web.UI.UserControl
 
         foreach (DataRow comment_dr in child_comments.Rows)
         {
-            User_Controls_CommentControl child = (User_Controls_CommentControl)Page.LoadControl("~/User_Controls/CommentControl.ascx");
+            CommentControl child = (CommentControl)Page.LoadControl("~/UserControls/CommentControl.ascx");
             child.CommentID = Convert.ToInt32(comment_dr["ID"]);
             child_comments_space.Controls.Add(child);
         }
     }
-
 }

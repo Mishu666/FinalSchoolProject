@@ -12,7 +12,7 @@
 
     <div id="content_space" class="overflow-hidden d-flex flex-row h-100 py-3 px-4">
 
-        <asp:GridView ID="UsersGV" BorderWidth="0" runat="server" AutoGenerateColumns="false" CssClass="table w-100" style="table-layout: fixed !important;" 
+        <asp:GridView ID="UsersGV" BorderWidth="0" runat="server" AutoGenerateColumns="false" CssClass="table w-100" Style="table-layout: fixed !important;"
             GridLines="None" HeaderStyle-CssClass="thead-dark" AlternatingRowStyle-CssClass="bg-gray-400" AllowPaging="true" PageSize="15" PagerSettings-FirstPageText="First"
             PagerSettings-LastPageText="Last" PagerSettings-Mode="NumericFirstLast" PagerSettings-Position="Bottom" PagerSettings-PageButtonCount="5"
             OnPageIndexChanging="UsersGV_PageIndexChanging">
@@ -24,10 +24,10 @@
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="IsAdmin">
                     <ItemTemplate>
-                        <div class="custom-control custom-switch">
+                        <div class="custom-control custom-switch ml-3">
                             <input type="checkbox" checked='<%# Bind("IsAdmin") %>' class='custom-control-input IsAdminSwitch'
                                 id="IsAdminSwitch" runat="server" disabled />
-                            <label class="custom-control-label" for="#">Admin</label>
+                            <label class="custom-control-label" for="#"></label>
                         </div>
                     </ItemTemplate>
                 </asp:TemplateField>
@@ -43,15 +43,18 @@
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="IsSuspended">
                     <ItemTemplate>
-                        <div class="custom-control custom-switch">
+                        <div class="custom-control custom-switch ml-3">
                             <input type="checkbox" checked='<%# Bind("IsSuspended") %>' class='custom-control-input IsSuspendedSwitch'
                                 id="IsSuspendedSwitch" runat="server" disabled />
-                            <label class="custom-control-label" for="#">Suspended</label>
+                            <label class="custom-control-label" for="#"></label>
                         </div>
                     </ItemTemplate>
                 </asp:TemplateField>
-                <asp:TemplateField HeaderText="Ban"></asp:TemplateField>
-                <asp:TemplateField HeaderText="Delete"></asp:TemplateField>
+                <asp:TemplateField HeaderText="Delete">
+                    <ItemTemplate>
+                        <button type="button" class="DeleteUserButton btn btn-link" data-user-id='<%# Bind("ID") %>'>Delete</button>
+                    </ItemTemplate>
+                </asp:TemplateField>
             </Columns>
         </asp:GridView>
 

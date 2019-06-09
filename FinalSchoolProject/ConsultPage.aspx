@@ -5,6 +5,8 @@
     <script type="text/javascript" src="Script/post_actions.js"></script>
     <link rel="stylesheet" href="Style/post_actions.css" />
 
+    <script type="text/javascript" src="Script/ConsultPage.js"></script>
+
 </asp:Content>
 
 <asp:Content ContentPlaceHolderID="nav_items_cph" runat="server">
@@ -88,37 +90,38 @@
             </div>
         </div>
 
-        <div id="page_info_space" class="ml-5 d-flex flex-column h-100" style="width: 30% !important;">
+        <div id="page_info_space" class="ml-3 d-flex flex-column h-100" style="width: 30% !important;">
             <div class="card shadow-sm h-100">
                 <h1 class="card-header"><%= page.PageName %></h1>
                 <div class="card-body">
                     <div class="card-text">
                         <%= page.Description %>
                     </div>
+
+                    <%
+                        if (Session["Logged"] != null && (bool)Session["Logged"])
+                        {
+                            UsersClass current_user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
+                            if (!current_user.IsSubscribedTo(page.ID))
+                            {
+                    %>
+
+                    <button type="button" class="SubscribeButton btn btn-primary my-3" data-pageid="<%= page.ID %>"><i class="fas fa-plus mr-2"></i>Subscribe</button>
+
+                    <%
+                            }
+                            else
+                            {
+                    %>
+
+                    <button type="button" class="SubscribeButton btn btn-success my-3" data-pageid="<%= page.ID %>"><i class="fas fa-check mr-2"></i>Subscribed</button>
+
+                    <%
+                            }
+                        }
+                    %>
                 </div>
 
-                <%
-                    if (Session["Logged"] != null && (bool)Session["Logged"])
-                    {
-                        UsersClass current_user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
-                        if (!current_user.IsSubscribedTo(page.ID))
-                        {
-                %>
-
-                <button id="SubscribeButton" type="button" class="btn btn-primary my-3">Subscribe</button>
-                
-                <%
-                        }
-                        else
-                        {
-                %>
-                
-                <button id="UnsubscribeButton" type="button" class="btn btn-secondary my-3">Unsubscribe</button>
-
-                <%
-                        }
-                    }
-                %>
 
                 <div class="card-footer text-md-center">
                     <%= page.SubscriberCount %> members

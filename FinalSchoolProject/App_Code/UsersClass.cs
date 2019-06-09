@@ -195,23 +195,52 @@ public class UsersClass
 
     public bool IsSubscribedTo(int PageID)
     {
-        string sql = "SELECT * FROM [Subscribtions] WHERE [SubscribedPageID]=" + PageID + " AND [SubscriberID]=" + this.ID;
+        string sql = "SELECT * FROM [Subscriptions] WHERE [PageID]=" + PageID + " AND [SubscriberID]=" + this.ID;
         DataTable dt = Dbase.SelectFromTable(sql);
         return dt.Rows.Count > 0;
+    }
+
+    public bool IsBannedFrom(int PageID)
+    {
+        string sql = "SELECT * FROM [PageUserBans] WHERE [PageID]=" + PageID + " AND [BannedUserID]=" + this.ID;
+        DataTable dt = Dbase.SelectFromTable(sql);
+        return dt.Rows.Count > 0;
+    }
+
+    public bool IsModeratorFor(int PageID)
+    {
+        string sql = "SELECT * FROM [Moderators] WHERE [PageID]=" + PageID + " AND [ModeratorID]=" + this.ID;
+        DataTable dt = Dbase.SelectFromTable(sql);
+        return dt.Rows.Count > 0;
+    }
+
+    public bool IsModerator()
+    {
+        string sql = "SELECT * FROM [Moderators] WHERE [ModeratorID]=" + this.ID;
+        DataTable dt = Dbase.SelectFromTable(sql);
+        return dt.Rows.Count > 0;
+    }
+
+
+    public DataTable GetMyModeratedPages()
+    {
+        string sql = "SELECT * FROM [ConsultPages] WHERE [ID] IN (SELECT [PageID] FROM [Moderators] WHERE [ModeratorID]=" + this.ID + ")";
+        DataTable dt = Dbase.SelectFromTable(sql);
+        return dt;
     }
 
     public DataTable GetMySubscibedPages()
     {
 
-        string sql = "SELECT * FROM [ConsultPages] WHERE [ID] IN (SELECT [SubscribedPageID] FROM [Subscribtions] WHERE [SubscriberID]=" + this.ID + ")";
+        string sql = "SELECT * FROM [ConsultPages] WHERE [ID] IN (SELECT [PageID] FROM [Subscriptions] WHERE [SubscriberID]=" + this.ID + ")";
         return Dbase.SelectFromTable(sql);
 
     }
 
-    public DataTable GetUserSubscribedPosts()
+    public DataTable GetPostsInSubscibedPages()
     {
 
-        string sql = "SELECT * FROM [Posts] WHERE [ConsultPageID] IN (SELECT [SubscribedPageID] FROM [Subscribtions] WHERE [SubscriberID]=" + this.ID + ")";
+        string sql = "SELECT * FROM [Posts] WHERE [ConsultPageID] IN (SELECT [PageID] FROM [Subscriptions] WHERE [SubscriberID]=" + this.ID + ")";
         return Dbase.SelectFromTable(sql);
 
     }
@@ -238,10 +267,18 @@ public class UsersClass
 
     public DataTable GetUserDownvotedPosts()
     {
-        string sql = "SELECT * FROM [Posts] WHERE [ID] IN (SELECT [VotedPostID] FROM [PostVotes]  WHERE [VoterID]=" + this.ID + " AND [VoteValue]=-1)";
+        string sql = "SELECT * FROM [Posts] WHERE [ID] IN (SELECT [VotedPostID] FROM [PostVotes] WHERE [VoterID]=" + this.ID + " AND [VoteValue]=-1)";
         return Dbase.SelectFromTable(sql);
 
     }
+
+    public DataTable GetMessages()
+    {
+        string sql = "SELECT Messages.*, Users.* FROM [Messages] INNER JOIN [Users] ON Messages.SenderID = Users.ID WHERE Messages.RecipientID=" + this.ID;
+
+        return Dbase.SelectFromTable(sql);
+    }
+
 
     public DataTable GetConversationWith(int UserID)
     {
