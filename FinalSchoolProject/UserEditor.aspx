@@ -13,9 +13,9 @@
     <div id="content_space" class="overflow-hidden d-flex flex-row h-100 py-3 px-4">
 
         <asp:GridView ID="UsersGV" BorderWidth="0" runat="server" AutoGenerateColumns="false" CssClass="table w-100" Style="table-layout: fixed !important;"
-            GridLines="None" HeaderStyle-CssClass="thead-dark" AlternatingRowStyle-CssClass="bg-gray-400" AllowPaging="true" PageSize="15" PagerSettings-FirstPageText="First"
+            GridLines="None" HeaderStyle-CssClass="thead-dark" AllowPaging="true" PageSize="15" PagerSettings-FirstPageText="First" EmptyDataText="No Users Found"
             PagerSettings-LastPageText="Last" PagerSettings-Mode="NumericFirstLast" PagerSettings-Position="Bottom" PagerSettings-PageButtonCount="5"
-            OnPageIndexChanging="UsersGV_PageIndexChanging">
+            OnPageIndexChanging="UsersGV_PageIndexChanging" DataKeyNames="ID" HeaderStyle-HorizontalAlign="Center" RowStyle-HorizontalAlign="Center">
             <Columns>
                 <asp:TemplateField HeaderText="Username">
                     <ItemTemplate>
@@ -24,11 +24,10 @@
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="IsAdmin">
                     <ItemTemplate>
-                        <div class="custom-control custom-switch ml-3">
-                            <input type="checkbox" checked='<%# Bind("IsAdmin") %>' class='custom-control-input IsAdminSwitch'
-                                id="IsAdminSwitch" runat="server" disabled />
-                            <label class="custom-control-label" for="#"></label>
-                        </div>
+                        <label class="switch mb-0">
+                            <input type="checkbox" id="IsAdminSwitch" class="IsAdminSwitch" runat="server" checked='<%# Bind("IsAdmin") %>' data-user-id='<%# Eval("ID") %>'>
+                            <span class="slider round"></span>
+                        </label>
                     </ItemTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Flags">
@@ -43,11 +42,10 @@
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="IsSuspended">
                     <ItemTemplate>
-                        <div class="custom-control custom-switch ml-3">
-                            <input type="checkbox" checked='<%# Bind("IsSuspended") %>' class='custom-control-input IsSuspendedSwitch'
-                                id="IsSuspendedSwitch" runat="server" disabled />
-                            <label class="custom-control-label" for="#"></label>
-                        </div>
+                        <label class="switch mb-0">
+                            <input type="checkbox" id="IsSuspendedSwitch" class="IsSuspendedSwitch" runat="server" checked='<%# Eval("IsSuspended") %>' data-user-id='<%# Eval("ID") %>'>
+                            <span class="slider round"></span>
+                        </label>
                     </ItemTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Delete">

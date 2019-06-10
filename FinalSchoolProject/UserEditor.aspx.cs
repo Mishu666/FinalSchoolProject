@@ -25,7 +25,7 @@ public partial class UserEditor : System.Web.UI.Page
     private void FillUsersGV()
     {
 
-        DataTable dt = UsersClass.GetAll();
+        DataTable dt = UsersClass.GetAllExcept(Convert.ToInt32(Session["CurrentUserID"]));
         ViewState["UsersGVDataSource"] = dt;
         UsersGV.DataSource = dt;
         UsersGV.DataBind();

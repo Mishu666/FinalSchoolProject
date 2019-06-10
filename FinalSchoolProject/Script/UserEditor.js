@@ -1,8 +1,5 @@
 ﻿$(document).ready(function () {
 
-    AssignAdminSwitchLabels();
-    AssignSuspendedSwitchLabels();
-
     $(".DeleteUserButton").on("click", function (e) {
         e.preventDefault();
         let userid = parseInt($(this).data("user-id"));
@@ -12,45 +9,13 @@
 
 });
 
-function AssignAdminSwitchLabels() {
-
-    let switches = $(".IsAdminSwitch");
-    let switchLabel;
-    let switchContainer;
-
-    for (let s of switches) {
-
-        switchContainer = $(s.closest("div"));
-        switchLabel = switchContainer.find("label").first();
-
-        switchLabel.attr("for", s.id);
-
-    }
-}
-
-function AssignSuspendedSwitchLabels() {
-
-    let switches = $(".IsSuspendedSwitch");
-    let switchLabel;
-    let switchContainer;
-
-    for (let s of switches) {
-
-        switchContainer = $(s.closest("div"));
-        switchLabel = switchContainer.find("label").first();
-
-        switchLabel.attr("for", s.id);
-
-    }
-}
-
 //--------------------------------------------------------------------------------------
 
 function DeleteUserSuccessCallback(data) {
 
 }
 
-function DeleteUser(userid, success_callbcak) {
+function DeleteUser(userid, success_callback) {
 
     data = { "UserID": userid };
 

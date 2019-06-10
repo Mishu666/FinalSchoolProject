@@ -122,11 +122,16 @@ public class UsersClass
     public static DataTable GetAll()
     {
         string sql_str = "SELECT * FROM [Users]";
-        DataTable all = Dbase.SelectFromTable(sql_str);
-
-        return all;
+        return Dbase.SelectFromTable(sql_str);
 
     }
+    public static DataTable GetAllExcept(int id)
+    {
+        string sql_str = "SELECT * FROM [Users] WHERE [ID]<>" + id;
+        return Dbase.SelectFromTable(sql_str);
+
+    }
+
 
     public static UsersClass GetByID(int ID)
     {
