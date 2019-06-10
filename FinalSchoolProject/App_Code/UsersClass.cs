@@ -132,7 +132,6 @@ public class UsersClass
 
     }
 
-
     public static UsersClass GetByID(int ID)
     {
         KeyValuePair<string, object> id_pair = new KeyValuePair<string, object>("ID", ID);
@@ -183,7 +182,7 @@ public class UsersClass
         return FromDataRow(user_dt.Rows[0]);
     }
 
-    public static bool UserNameTaken(string username)
+    public static bool UsernameTaken(string username)
     {
         string sql_str = "SELECT * FROM [Users] WHERE [Username]='{0}'";
         sql_str = string.Format(sql_str, username);

@@ -112,7 +112,7 @@ public class UsersService : System.Web.Services.WebService
                 valid = false;
             }
 
-            if (UsersClass.UserNameTaken(username))
+            if (UsersClass.UsernameTaken(username))
             {
                 warnings.Add(new Warning("signupInputUsername", "username taken"));
                 valid = false;
@@ -163,7 +163,7 @@ public class UsersService : System.Web.Services.WebService
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     public bool UsernameTaken(string username)
     {
-        return UsersClass.UserNameTaken(username);
+        return UsersClass.UsernameTaken(username);
     }
 
     [WebMethod]
@@ -672,10 +672,14 @@ public class UsersService : System.Web.Services.WebService
                 );
             SubscriptionsClass sub = SubscriptionsClass.FromDataRow(sub_dt.Rows[0]);
             sub.Delete();
+            page.SubscriberCount -= 1;
+            page.Update();
         }
         else
         {
             SubscriptionsClass.CreateNew(current_user.ID, PageID);
+            page.SubscriberCount += 1;
+            page.Update();
         }
 
     }
@@ -950,7 +954,7 @@ public class UsersService : System.Web.Services.WebService
         }
         else
         {
-            if (UsersClass.UserNameTaken(Username) && Username != user.Username)
+            if (UsersClass.UsernameTaken(Username) && Username != user.Username)
             {
                 warnings.Add(new Warning("EditUsernameInput", "username taken"));
                 valid = false;
@@ -1175,4 +1179,133 @@ public class UsersService : System.Web.Services.WebService
         return "deleted successfully";
 
     }
+
+    //------------------------------------------------------------------------------------------------------------
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public void ToggleSubscription(int UserID, int PageID)
+    {
+
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            Abort();
+        }
+
+        ConsultPagesClass page = ConsultPagesClass.GetByID(PageID);
+
+        if (page == null)
+        {
+            Abort();
+        }
+
+        int CurrentUserID = Convert.ToInt32(Session["CurrentUserID"]);
+        UsersClass current_user = UsersClass.GetByID(CurrentUserID);
+
+        if (!current_user.IsModeratorFor(PageID))
+        {
+            Abort();
+        }
+
+        UsersClass UserToEdit = UsersClass.GetByID(UserID);
+
+        if(UserToEdit == null)
+        {
+            Abort();
+        }
+
+        if (UserToEdit.IsSubscribedTo(PageID))
+        {
+            DataTable sub_dt = SubscriptionsClass.GetByProperties(
+                new KeyValuePair<string, object>("PageID", PageID),
+                new KeyValuePair<string, object>("SubscriberID", UserID)
+                );
+
+            SubscriptionsClass sub = SubscriptionsClass.FromDataRow(sub_dt.Rows[0]);
+            sub.Delete();
+            page.SubscriberCount -= 1;
+            page.Update();
+        }
+        else
+        {
+            SubscriptionsClass.CreateNew(UserID, PageID);
+            page.SubscriberCount += 1;
+            page.Update();
+        }
+
+    }
+
+    //------------------------------------------------------------------------------------------------------------
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public void UpdateAdminStatus(bool IsAdmin, int UserID)
+    {
+
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            Abort();
+        }
+
+        int CurrentUserID = Convert.ToInt32(Session["CurrentUserID"]);
+        UsersClass current_user = UsersClass.GetByID(CurrentUserID);
+        UsersClass EditedUser = UsersClass.GetByID(UserID);
+
+        if (EditedUser == null)
+        {
+            Abort();
+        }
+
+        if (CurrentUserID == UserID)
+        {
+            Abort();
+        }
+
+        if (!current_user.IsAdmin)
+        {
+            Abort();
+        }
+
+        EditedUser.IsAdmin = IsAdmin;
+        EditedUser.Update();
+
+    }
+
+    //------------------------------------------------------------------------------------------------------------
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public void UpdateSuspendedStatus(bool IsSuspended, int UserID)
+    {
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            Abort();
+        }
+
+        int CurrentUserID = Convert.ToInt32(Session["CurrentUserID"]);
+        UsersClass current_user = UsersClass.GetByID(CurrentUserID);
+        UsersClass EditedUser = UsersClass.GetByID(UserID);
+
+        if (EditedUser == null)
+        {
+            Abort();
+        }
+
+        if (CurrentUserID == UserID)
+        {
+            Abort();
+        }
+
+        if (!current_user.IsAdmin)
+        {
+            Abort();
+        }
+
+        EditedUser.IsSuspended = IsSuspended;
+        EditedUser.Update();
+
+    }
+
+    //------------------------------------------------------------------------------------------------------------
+
 }

@@ -10,8 +10,10 @@
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/jquery/jquery.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.js"></script>
+
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.css" />
+
     <!-- Core plugin JavaScript-->
     <script src="vendor/jquery-easing/jquery.easing.js"></script>
 
@@ -47,6 +49,14 @@
 </head>
 <body id="page-top" class="overflow-hidden" style="width: 100vw; height: 100vh;">
     <form runat="server" class="h-100 main_form">
+
+        <% 
+            UsersClass current_user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
+            bool IsMod = current_user == null ? false : current_user.IsModerator();
+            bool IsAdmin = current_user == null ? false : current_user.IsAdmin;
+
+        %>
+
         <!-- Page Wrapper -->
         <div id="wrapper" class="h-100">
             <!-- Sidebar -->
@@ -61,11 +71,30 @@
                         Consult
                     </div>
                 </a>
-                <!-- Divider -->
-                <hr class="sidebar-divider mt-0">
-                <% if (Session["Logged"] != null && (bool)Session["Logged"] && Session["CurrentUserIsAdmin"] != null && (bool)Session["CurrentUserIsAdmin"])
+
+
+                <%
+                    if (IsMod || IsAdmin)
                     {
                 %>
+
+                <!-- Divider -->
+                <hr class="sidebar-divider">
+
+                <!-- Heading -->
+                <div class="sidebar-heading">
+                    Editors
+                </div>
+
+                <%
+                    }
+                %>
+
+                <%
+                    if (IsAdmin)
+                    {
+                %>
+
                 <!--Nav item - Admin tools collapse menu-->
                 <li class="nav-item"><a class="nav-link collapsed" href="#" data-toggle="collapse"
                     data-target="#collapseAdminTools" aria-expanded="true" aria-controls="collapseAdminTools">
@@ -77,23 +106,53 @@
                         </div>
                     </div>
                 </li>
+
+                <%
+                    }
+                %>
+
+                <%
+                    if (IsMod)
+                    {
+                %>                
+
+                <!--Nav item - Mod tools collapse menu-->
+                <li class="nav-item"><a class="nav-link collapsed" href="#" data-toggle="collapse"
+                    data-target="#collapseModTools" aria-expanded="true" aria-controls="collapseModTools">
+                    <i class="fas fa-fw fa-cog"></i><span>Mod Tools</span> </a>
+                    <div id="collapseModTools" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                        <div class="bg-light py-2 collapse-inner rounded">
+                            <a class="collapse-item text-black-50" href="PageMembersEditor.aspx">Page Members Editor</a>
+                        </div>
+                    </div>
+                </li>
+
+                <%
+                    }
+                %>
+
                 <!-- Divider -->
                 <hr class="sidebar-divider">
-                <% } %>
+
                 <!-- Heading -->
                 <div class="sidebar-heading">
                     Navigation
                 </div>
+
                 <!-- Nav Item - All -->
                 <li class="nav-item"><a class="nav-link" href="All.aspx"><i class="fas fa-fw fa-globe-americas"></i><span>All</span> </a></li>
-                <% if (Session["Logged"] != null && (bool)Session["Logged"])
+
+                <% if (Session["Logged"] != null && (bool) Session["Logged"])
                     {
                 %>
+
                 <!-- Nav Item - Home -->
                 <li class="nav-item"><a class="nav-link" href="Home.aspx"><i class="fas fa-fw fa-home"></i><span>Home</span> </a></li>
+
                 <%
                     }
                 %>
+
                 <!--Nav item - all consult pages collapse menu-->
                 <li class="nav-item"><a class="nav-link collapsed" href="#" data-toggle="collapse"
                     data-target="#collapsePages" aria-expanded="true" aria-controls="collapsePages">
@@ -113,9 +172,11 @@
                         </div>
                     </div>
                 </li>
-                <% if (Session["Logged"] != null && (bool)Session["Logged"])
+
+                <% if (Session["Logged"] != null && (bool) Session["Logged"])
                     {
                 %>
+
                 <!--Nav item - my consult pages collapse menu-->
                 <li class="nav-item"><a class="nav-link collapsed" href="#" data-toggle="collapse"
                     data-target="#collapseMyPages" aria-expanded="true" aria-controls="collapseMyPages">
@@ -135,9 +196,11 @@
                         </div>
                     </div>
                 </li>
+
                 <%
                     }
                 %>
+
                 <!-- Sidebar Toggler (Sidebar) -->
                 <div class="text-center d-none d-md-inline">
                     <button class="rounded-circle border-0" onclick="return false;" id="sidebarToggle">
@@ -145,9 +208,12 @@
                 </div>
             </ul>
             <!-- End of Sidebar -->
+
             <!-- Content Wrapper -->
-            <div id="content-wrapper" class="d-flex flex-column h-100">
+            <div id="content-wrapper" class="d-flex flex-column h-100 overflow-hidden">
+
                 <!-- Main Content -->
+
                 <!-- Topbar -->
                 <nav class="navbar navbar-expand navbar-light bg-white topbar static-top shadow">
 
@@ -166,16 +232,17 @@
 
                         <!-- Nav Item - User Information -->
 
-                        <%  if (Session["Logged"] != null && (bool)Session["Logged"] == true)
+                        <%  if (Session["Logged"] != null && (bool) Session["Logged"] == true)
                             {
                                 UsersClass user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
                         %>
+
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small"><%= user.Username %></span>
-                                <%--<img id="profile_picture" class="img-profile rounded-circle" src="<%= user.ProfilePictureDir %>" />--%>
                                 <i class="fas fa-user"></i>
                             </a>
+
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
                                 <a class="dropdown-item" href="ViewUser.aspx">
@@ -189,10 +256,12 @@
                                 </a>
                             </div>
                         </li>
+
                         <%  }
                             else
                             {
                         %>
+
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="noUserButton" role="button" data-toggle="modal" data-target="#loginModal" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">Log In / Sign Up</span>
@@ -204,18 +273,27 @@
                     </ul>
 
                 </nav>
+
                 <!-- End of Topbar -->
+
                 <!-- Begin Page Content -->
+
                 <asp:ContentPlaceHolder ID="main_content" runat="server">
                 </asp:ContentPlaceHolder>
+
                 <!-- End of Page Content -->
+
             </div>
+
             <!-- End of Content Wrapper -->
         </div>
+
         <!-- End of Page Wrapper -->
+
         <!-- Scroll to Top Button-->
         <a class="scroll-to-top rounded" href="#page-top"><i class="fas fa-angle-up"></i>
         </a>
+
         <!-- Logout Modal-->
         <div class="user">
             <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel"
@@ -242,6 +320,7 @@
             </div>
         </div>
         <!-- End Of Logout Modal -->
+
         <!-- Log In Modal-->
         <div class="user">
             <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel"
@@ -281,6 +360,7 @@
             </div>
         </div>
         <!-- Log In Modal -->
+
         <!-- Sign Up Modal-->
         <div class="user">
             <div class="modal fade" id="signupModal" tabindex="-1" role="dialog" aria-labelledby="signupModalLabel"
@@ -328,6 +408,7 @@
             </div>
         </div>
         <!-- Sign Up Modal -->
+
     </form>
 </body>
 </html>

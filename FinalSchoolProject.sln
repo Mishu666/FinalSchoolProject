@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.329
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.452
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "FinalSchoolProject", "FinalSchoolProject\", "{9453350B-DCA6-4CD5-A831-3BDD0F35B317}"
 	ProjectSection(WebsiteProperties) = preProject

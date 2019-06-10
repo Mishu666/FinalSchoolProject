@@ -133,7 +133,7 @@ function validateAndSignup(username, password, password_confirm, DOB, success_ca
 //----------------------------------------------------------------------------------------------------------------------------
 
 function logoutUserSuccess(data) {
-    window.location.reload(false);
+    window.location.reload();
 }
 
 function logoutUser(success_callback) {

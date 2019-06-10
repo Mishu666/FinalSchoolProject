@@ -151,6 +151,17 @@ public class ConsultPagesClass
 
     #region tility methods
 
+    public DataTable GetUsersInPage()
+    {
+        string sql = "SELECT * FROM [Users] WHERE [ID] IN (SELECT [SubscriberID] FROM [Subscriptions] WHERE [PageID]=" + this.ID + ")";
+        return Dbase.SelectFromTable(sql);
+    }
+
+    public DataTable GetUsersNotInPage()
+    {
+        string sql = "SELECT * FROM [Users] WHERE [ID] NOT IN (SELECT [SubscriberID] FROM [Subscriptions] WHERE [PageID]=" + this.ID + ")";
+        return Dbase.SelectFromTable(sql);
+    }
 
     #endregion
 }
