@@ -26,20 +26,18 @@ public partial class PageMembersEditor : System.Web.UI.Page
         FillConsultPagesDDL();
 
         object pageid = Request.Form["PageID"];
-        object test = Session["PageID"];
 
-        if(pageid != null)
+        if(pageid != null && pageid.ToString() != "")
         {
             Session["PageID"] = pageid;
         }
 
-        if (pageid == null && Session["PageID"] == null)
+        if ((pageid == null || pageid.ToString() == "") && (Session["PageID"] == null || Session["PageID"].ToString() == ""))
         {
             pageid = ConsultPagesDDL.Items[0].Value;
             Session["PageID"] = pageid;
-
         }
-        else if (Session["PageID"] != null)
+        else if (Session["PageID"] != null && Session["PageID"].ToString() != "")
         {
             pageid = Session["PageID"];
             ConsultPagesDDL.SelectedValue = pageid.ToString();

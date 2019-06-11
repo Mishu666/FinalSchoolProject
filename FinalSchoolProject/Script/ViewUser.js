@@ -3,17 +3,16 @@
 
     tinymce.init({
         selector: '#EditBioInput',
-        width: '100%',
-        height: 300,
         resize: false,
         branding: false,
         menubar: false,
+        inline: true,
         plugins: [
             'advlist autolink lists link image charmap print preview anchor',
             'searchreplace visualblocks code fullscreen emoticons directionality',
             'insertdatetime media table paste code help wordcount'
         ],
-        toolbar: 'link bold italic forecolor backcolor emoticons | bullist numlist | alignleft aligncenter alignright alignjustify ltr rtl'
+        toolbar: 'link bold italic forecolor backcolor emoticons | alignleft alignright'
     });
 
     tinymce.init({

@@ -25,7 +25,7 @@ $(document).ready(function () {
         let password_confirm = $("#signupInputPasswordConfirm").val().trim();
         let DOB = $("#signupInputDOB").val().trim();
 
-        validateAndSignup(validateAndSignupSuccess);
+        validateAndSignup(username, password, password_confirm, DOB, validateAndSignupSuccess);
 
     });
 

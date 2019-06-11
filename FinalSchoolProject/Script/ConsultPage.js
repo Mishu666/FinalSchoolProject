@@ -105,7 +105,7 @@ function createPostSuccess(data) {
 
     if (warnings.length === 0) {
         console.log("added successfully");
-        window.location.reload();
+        $("#main_content_space").load(window.location.pathname + " #main_content_space"); 
     }
 }
 

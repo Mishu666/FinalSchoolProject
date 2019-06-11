@@ -49,7 +49,7 @@
         <% UsersClass current_user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"])); %>
         <% bool IsMod = user.IsModerator(); %>
 
-        <div id="main_space" class="card shadow-sm d-flex flex-column w-75 h-100 p-3">
+        <div id="main_space" class="card shadow-sm d-flex flex-column flex-grow-1 h-100 p-3">
 
             <ul class="nav nav-tabs">
                 <li class="nav-item">
@@ -167,7 +167,7 @@
 
         </div>
 
-        <div id="user_space" class="card shadow-sm ml-3 d-flex flex-column h-100" style="width: 30% !important;">
+        <div id="user_space" class="card shadow-sm ml-3 d-flex flex-column h-100" style="width: 35% !important;">
             <img src="<%= user.ProfilePictureDir %>" alt="profile picture" onerror="this.remove();" class="card-img-top" />
             <div class="card-body" id="default_user_view">
                 <h5 class="card-title mr-1">
@@ -243,7 +243,8 @@
                 </div>
 
                 <div class="input-group mb-3 EditableAreaSpace">
-                    <div id="EditBioInput" class="form-control EditableArea" aria-describedby="basic-addon-username"><%= user.Bio %></div>
+                    <div id="EditBioInput" class="form-control EditableArea"
+                    aria-describedby="basic-addon-username"><%= user.Bio %></div>
                 </div>
 
                 <div class="input-group mb-3">

@@ -278,9 +278,10 @@
 
                 <!-- Begin Page Content -->
 
-                <asp:ContentPlaceHolder ID="main_content" runat="server">
-                </asp:ContentPlaceHolder>
-
+                <div id="main_content_space" class="h-100 overflow-auto">
+                    <asp:ContentPlaceHolder ID="main_content" runat="server">
+                    </asp:ContentPlaceHolder>
+                </div>
                 <!-- End of Page Content -->
 
             </div>
