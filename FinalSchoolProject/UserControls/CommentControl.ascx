@@ -89,7 +89,7 @@
         %>
 
         <div class="edit_comment_view" style="display: none;">
-            <div class="EditableAreaSpace mb-3">
+            <div class=" mb-3">
                 <div class="EditableArea"><%= comment.Body %></div>
             </div>
             <button type="button" class="CancelCommentEditButton btn btn-secondary">Cancel</button>
@@ -158,7 +158,7 @@
             <div class="card shadow-sm w-100 mt-2 mb-3 hidden_reply" style="display: none;">
                 <div class="card-body">
 
-                    <div class="EditableAreaSpace mb-3">
+                    <div class=" mb-3">
                         <div class="EditableArea addReplyBody"></div>
                     </div>
 

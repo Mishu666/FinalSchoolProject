@@ -27,10 +27,8 @@
 
             <div id="UsersInPageSection" class="h-100 mr-3" style="width: 45% !important;">
 
-                <asp:GridView ID="UsersInPageGV" BorderWidth="0" runat="server" AutoGenerateColumns="false" CssClass="UsersInPageGV table w-100 border" Style="table-layout: fixed !important;"
-                    GridLines="None" HeaderStyle-CssClass="thead-dark" AllowPaging="true" PageSize="10" PagerSettings-FirstPageText="First" EmptyDataText="No Users Found"
-                    PagerSettings-LastPageText="Last" PagerSettings-Mode="NumericFirstLast" PagerSettings-Position="Bottom" PagerSettings-PageButtonCount="5"
-                    HeaderStyle-HorizontalAlign="Center" RowStyle-HorizontalAlign="Center" ShowHeaderWhenEmpty="true">
+                <asp:GridView ID="UsersInPageGV" BorderWidth="0" runat="server" AutoGenerateColumns="false" CssClass="UsersInPageGV table border"
+                    GridLines="None" HeaderStyle-CssClass="thead-dark" HeaderStyle-HorizontalAlign="Center" RowStyle-HorizontalAlign="Center" ShowHeaderWhenEmpty="true">
 
                     <Columns>
                         <asp:TemplateField HeaderStyle-Width="70">
@@ -59,13 +57,6 @@
                                 </button>
                             </ItemTemplate>
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Ban">
-                            <ItemTemplate>
-                                <button type="button" class="btn btn-link ToggleUserBanButton" data-user-id='<%# Eval("ID") %>'>
-                                    <i class="fas fa-ban mr-2"></i>Ban
-                                </button>
-                            </ItemTemplate>
-                        </asp:TemplateField>
                     </Columns>
 
                 </asp:GridView>
@@ -85,10 +76,8 @@
 
             <div id="UsersNotInPageSection" class="h-100 ml-3" style="width: 45% !important;">
 
-                <asp:GridView ID="UsersNotInPageGV" BorderWidth="0" runat="server" AutoGenerateColumns="false" CssClass="UsersNotInPageGV table w-100 border" Style="table-layout: fixed !important;"
-                    GridLines="None" HeaderStyle-CssClass="thead-dark" AllowPaging="true" PageSize="10" PagerSettings-FirstPageText="First" EmptyDataText="No Users Found"
-                    PagerSettings-LastPageText="Last" PagerSettings-Mode="NumericFirstLast" PagerSettings-Position="Bottom" PagerSettings-PageButtonCount="5"
-                    HeaderStyle-HorizontalAlign="Center" RowStyle-HorizontalAlign="Center" ShowHeaderWhenEmpty="true">
+                <asp:GridView ID="UsersNotInPageGV" BorderWidth="0" runat="server" AutoGenerateColumns="false" CssClass="UsersNotInPageGV table w-100 border"
+                    GridLines="None" HeaderStyle-CssClass="thead-dark" HeaderStyle-HorizontalAlign="Center" RowStyle-HorizontalAlign="Center" ShowHeaderWhenEmpty="true">
 
                     <Columns>
                         <asp:TemplateField HeaderStyle-Width="70">
@@ -117,15 +106,7 @@
                                 </button>
                             </ItemTemplate>
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Unban">
-                            <ItemTemplate>
-                                <button type="button" class="btn btn-link ToggleUserBanButton" data-user-id='<%# Eval("ID") %>'>
-                                    <i class="fas fa-check mr-2"></i>Unban
-                                </button>
-                            </ItemTemplate>
-                        </asp:TemplateField>
                     </Columns>
-
                 </asp:GridView>
             </div>
 

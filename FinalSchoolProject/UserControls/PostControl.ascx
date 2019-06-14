@@ -152,7 +152,7 @@
         %>
 
         <div class="edit_post_view" style="display: none;">
-            <div class="EditableAreaSpace mb-3">
+            <div class=" mb-3">
                 <div class="EditableArea"><%= post.Body %></div>
             </div>
             <button type="button" class="CancelPostEditButton btn btn-secondary">Cancel</button>

@@ -47,7 +47,6 @@
 
         <% UsersClass user = UsersClass.GetByID(Convert.ToInt32(ViewState["ViewUserID"])); %>
         <% UsersClass current_user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"])); %>
-        <% bool IsMod = user.IsModerator(); %>
 
         <div id="main_space" class="card shadow-sm d-flex flex-column flex-grow-1 h-100 p-3">
 
@@ -96,7 +95,7 @@
 
             <div id="user_messages_space" runat="server" class="d-flex flex-column pr-3 mt-3 h-100"
                 style="overflow-y: scroll !important; overflow-x: hidden !important;" visible="false">
-                
+
                 <div class="accordion" id="MessagesAccordion">
 
                     <asp:Repeater ID="ProfileMessagesRepeater" runat="server">
@@ -104,7 +103,7 @@
                             <div class="card shadow-sm mb-3">
                                 <div class="card-header d-flex flex-row justify-content-between align-items-baseline" id="heading_<%# Container.ItemIndex %>">
                                     <h2 class="mb-0">
-                                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse_<%# Container.ItemIndex %>" 
+                                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse_<%# Container.ItemIndex %>"
                                             aria-expanded="true" aria-controls="collapse_<%# Container.ItemIndex %>">
                                             Message From <%# Eval("Username") %>
                                         </button>
@@ -112,7 +111,7 @@
                                     <span class="text-md"><%# Eval("SendDate") %></span>
                                 </div>
 
-                                <div id="collapse_<%# Container.ItemIndex %>" class="collapse" 
+                                <div id="collapse_<%# Container.ItemIndex %>" class="collapse"
                                     aria-labelledby="heading_<%# Container.ItemIndex %>" data-parent="#MessagesAccordion">
                                     <div class="card-body">
                                         <%# Eval("Body") %>
@@ -151,7 +150,7 @@
 
             <div id="new_message_space" runat="server" visible="false" class="d-flex flex-column justify-content-between align-items-baseline w-100 h-100">
 
-                <div class="input-group h-100 my-3 EditableAreaSpace">
+                <div class="input-group h-100 my-3">
                     <div id="NewMessageInput" class="form-control h-100" aria-describedby="basic-addon-new-messagge"></div>
                 </div>
 
@@ -186,7 +185,7 @@
                     %>
 
                     <%
-                        if (IsMod)
+                        if (user.IsMod)
                         {
                     %>
 
@@ -200,17 +199,17 @@
 
                 <span class="font-weight-bold text-lg-center">Points: <%= user.Points %></span>
 
-                <div class="card-text" style="overflow-y: auto !important; overflow-x: hidden !important; max-height: 5rem;"><%= user.Bio %></div>
+                <div class="card-text border px-2" style="overflow-y: auto !important; overflow-x: hidden !important; max-height: 5rem;"><%= user.Bio %></div>
 
                 <% 
                     if (current_user != null && current_user.ID == user.ID)
                     {
                 %>
-                
+
                 <button id="EditUserButton" type="button" class="btn btn-primary mt-3">
                     <i class="far fa-edit mr-2"></i>Edit
                 </button>
-                
+
                 <button id="DeleteUserButton" type="button" class="btn btn-danger mt-3" data-user-id='<%= (int)Session["CurrentUserID"] %>'>
                     <i class="fas fa-times mr-2"></i>Delete
                 </button>
@@ -235,16 +234,18 @@
                 </ul>
 
             </div>
-            <div class="card-body" id="edit_user_view" style="display: none;">
+            <div class="card-body overflow-auto" id="edit_user_view" style="display: none;">
 
                 <div class="input-group mb-3">
                     <input id="EditUsernameInput" type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon-username"
                         value="<%= user.Username %>">
                 </div>
 
-                <div class="input-group mb-3 EditableAreaSpace">
-                    <div id="EditBioInput" class="form-control EditableArea"
-                    aria-describedby="basic-addon-username"><%= user.Bio %></div>
+                <div class="input-group mb-3">
+                    <div id="EditBioInput" class="form-control"
+                        aria-describedby="basic-addon-bio">
+                        <%= user.Bio %>
+                    </div>
                 </div>
 
                 <div class="input-group mb-3">

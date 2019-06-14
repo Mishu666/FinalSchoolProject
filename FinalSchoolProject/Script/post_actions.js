@@ -619,21 +619,3 @@ function viewPostPage(ID) {
         window.location.href = "ViewPost.aspx?post-id=" + ID;
     }
 }
-
-//----------------------------------------------------------------------------------------------------------------------------
-
-function closeActiveEditors() {
-
-    $("#hidden_post_card").hide();
-    $(".edit_post_view").hide();
-    $(".default_post_view").show();
-    $("#hidden_comment_card").hide();
-    $(".edit_comment_view").hide();
-    $(".default_comment_view").show();
-}
-
-function resetForm() {
-    $(".main_form")[0].reset();
-    $(".alert-danger").remove();
-    $(".border-danger").removeClass("border-danger");
-}

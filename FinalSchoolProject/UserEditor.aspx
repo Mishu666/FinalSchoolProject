@@ -12,10 +12,9 @@
 
     <div id="content_space" class="overflow-hidden d-flex flex-row h-100 py-3 px-4">
 
-        <asp:GridView ID="UsersGV" BorderWidth="0" runat="server" AutoGenerateColumns="false" CssClass="table w-100 border" Style="table-layout: fixed !important;"
-            GridLines="None" HeaderStyle-CssClass="thead-dark" AllowPaging="true" PageSize="15" PagerSettings-FirstPageText="First" EmptyDataText="No Users Found"
-            PagerSettings-LastPageText="Last" PagerSettings-Mode="NumericFirstLast" PagerSettings-Position="Bottom" PagerSettings-PageButtonCount="5"
-            OnPageIndexChanging="UsersGV_PageIndexChanging" HeaderStyle-HorizontalAlign="Center" RowStyle-HorizontalAlign="Center" ShowHeaderWhenEmpty="true">
+        <asp:GridView ID="UsersGV" BorderWidth="0" runat="server" AutoGenerateColumns="false" CssClass="UsersGV table w-100 border"
+            GridLines="None" HeaderStyle-CssClass="thead-dark" EmptyDataText="No Users Found" HeaderStyle-HorizontalAlign="Center" RowStyle-HorizontalAlign="Center" 
+            ShowHeaderWhenEmpty="true">
             <Columns>
                 <asp:TemplateField HeaderText="Username">
                     <ItemTemplate>
@@ -53,7 +52,15 @@
                         <button type="button" class="DeleteUserButton btn btn-link" data-user-id='<%# Eval("ID") %>'>Delete</button>
                     </ItemTemplate>
                 </asp:TemplateField>
+                <asp:TemplateField HeaderStyle-Width="100">
+                    <ItemTemplate>
+                        <div class="loading_spinner spinner-border text-primary" role="status" style="display: none;">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </ItemTemplate>
+                </asp:TemplateField>
             </Columns>
+
         </asp:GridView>
 
     </div>

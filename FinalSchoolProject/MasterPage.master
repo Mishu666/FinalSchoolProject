@@ -43,263 +43,266 @@
     <!-- tinyMCE editor -->
     <script src="https://cloud.tinymce.com/5/tinymce.min.js?apiKey=o9y6hm3e4pvyn0z324i259qv7hhoi7sl75h0wvgjiu84ic9i"></script>
 
+    <!-- JQuery DataTables -->
+    <script type="text/javascript" src="vendor/DataTables/datatables.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="vendor/DataTables/DataTables-1.10.18/css/dataTables.bootstrap4.css" />
+    <script type="text/javascript" src="vendor/DataTables/DataTables-1.10.18/js/dataTables.bootstrap4.js"></script>
 
     <asp:ContentPlaceHolder ID="head" runat="server">
     </asp:ContentPlaceHolder>
 </head>
-<body id="page-top" class="overflow-hidden" style="width: 100vw; height: 100vh;">
+<body id="page-top" style="width: 100vw; height: 100vh;">
     <form runat="server" class="h-100 main_form">
 
         <% 
             UsersClass current_user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
-            bool IsMod = current_user == null ? false : current_user.IsModerator();
+            bool IsMod = current_user == null ? false : current_user.IsMod;
             bool IsAdmin = current_user == null ? false : current_user.IsAdmin;
 
         %>
 
         <!-- Page Wrapper -->
-        <div id="wrapper" class="h-100">
-            <!-- Sidebar -->
-            <ul class="navbar-nav bg-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-                <!-- Sidebar - Brand -->
-                <a class="sidebar-brand d-flex align-items-center justify-content-center text-light"
-                    href="All.aspx">
-                    <div class="sidebar-brand-icon">
-                        <i class="fa fa-comments"></i>
-                    </div>
-                    <div class="sidebar-brand-text mx-3">
-                        Consult
-                    </div>
-                </a>
-
-
-                <%
-                    if (IsMod || IsAdmin)
-                    {
-                %>
-
-                <!-- Divider -->
-                <hr class="sidebar-divider">
-
-                <!-- Heading -->
-                <div class="sidebar-heading">
-                    Editors
-                </div>
-
-                <%
-                    }
-                %>
-
-                <%
-                    if (IsAdmin)
-                    {
-                %>
-
-                <!--Nav item - Admin tools collapse menu-->
-                <li class="nav-item"><a class="nav-link collapsed" href="#" data-toggle="collapse"
-                    data-target="#collapseAdminTools" aria-expanded="true" aria-controls="collapseAdminTools">
-                    <i class="fas fa-fw fa-cog"></i><span>Admin Tools</span> </a>
-                    <div id="collapseAdminTools" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                        <div class="bg-light py-2 collapse-inner rounded">
-                            <a class="collapse-item text-black-50" href="UserEditor.aspx">Users Editor</a>
-                            <a class="collapse-item text-black-50" href="ConsultPageEditor.aspx">Consult Pages Editor</a>
+        <div id="page_container" class="h-100">
+            <div id="wrapper" class="h-100">
+                <!-- Sidebar -->
+                <ul class="navbar-nav bg-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+                    <!-- Sidebar - Brand -->
+                    <a class="sidebar-brand d-flex align-items-center justify-content-center text-light"
+                        href="All.aspx">
+                        <div class="sidebar-brand-icon">
+                            <i class="fa fa-comments"></i>
                         </div>
-                    </div>
-                </li>
-
-                <%
-                    }
-                %>
-
-                <%
-                    if (IsMod)
-                    {
-                %>                
-
-                <!--Nav item - Mod tools collapse menu-->
-                <li class="nav-item"><a class="nav-link collapsed" href="#" data-toggle="collapse"
-                    data-target="#collapseModTools" aria-expanded="true" aria-controls="collapseModTools">
-                    <i class="fas fa-fw fa-cog"></i><span>Mod Tools</span> </a>
-                    <div id="collapseModTools" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                        <div class="bg-light py-2 collapse-inner rounded">
-                            <a class="collapse-item text-black-50" href="PageMembersEditor.aspx">Page Members Editor</a>
+                        <div class="sidebar-brand-text mx-3">
+                            Consult
                         </div>
+                    </a>
+
+
+                    <%
+                        if (IsMod || IsAdmin)
+                        {
+                    %>
+
+                    <!-- Divider -->
+                    <hr class="sidebar-divider">
+
+                    <!-- Heading -->
+                    <div class="sidebar-heading">
+                        Editors
                     </div>
-                </li>
 
-                <%
-                    }
-                %>
+                    <%
+                        }
+                    %>
 
-                <!-- Divider -->
-                <hr class="sidebar-divider">
+                    <%
+                        if (IsAdmin)
+                        {
+                    %>
 
-                <!-- Heading -->
-                <div class="sidebar-heading">
-                    Navigation
-                </div>
-
-                <!-- Nav Item - All -->
-                <li class="nav-item"><a class="nav-link" href="All.aspx"><i class="fas fa-fw fa-globe-americas"></i><span>All</span> </a></li>
-
-                <% if (Session["Logged"] != null && (bool) Session["Logged"])
-                    {
-                %>
-
-                <!-- Nav Item - Home -->
-                <li class="nav-item"><a class="nav-link" href="Home.aspx"><i class="fas fa-fw fa-home"></i><span>Home</span> </a></li>
-
-                <%
-                    }
-                %>
-
-                <!--Nav item - all consult pages collapse menu-->
-                <li class="nav-item"><a class="nav-link collapsed" href="#" data-toggle="collapse"
-                    data-target="#collapsePages" aria-expanded="true" aria-controls="collapsePages">
-                    <i class="fas fa-fw fa-folder"></i><span>All Consult Pages</span> </a>
-                    <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                        <div class="bg-light py-2 collapse-inner rounded">
-                            <asp:Repeater ID="AllConsultPagesRepeater" runat="server">
-                                <ItemTemplate>
-                                    <a class="collapse-item text-black-50" href="ConsultPage.aspx?page-id=<%# Eval("ID") %>">
-                                        <%# Eval("PageName") %></a>
-                                </ItemTemplate>
-                                <FooterTemplate>
-                                    <asp:Label ID="defaultItem" runat="server" CssClass="collapse-item"
-                                        Visible='<%# AllConsultPagesRepeater.Items.Count == 0 %>' Text="No pages found" />
-                                </FooterTemplate>
-                            </asp:Repeater>
-                        </div>
-                    </div>
-                </li>
-
-                <% if (Session["Logged"] != null && (bool) Session["Logged"])
-                    {
-                %>
-
-                <!--Nav item - my consult pages collapse menu-->
-                <li class="nav-item"><a class="nav-link collapsed" href="#" data-toggle="collapse"
-                    data-target="#collapseMyPages" aria-expanded="true" aria-controls="collapseMyPages">
-                    <i class="fas fa-fw fa-folder"></i><span>My Consult Pages</span> </a>
-                    <div id="collapseMyPages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                        <div class="bg-light py-2 collapse-inner rounded">
-                            <asp:Repeater ID="MyConsultPagesRepeater" runat="server">
-                                <ItemTemplate>
-                                    <a class="collapse-item text-black-50" href="ConsultPage.aspx?page-id=<%# Eval("ID") %>">
-                                        <%# Eval("PageName") %></a>
-                                </ItemTemplate>
-                                <FooterTemplate>
-                                    <asp:Label ID="defaultItem" runat="server" CssClass="collapse-item"
-                                        Visible='<%# MyConsultPagesRepeater.Items.Count == 0 %>' Text="No page subscibtions" />
-                                </FooterTemplate>
-                            </asp:Repeater>
-                        </div>
-                    </div>
-                </li>
-
-                <%
-                    }
-                %>
-
-                <!-- Sidebar Toggler (Sidebar) -->
-                <div class="text-center d-none d-md-inline">
-                    <button class="rounded-circle border-0" onclick="return false;" id="sidebarToggle">
-                    </button>
-                </div>
-            </ul>
-            <!-- End of Sidebar -->
-
-            <!-- Content Wrapper -->
-            <div id="content-wrapper" class="d-flex flex-column h-100 overflow-hidden">
-
-                <!-- Main Content -->
-
-                <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar static-top shadow">
-
-                    <!-- Sidebar Toggle (Topbar) -->
-                    <button id="sidebarToggleTop" onclick="return false;" class="btn btn-link d-md-none rounded-circle mr-3 text-gray-700">
-                        <i class="fa fa-bars"></i>
-                    </button>
-
-
-                    <!-- Topbar Navbar -->
-                    <ul class="navbar-nav ml-auto">
-
-                        <asp:ContentPlaceHolder ID="nav_items_cph" runat="server"></asp:ContentPlaceHolder>
-
-                        <div class="topbar-divider d-none d-sm-block"></div>
-
-                        <!-- Nav Item - User Information -->
-
-                        <%  if (Session["Logged"] != null && (bool) Session["Logged"] == true)
-                            {
-                                UsersClass user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
-                        %>
-
-                        <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><%= user.Username %></span>
-                                <i class="fas fa-user"></i>
-                            </a>
-
-                            <!-- Dropdown - User Information -->
-                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="ViewUser.aspx">
-                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Profile
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Logout
-                                </a>
+                    <!--Nav item - Admin tools collapse menu-->
+                    <li class="nav-item"><a class="nav-link collapsed" href="#" data-toggle="collapse"
+                        data-target="#collapseAdminTools" aria-expanded="true" aria-controls="collapseAdminTools">
+                        <i class="fas fa-fw fa-cog"></i><span>Admin Tools</span> </a>
+                        <div id="collapseAdminTools" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                            <div class="bg-light py-2 collapse-inner rounded">
+                                <a class="collapse-item text-black-50" href="UserEditor.aspx">Users Editor</a>
+                                <a class="collapse-item text-black-50" href="ConsultPageEditor.aspx">Consult Pages Editor</a>
+                                <a class="collapse-item text-black-50" href="ModsEditor.aspx">Mods Editor</a>
                             </div>
-                        </li>
+                        </div>
+                    </li>
 
-                        <%  }
-                            else
-                            {
-                        %>
+                    <%
+                        }
+                    %>
 
-                        <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" id="noUserButton" role="button" data-toggle="modal" data-target="#loginModal" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Log In / Sign Up</span>
-                                <i class="fas fa-user"></i>
-                            </a>
-                        </li>
+                    <%
+                        if (IsMod)
+                        {
+                    %>
 
-                        <%  } %>
-                    </ul>
+                    <!--Nav item - Mod tools collapse menu-->
+                    <li class="nav-item"><a class="nav-link collapsed" href="#" data-toggle="collapse"
+                        data-target="#collapseModTools" aria-expanded="true" aria-controls="collapseModTools">
+                        <i class="fas fa-fw fa-cog"></i><span>Mod Tools</span> </a>
+                        <div id="collapseModTools" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                            <div class="bg-light py-2 collapse-inner rounded">
+                                <a class="collapse-item text-black-50" href="PageMembersEditor.aspx">Page Members Editor</a>
+                            </div>
+                        </div>
+                    </li>
 
-                </nav>
+                    <%
+                        }
+                    %>
 
-                <!-- End of Topbar -->
+                    <!-- Divider -->
+                    <hr class="sidebar-divider">
 
-                <!-- Begin Page Content -->
+                    <!-- Heading -->
+                    <div class="sidebar-heading">
+                        Navigation
+                    </div>
 
-                <div id="main_content_space" class="h-100 overflow-auto">
-                    <asp:ContentPlaceHolder ID="main_content" runat="server">
-                    </asp:ContentPlaceHolder>
+                    <!-- Nav Item - All -->
+                    <li class="nav-item"><a class="nav-link" href="All.aspx"><i class="fas fa-fw fa-globe-americas"></i><span>All</span> </a></li>
+
+                    <% if (Session["Logged"] != null && (bool)Session["Logged"])
+                        {
+                    %>
+
+                    <!-- Nav Item - Home -->
+                    <li class="nav-item"><a class="nav-link" href="Home.aspx"><i class="fas fa-fw fa-home"></i><span>Home</span> </a></li>
+
+                    <%
+                        }
+                    %>
+
+                    <!--Nav item - all consult pages collapse menu-->
+                    <li class="nav-item"><a class="nav-link collapsed" href="#" data-toggle="collapse"
+                        data-target="#collapsePages" aria-expanded="true" aria-controls="collapsePages">
+                        <i class="fas fa-fw fa-folder"></i><span>All Consult Pages</span> </a>
+                        <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                            <div class="bg-light py-2 collapse-inner rounded">
+                                <asp:Repeater ID="AllConsultPagesRepeater" runat="server">
+                                    <ItemTemplate>
+                                        <a class="collapse-item text-black-50" href="ConsultPage.aspx?page-id=<%# Eval("ID") %>">
+                                            <%# Eval("PageName") %></a>
+                                    </ItemTemplate>
+                                    <FooterTemplate>
+                                        <asp:Label ID="defaultItem" runat="server" CssClass="collapse-item"
+                                            Visible='<%# AllConsultPagesRepeater.Items.Count == 0 %>' Text="No pages found" />
+                                    </FooterTemplate>
+                                </asp:Repeater>
+                            </div>
+                        </div>
+                    </li>
+
+                    <% if (Session["Logged"] != null && (bool)Session["Logged"])
+                        {
+                    %>
+
+                    <!--Nav item - my consult pages collapse menu-->
+                    <li class="nav-item"><a class="nav-link collapsed" href="#" data-toggle="collapse"
+                        data-target="#collapseMyPages" aria-expanded="true" aria-controls="collapseMyPages">
+                        <i class="fas fa-fw fa-folder"></i><span>My Consult Pages</span> </a>
+                        <div id="collapseMyPages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                            <div class="bg-light py-2 collapse-inner rounded">
+                                <asp:Repeater ID="MyConsultPagesRepeater" runat="server">
+                                    <ItemTemplate>
+                                        <a class="collapse-item text-black-50" href="ConsultPage.aspx?page-id=<%# Eval("ID") %>">
+                                            <%# Eval("PageName") %></a>
+                                    </ItemTemplate>
+                                    <FooterTemplate>
+                                        <asp:Label ID="defaultItem" runat="server" CssClass="collapse-item"
+                                            Visible='<%# MyConsultPagesRepeater.Items.Count == 0 %>' Text="No page subscibtions" />
+                                    </FooterTemplate>
+                                </asp:Repeater>
+                            </div>
+                        </div>
+                    </li>
+
+                    <%
+                        }
+                    %>
+
+                    <!-- Sidebar Toggler (Sidebar) -->
+                    <div class="text-center d-none d-md-inline">
+                        <button class="rounded-circle border-0" onclick="return false;" id="sidebarToggle">
+                        </button>
+                    </div>
+                </ul>
+                <!-- End of Sidebar -->
+
+                <!-- Content Wrapper -->
+                <div id="content-wrapper" class="d-flex flex-column h-100">
+
+                    <!-- Main Content -->
+
+                    <!-- Topbar -->
+                    <nav class="navbar navbar-expand navbar-light bg-white topbar static-top shadow">
+
+                        <!-- Sidebar Toggle (Topbar) -->
+                        <button id="sidebarToggleTop" onclick="return false;" class="btn btn-link d-md-none rounded-circle mr-3 text-gray-700">
+                            <i class="fa fa-bars"></i>
+                        </button>
+
+
+                        <!-- Topbar Navbar -->
+                        <ul class="navbar-nav ml-auto">
+
+                            <asp:ContentPlaceHolder ID="nav_items_cph" runat="server"></asp:ContentPlaceHolder>
+
+                            <div class="topbar-divider d-none d-sm-block"></div>
+
+                            <!-- Nav Item - User Information -->
+
+                            <%  if (Session["Logged"] != null && (bool)Session["Logged"] == true)
+                                {
+                                    UsersClass user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
+                            %>
+
+                            <li class="nav-item dropdown no-arrow">
+                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <span class="mr-2 d-none d-lg-inline text-gray-600 small"><%= user.Username %></span>
+                                    <i class="fas fa-user"></i>
+                                </a>
+
+                                <!-- Dropdown - User Information -->
+                                <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                                    <a class="dropdown-item" href="ViewUser.aspx">
+                                        <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                        Profile
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                        Logout
+                                    </a>
+                                </div>
+                            </li>
+
+                            <%  }
+                                else
+                                {
+                            %>
+
+                            <li class="nav-item dropdown no-arrow">
+                                <a class="nav-link dropdown-toggle" href="#" id="noUserButton" role="button" data-toggle="modal" data-target="#loginModal" aria-haspopup="true" aria-expanded="false">
+                                    <span class="mr-2 d-none d-lg-inline text-gray-600 small">Log In / Sign Up</span>
+                                    <i class="fas fa-user"></i>
+                                </a>
+                            </li>
+
+                            <%  } %>
+                        </ul>
+
+                    </nav>
+
+                    <!-- End of Topbar -->
+
+                    <!-- Begin Page Content -->
+
+                    <div id="main_content_space" class="h-100 overflow-auto">
+                        <asp:ContentPlaceHolder ID="main_content" runat="server">
+                        </asp:ContentPlaceHolder>
+                    </div>
+                    <!-- End of Page Content -->
+
                 </div>
-                <!-- End of Page Content -->
 
+                <!-- End of Content Wrapper -->
             </div>
-
-            <!-- End of Content Wrapper -->
         </div>
 
         <!-- End of Page Wrapper -->
-
-        <!-- Scroll to Top Button-->
-        <a class="scroll-to-top rounded" href="#page-top"><i class="fas fa-angle-up"></i>
-        </a>
 
         <!-- Logout Modal-->
         <div class="user">
             <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel"
                 aria-hidden="true">
-                <div class="modal-dialog" role="document">
+                <div class="modal-dialog modal-dialog-scrollable" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="logoutModalLabel">Ready to Leave?</h5>
@@ -326,7 +329,7 @@
         <div class="user">
             <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel"
                 aria-hidden="true">
-                <div class="modal-dialog" role="document">
+                <div class="modal-dialog modal-dialog-scrollable" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="loginModalLabel">Log In</h5>
@@ -343,8 +346,8 @@
                                 <asp:TextBox TextMode="password" runat="server" CssClass="login_textbox form-control form-control-user"
                                     ID="loginInputPassword" placeholder="Password"></asp:TextBox>
                             </div>
-                        </div>
-                        <div id="login_warning_space">
+                            <div id="login_warning_space">
+                            </div>
                         </div>
                         <div class="text-center">
                             <a class="small" href="#" data-dismiss="modal" data-toggle="modal" data-target="#signupModal">Create an Account!</a>
@@ -366,7 +369,7 @@
         <div class="user">
             <div class="modal fade" id="signupModal" tabindex="-1" role="dialog" aria-labelledby="signupModalLabel"
                 aria-hidden="true">
-                <div class="modal-dialog" role="document">
+                <div class="modal-dialog modal-dialog-scrollable" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="signupModalLabel">Sign Up</h5>
@@ -391,8 +394,8 @@
                                 <asp:TextBox runat="server" CssClass="signup_textbox form-control form-control-user"
                                     data-provide="datepicker" ID="signupInputDOB" placeholder="Date of birth"></asp:TextBox>
                             </div>
-                        </div>
-                        <div id="signup_warning_space">
+                            <div id="signup_warning_space">
+                            </div>
                         </div>
                         <div class="text-center">
                             <a class="small" href="#" data-dismiss="modal" data-toggle="modal" data-target="#loginModal">Already have an account? Log in!</a>
@@ -411,5 +414,6 @@
         <!-- Sign Up Modal -->
 
     </form>
+    
 </body>
 </html>

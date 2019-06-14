@@ -14,7 +14,7 @@ public class UsersClass
     public int Flags, Points;
     public string Username, Password, ProfilePictureDir, Bio;
     public DateTime DOB, CreationDate;
-    public bool IsAdmin, IsSuspended;
+    public bool IsAdmin, IsMod, IsSuspended;
 
     protected UsersClass()
     {
@@ -22,7 +22,7 @@ public class UsersClass
     }
 
     protected UsersClass(int ID, int Flags, int Points, string Username, string Password, string ProfilePictureDir,
-                         string Bio, DateTime DOB, DateTime CreationDate, bool IsAdmin, bool IsSuspended)
+                         string Bio, DateTime DOB, DateTime CreationDate, bool IsAdmin, bool IsMod, bool IsSuspended)
     {
         this.ID = ID;
         this.Flags = Flags;
@@ -33,6 +33,7 @@ public class UsersClass
         this.DOB = DOB;
         this.CreationDate = CreationDate;
         this.IsAdmin = IsAdmin;
+        this.IsMod = IsMod;
         this.IsSuspended = IsSuspended;
         this.ProfilePictureDir = ProfilePictureDir;
     }
@@ -52,6 +53,7 @@ public class UsersClass
             DOB = Convert.ToDateTime(dr["DOB"]),
             CreationDate = Convert.ToDateTime(dr["CreationDate"]),
             IsAdmin = Convert.ToBoolean(dr["IsAdmin"]),
+            IsMod = Convert.ToBoolean(dr["IsMod"]),
             IsSuspended = Convert.ToBoolean(dr["IsSuspended"]),
         };
         return obj;
@@ -65,6 +67,7 @@ public class UsersClass
             Password = Password,
             DOB = DOB,
             IsAdmin = false,
+            IsMod = false,
             Flags = 0,
             Points = 0,
             Bio = "Hello fellow consultants and consultees!",
@@ -86,11 +89,11 @@ public class UsersClass
 
         string sql_str = "INSERT INTO [Users] " +
             "([Username], [Password], [Flags], [Points], " +
-            "[CreationDate], [DOB], [IsAdmin], [IsSuspended], [ProfilePictureDir], [Bio]) " +
-            "VALUES ('{0}','{1}', {2}, {3}, #{4}#, #{5}#, {6}, {7},'{8}', '{9}') ";
+            "[CreationDate], [DOB], [IsAdmin], [IsMod], [IsSuspended], [ProfilePictureDir], [Bio]) " +
+            "VALUES ('{0}','{1}', {2}, {3}, #{4}#, #{5}#, {6}, {7}, {8}, '{9}', '{10}') ";
 
         sql_str = string.Format(sql_str, this.Username, this.Password, this.Flags, this.Points,
-            this.CreationDate, this.DOB, this.IsAdmin, this.IsSuspended, this.ProfilePictureDir, this.Bio);
+            this.CreationDate, this.DOB, this.IsAdmin, this.IsMod, this.IsSuspended, this.ProfilePictureDir, this.Bio);
         Dbase.ChangeTable(sql_str);
 
         string get_id = "SELECT @@IDENTITY AS ID";
@@ -104,12 +107,12 @@ public class UsersClass
     {
         string sql_str = "UPDATE [Users] " +
             "SET [Username] = '{0}', [Password] = '{1}', " +
-            "[Flags] = {2}, [Points]= {3}, " +
-            "[CreationDate] = #{4}#, [DOB] = #{5}#, [IsAdmin] = {6}, [IsSuspended] = {7}, " +
-            "[ProfilePictureDir] = '{8}', [Bio] = '{9}'";
+            "[Flags] = {2}, [Points]= {3}, [CreationDate] = #{4}#, [DOB] = #{5}#, " +
+            "[IsAdmin] = {6}, [IsMod] = {7}, [IsSuspended] = {8}, " +
+            "[ProfilePictureDir] = '{9}', [Bio] = '{10}'";
         sql_str += " WHERE [ID]=" + this.ID;
         sql_str = string.Format(sql_str, this.Username, this.Password, this.Flags, this.Points,
-            this.CreationDate, this.DOB, this.IsAdmin, this.IsSuspended, this.ProfilePictureDir, this.Bio);
+            this.CreationDate, this.DOB, this.IsAdmin, this.IsMod, this.IsSuspended, this.ProfilePictureDir, this.Bio);
         Dbase.ChangeTable(sql_str);
     }
 
@@ -125,6 +128,7 @@ public class UsersClass
         return Dbase.SelectFromTable(sql_str);
 
     }
+
     public static DataTable GetAllExcept(int id)
     {
         string sql_str = "SELECT * FROM [Users] WHERE [ID]<>" + id;
@@ -204,27 +208,14 @@ public class UsersClass
         return dt.Rows.Count > 0;
     }
 
-    public bool IsBannedFrom(int PageID)
-    {
-        string sql = "SELECT * FROM [PageUserBans] WHERE [PageID]=" + PageID + " AND [BannedUserID]=" + this.ID;
-        DataTable dt = Dbase.SelectFromTable(sql);
-        return dt.Rows.Count > 0;
-    }
-
     public bool IsModeratorFor(int PageID)
     {
+        if (!this.IsMod) return false;
+
         string sql = "SELECT * FROM [Moderators] WHERE [PageID]=" + PageID + " AND [ModeratorID]=" + this.ID;
         DataTable dt = Dbase.SelectFromTable(sql);
         return dt.Rows.Count > 0;
     }
-
-    public bool IsModerator()
-    {
-        string sql = "SELECT * FROM [Moderators] WHERE [ModeratorID]=" + this.ID;
-        DataTable dt = Dbase.SelectFromTable(sql);
-        return dt.Rows.Count > 0;
-    }
-
 
     public DataTable GetMyModeratedPages()
     {
@@ -288,7 +279,6 @@ public class UsersClass
 
         return Dbase.SelectFromTable(sql);
     }
-
 
     public DataTable GetConversationWith(int UserID)
     {

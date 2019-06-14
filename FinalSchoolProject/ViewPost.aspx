@@ -63,7 +63,7 @@
         <div class="card shadow-sm w-100 mb-3 hidden_comment" id="hidden_comment_card" style="display: none;">
             <div class="card-body">
 
-                <div class="EditableAreaSpace mb-3">
+                <div class=" mb-3">
                     <div id="addCommentBody" class="EditableArea"></div>
                 </div>
 

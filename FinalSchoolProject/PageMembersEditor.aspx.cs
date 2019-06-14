@@ -10,48 +10,51 @@ public partial class PageMembersEditor : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        WarningLabel.Text = "";
-        WarningLabel.Visible = false;
-
-        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        if (!IsPostBack)
         {
-            Response.Redirect("All.aspx");
+            WarningLabel.Text = "";
+            WarningLabel.Visible = false;
+
+            if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+            {
+                Response.Redirect("All.aspx");
+            }
+            UsersClass current_user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
+            if (!current_user.IsMod)
+            {
+                Response.Redirect("All.aspx");
+            }
+
+            FillConsultPagesDDL();
+
+            string pageid = Request.Form["PageID"];
+
+            if (pageid != null && pageid != "")
+            {
+                ViewState["PageID"] = pageid;
+            }
+
+            if ((pageid == null || pageid == "") && (ViewState["PageID"] == null || ViewState["PageID"].ToString() == ""))
+            {
+                pageid = ConsultPagesDDL.Items[0].Value;
+                ViewState["PageID"] = pageid;
+            }
+            else if (ViewState["PageID"] != null && ViewState["PageID"].ToString() != "")
+            {
+                pageid = ViewState["PageID"].ToString();
+                ConsultPagesDDL.SelectedValue = pageid.ToString();
+            }
+
+            FillUsersInPageGV(Convert.ToInt32(pageid));
+            FillUsersNotInPageGV(Convert.ToInt32(pageid));
         }
-        UsersClass current_user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
-        if (!current_user.IsModerator())
-        {
-            Response.Redirect("All.aspx");
-        }
-
-        FillConsultPagesDDL();
-
-        object pageid = Request.Form["PageID"];
-
-        if(pageid != null && pageid.ToString() != "")
-        {
-            Session["PageID"] = pageid;
-        }
-
-        if ((pageid == null || pageid.ToString() == "") && (Session["PageID"] == null || Session["PageID"].ToString() == ""))
-        {
-            pageid = ConsultPagesDDL.Items[0].Value;
-            Session["PageID"] = pageid;
-        }
-        else if (Session["PageID"] != null && Session["PageID"].ToString() != "")
-        {
-            pageid = Session["PageID"];
-            ConsultPagesDDL.SelectedValue = pageid.ToString();
-        }
-
-        FillUsersInPageGV(Convert.ToInt32(pageid));
-        FillUsersNotInPageGV(Convert.ToInt32(pageid));
-
     }
 
     private void FillUsersInPageGV(int PageID)
     {
 
         ConsultPagesClass page = ConsultPagesClass.GetByID(PageID);
+        DataTable users_dt;
 
         if (page == null)
         {
@@ -60,9 +63,19 @@ public partial class PageMembersEditor : System.Web.UI.Page
             return;
         }
 
-        DataTable users_dt = page.GetUsersInPage();
+        if (ViewState["UsersInPage_dt"] == null)
+        {
+            users_dt = page.GetUsersInPage();
+        }
+        else
+        {
+            users_dt = (DataTable)ViewState["UsersInPage_dt"];
+        }
+
+
         UsersInPageGV.DataSource = users_dt;
         UsersInPageGV.DataBind();
+        UsersInPageGV.HeaderRow.TableSection = TableRowSection.TableHeader;
 
     }
 
@@ -70,6 +83,7 @@ public partial class PageMembersEditor : System.Web.UI.Page
     {
 
         ConsultPagesClass page = ConsultPagesClass.GetByID(PageID);
+        DataTable users_dt;
 
         if (page == null)
         {
@@ -78,9 +92,18 @@ public partial class PageMembersEditor : System.Web.UI.Page
             return;
         }
 
-        DataTable users_dt = page.GetUsersNotInPage();
+        if (ViewState["UsersNotInPage_dt"] == null)
+        {
+            users_dt = page.GetUsersNotInPage();
+        }
+        else
+        {
+            users_dt = (DataTable)ViewState["UsersNotInPage_dt"];
+        }
+
         UsersNotInPageGV.DataSource = users_dt;
         UsersNotInPageGV.DataBind();
+        UsersNotInPageGV.HeaderRow.TableSection = TableRowSection.TableHeader;
 
     }
 
@@ -100,6 +123,5 @@ public partial class PageMembersEditor : System.Web.UI.Page
             li.Text = cp.PageName;
             ConsultPagesDDL.Items.Add(li);
         }
-
     }
 }

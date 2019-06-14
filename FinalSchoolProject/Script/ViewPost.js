@@ -336,7 +336,7 @@ function EditCommentSuccessCallback(data) {
 
     if (warnings.length === 0) {
         console.log("added successfully");
-        window.location.reload();
+        loadServerChanges();
     }
     else {
 
@@ -376,7 +376,7 @@ function EditPostSuccessCallback(data) {
 
     if (warnings.length === 0) {
         console.log("added successfully");
-        window.location.reload();
+        loadServerChanges();
     }
     else {
 
@@ -415,7 +415,7 @@ function createNewCommentSuccess(data) {
 
     if (warnings.length === 0) {
         console.log("added successfully");
-        window.location.reload();
+        loadServerChanges();
     }
     else {
         $("#add_comment_warning_space").text(warnings[0].Text);
@@ -449,7 +449,7 @@ function createCommentReplySuccess(data) {
 
     if (warnings.length === 0) {
         console.log("added successfully");
-        window.location.reload();
+        loadServerChanges();
     }
     else {
         $(".add_reply_warning_space").text(warnings[0].Text);

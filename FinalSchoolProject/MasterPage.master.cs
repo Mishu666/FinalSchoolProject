@@ -13,19 +13,16 @@ public partial class MasterPage : System.Web.UI.MasterPage
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (!IsPostBack)
-        {
-            BindAllConsultPagesRepeater();
-            
-            if(Session["Logged"] != null && (bool)Session["Logged"])
-                BindMyConsultPagesRepeater();
-        }
+        BindAllConsultPagesRepeater();
+
+        if (Session["Logged"] != null && (bool)Session["Logged"])
+            BindMyConsultPagesRepeater();
     }
 
     #endregion
 
     #region page methods
-    
+
     private void BindAllConsultPagesRepeater()
     {
         DataTable pages = ConsultPagesClass.GetAll();

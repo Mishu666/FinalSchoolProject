@@ -6,7 +6,9 @@
         resize: false,
         branding: false,
         menubar: false,
-        inline: true,
+        width: '100%',
+        height: 200,
+        body_class: "form-control",
         plugins: [
             'advlist autolink lists link image charmap print preview anchor',
             'searchreplace visualblocks code fullscreen emoticons directionality',
@@ -49,7 +51,8 @@
 
     $("#ConfirmEditButton").on("click", function (e) {
         e.preventDefault();
-        resetForm();
+        removeAlerts();
+
 
         let username = $("#EditUsernameInput").val();
         let bio = tinymce.activeEditor.getContent();
@@ -58,7 +61,6 @@
         let new_password_confirm = $("#EditConfirmNewPasswordInput").val();
 
         updateUserInfo(username, bio, confirm_pass, new_password, new_password_confirm, updateUserInfoSuccessCallback);
-
     });
 
     $("#CancelEditButton").on("click", function (e) {
@@ -162,7 +164,7 @@ function updateUserInfoSuccessCallback(data) {
 
     if (warnings.length === 0) {
         console.log("added successfully");
-        window.location.reload();
+        loadServerChanges();
     }
 
 }

@@ -546,8 +546,6 @@ public class UsersService : System.Web.Services.WebService
 
     }
 
-    //------------------------------------------------------------------------------------------------------------
-
     [WebMethod(EnableSession = true)]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     public void RemovePost(int PostID)
@@ -562,7 +560,7 @@ public class UsersService : System.Web.Services.WebService
 
         if (post == null)
         {
-            Abort();      
+            Abort();
         }
 
         UsersClass current_user = UsersClass.GetByID(userID);
@@ -608,8 +606,6 @@ public class UsersService : System.Web.Services.WebService
         comment.Update();
 
     }
-
-    //------------------------------------------------------------------------------------------------------------
 
     [WebMethod(EnableSession = true)]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
@@ -1066,8 +1062,6 @@ public class UsersService : System.Web.Services.WebService
 
     }
 
-    //------------------------------------------------------------------------------------------------------------
-
     [WebMethod(EnableSession = true)]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     private void EditComment(int CommentID, string Body)
@@ -1160,7 +1154,7 @@ public class UsersService : System.Web.Services.WebService
         UsersClass user = UsersClass.GetByID(UserID);
 
         DataTable posts_dt = user.GetUserPosts();
-        foreach(DataRow dt in posts_dt.Rows)
+        foreach (DataRow dt in posts_dt.Rows)
         {
             DeletePost((int)dt["ID"]);
         }
@@ -1184,7 +1178,7 @@ public class UsersService : System.Web.Services.WebService
 
     [WebMethod(EnableSession = true)]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public void ToggleSubscription(int UserID, int PageID)
+    public void KickUser(int UserID, int PageID)
     {
 
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
@@ -1209,7 +1203,7 @@ public class UsersService : System.Web.Services.WebService
 
         UsersClass UserToEdit = UsersClass.GetByID(UserID);
 
-        if(UserToEdit == null)
+        if (UserToEdit == null)
         {
             Abort();
         }
@@ -1226,12 +1220,152 @@ public class UsersService : System.Web.Services.WebService
             page.SubscriberCount -= 1;
             page.Update();
         }
-        else
+
+    }
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public void IncludeUser(int UserID, int PageID)
+    {
+
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            Abort();
+        }
+
+        ConsultPagesClass page = ConsultPagesClass.GetByID(PageID);
+
+        if (page == null)
+        {
+            Abort();
+        }
+
+        int CurrentUserID = Convert.ToInt32(Session["CurrentUserID"]);
+        UsersClass current_user = UsersClass.GetByID(CurrentUserID);
+
+        if (!current_user.IsModeratorFor(PageID))
+        {
+            Abort();
+        }
+
+        UsersClass UserToEdit = UsersClass.GetByID(UserID);
+
+        if (UserToEdit == null)
+        {
+            Abort();
+        }
+
+        if (!UserToEdit.IsSubscribedTo(PageID))
         {
             SubscriptionsClass.CreateNew(UserID, PageID);
             page.SubscriberCount += 1;
             page.Update();
         }
+
+    }
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public void IncludeMultipleUsers(int[] UserIDs, int PageID)
+    {
+
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            Abort();
+        }
+
+        ConsultPagesClass page = ConsultPagesClass.GetByID(PageID);
+
+        if (page == null)
+        {
+            Abort();
+        }
+
+        int CurrentUserID = Convert.ToInt32(Session["CurrentUserID"]);
+        UsersClass current_user = UsersClass.GetByID(CurrentUserID);
+
+        if (!current_user.IsModeratorFor(PageID))
+        {
+            Abort();
+        }
+
+        UsersClass UserToEdit;
+
+        foreach (int ID in UserIDs)
+        {
+
+            UserToEdit = UsersClass.GetByID(ID);
+
+            if (UserToEdit == null)
+            {
+                continue;
+            }
+
+            if (!UserToEdit.IsSubscribedTo(PageID))
+            {
+                SubscriptionsClass.CreateNew(ID, PageID);
+                page.SubscriberCount += 1;
+            }
+
+        }
+
+        page.Update();
+
+
+    }
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public void KickMultipleUsers(int[] UserIDs, int PageID)
+    {
+
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            Abort();
+        }
+
+        ConsultPagesClass page = ConsultPagesClass.GetByID(PageID);
+
+        if (page == null)
+        {
+            Abort();
+        }
+
+        int CurrentUserID = Convert.ToInt32(Session["CurrentUserID"]);
+        UsersClass current_user = UsersClass.GetByID(CurrentUserID);
+
+        if (!current_user.IsModeratorFor(PageID))
+        {
+            Abort();
+        }
+
+        UsersClass UserToEdit;
+
+        foreach (int ID in UserIDs)
+        {
+
+            UserToEdit = UsersClass.GetByID(ID);
+
+            if (UserToEdit == null)
+            {
+                continue;
+            }
+
+            if (UserToEdit.IsSubscribedTo(PageID))
+            {
+                DataTable sub_dt = SubscriptionsClass.GetByProperties(
+                    new KeyValuePair<string, object>("PageID", PageID),
+                    new KeyValuePair<string, object>("SubscriberID", ID)
+                    );
+
+                SubscriptionsClass sub = SubscriptionsClass.FromDataRow(sub_dt.Rows[0]);
+                sub.Delete();
+                page.SubscriberCount -= 1;
+            }
+
+        }
+
+        page.Update();
 
     }
 
@@ -1270,8 +1404,6 @@ public class UsersService : System.Web.Services.WebService
         EditedUser.Update();
 
     }
-
-    //------------------------------------------------------------------------------------------------------------
 
     [WebMethod(EnableSession = true)]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]

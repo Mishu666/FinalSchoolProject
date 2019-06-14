@@ -12,32 +12,53 @@ public partial class UserEditor : System.Web.UI.Page
     {
         if (!IsPostBack)
         {
+
             if (Session["Logged"] == null || (bool)Session["Logged"] == false || Session["CurrentUserIsAdmin"] == null || (bool)Session["CurrentUserIsAdmin"] == false)
             {
                 Response.Redirect("All.aspx");
             }
 
-            FillUsersGV();
 
+            string users_page_no = Request.Form["UsersGV_PageNo"];
+
+            if (users_page_no != null && users_page_no != "")
+            {
+                ViewState["UsersGV_PageNo"] = users_page_no;
+            }
+
+            if ((users_page_no == null || users_page_no == "") && (ViewState["UsersGV_PageNo"] == null || ViewState["UsersGV_PageNo"].ToString() == ""))
+            {
+                users_page_no = "1";
+                ViewState["UsersGV_PageNo"] = users_page_no;
+            }
+            else if (ViewState["UsersGV_PageNo"] != null && ViewState["UsersGV_PageNo"].ToString() != "")
+            {
+                users_page_no = ViewState["UsersGV_PageNo"].ToString();
+            }
+
+            FillUsersGV(int.Parse(users_page_no));
         }
     }
 
-    private void FillUsersGV()
+    private void FillUsersGV(int PageNo)
     {
 
-        DataTable dt = UsersClass.GetAllExcept(Convert.ToInt32(Session["CurrentUserID"]));
-        ViewState["UsersGVDataSource"] = dt;
-        UsersGV.DataSource = dt;
+        DataTable users_dt;
+
+        if (ViewState["UsersGVDataSource"] != null)
+        {
+            users_dt = (DataTable)ViewState["UsersGVDataSource"];
+        }
+        else
+        {
+            users_dt = UsersClass.GetAllExcept(Convert.ToInt32(Session["CurrentUserID"]));
+            ViewState["UsersGVDataSource"] = users_dt;
+        }
+
+        UsersGV.DataSource = users_dt;
+        UsersGV.PageIndex = PageNo;
         UsersGV.DataBind();
 
     }
 
-
-    protected void UsersGV_PageIndexChanging(object sender, GridViewPageEventArgs e)
-    {
-        UsersGV.PageIndex = e.NewPageIndex;
-        DataTable dt = (DataTable)ViewState["UsersGVDataSource"];
-        UsersGV.DataSource = dt;
-        UsersGV.DataBind();
-    }
 }

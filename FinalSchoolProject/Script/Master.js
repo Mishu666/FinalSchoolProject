@@ -64,7 +64,8 @@ function validateAndLoginSuccess(data) {
     }
     if (warnings.length === 0) {
         console.log("login success");
-        window.location.reload();
+        loadServerChanges();
+        $("#loginModal").modal('hide');
     }
 }
 
@@ -105,7 +106,8 @@ function validateAndSignupSuccess(data) {
 
     if (warnings.length === 0) {
         console.log("signup success");
-        window.location.reload();
+        loadServerChanges();
+        $("#signupModal").modal('hide');
     }
 
 }
@@ -133,7 +135,8 @@ function validateAndSignup(username, password, password_confirm, DOB, success_ca
 //----------------------------------------------------------------------------------------------------------------------------
 
 function logoutUserSuccess(data) {
-    window.location.reload();
+    loadServerChanges();
+    $("#logoutModal").modal('hide');
 }
 
 function logoutUser(success_callback) {
@@ -153,7 +156,7 @@ function logoutUser(success_callback) {
         success: success_callback
     });
 }
-1
+
 //----------------------------------------------------------------------------------------------------------------------------
 
 function createWarning(message) {
@@ -162,4 +165,33 @@ function createWarning(message) {
     warning.setAttribute("role", "alert");
     warning.innerText = message;
     return warning;
+}
+
+//----------------------------------------------------------------------------------------------------------------------------
+
+function loadServerChanges() {
+    console.log(window.location.pathname);
+    window.location.reload();
+}
+
+//----------------------------------------------------------------------------------------------------------------------------
+
+function closeActiveEditors() {
+
+    $("#hidden_post_card").hide();
+    $(".edit_post_view").hide();
+    $(".default_post_view").show();
+    $("#hidden_comment_card").hide();
+    $(".edit_comment_view").hide();
+    $(".default_comment_view").show();
+}
+
+function resetForm() {
+    $(".main_form")[0].reset();
+    removeAlerts();
+}
+
+function removeAlerts() {
+    $(".alert-danger").remove();
+    $(".border-danger").removeClass("border-danger");
 }
