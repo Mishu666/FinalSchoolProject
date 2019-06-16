@@ -22,7 +22,6 @@
             <asp:Label ID="WarningLabel" runat="server" CssClass="text-danger" Visible="false"></asp:Label>
 
         </div>
-
         <div id="ConsultPageGVSection" class="w-100 flex-grow-1 d-flex flex-row justify-content-center align-items-center">
 
             <div id="UsersInPageSection" class="h-100 mr-3" style="width: 45% !important;">

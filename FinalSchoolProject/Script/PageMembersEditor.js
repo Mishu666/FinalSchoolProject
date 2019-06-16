@@ -1,13 +1,13 @@
 ﻿$(document).ready(function () {
 
-    InitPageMembersDatatables();
+    RecreateDataTables();
 
     $(".ConsultPagesDDL").change(function (e) {
-        console.log("changing");
+
         let pageid = $(this).val();
         $(".ToggleSubscriptionButton").attr("disabled", true);
         window.sessionStorage.setItem("pageid", pageid);
-
+        
         BindGVs(BindGVsSuccessCallback);
     });
 
@@ -56,8 +56,9 @@
             users_to_kick.push($(this).data('user-id'));
         });
 
-        KickMultipleUsers(users_to_kick, pageid, KickMultipleUsersSuccessCallback);
-
+        if (users_to_kick.length > 0) {
+            KickMultipleUsers(users_to_kick, pageid, KickMultipleUsersSuccessCallback);
+        }
     });
 
     $("#ConsultPageGVSection").on("click", "#IncludeInPageButton", function (e) {
@@ -71,8 +72,9 @@
             users_to_include.push($(this).data('user-id'));
         });
 
-        IncludeMultipleUsers(users_to_include, pageid, IncludeMultipleUsersSuccessCallback);
-
+        if (users_to_include.length > 0) {
+            IncludeMultipleUsers(users_to_include, pageid, IncludeMultipleUsersSuccessCallback);
+        }
     });
 
 });
@@ -89,14 +91,14 @@ $(document).ajaxStop(function () {
 
 function BindGVsSuccessCallback(data) {
 
-    let response = $('<div />').html(data);
-    let UsersInPageGV = response.find("#UsersInPageSection").first();
-    let UsersNotInPageGV = response.find("#UsersNotInPageSection").first();
+    let response = $(data);
+    let UsersInPageSec = response.find("#UsersInPageSection");
+    let UsersNotInPageSec = response.find("#UsersNotInPageSection");
 
-    $("#UsersInPageSection").replaceWith(UsersInPageGV);
-    $("#UsersNotInPageSection").replaceWith(UsersNotInPageGV);
+    $("#UsersInPageSection").replaceWith(UsersInPageSec);
+    $("#UsersNotInPageSection").replaceWith(UsersNotInPageSec);
 
-    InitPageMembersDatatables();
+    RecreateDataTables();
 
 }
 
@@ -236,31 +238,35 @@ function KickMultipleUsers(userids, pageid, success_callback) {
 
 //--------------------------------------------------------------------------------------
 
-function InitPageMembersDatatables() {
+function RecreateDataTables() {
 
-    let IncludedTable = $(".UsersInPageGV").DataTable({
-        destroy: true,
+    let UsersInPage_table = $(".UsersInPageGV").DataTable({
+        "destroy": true,
         scrollY: "60vh",
         stateSave: true,
         scrollCollapse: true,
         ordering: false,
-        "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
+        "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+        "columnDefs": [
+            { "targets": [0, 2], "searchable": false }
+        ]
     });
 
-    IncludedTable.columns.adjust().draw();
+    UsersInPage_table.columns.adjust().draw();
 
-
-    let NotIncludedTable = $(".UsersNotInPageGV").DataTable({
-        destroy: true,
+    let UsersNotInPage_table = $(".UsersNotInPageGV").DataTable({
+        "destroy": true,
         scrollY: "60vh",
         stateSave: true,
         scrollCollapse: true,
         ordering: false,
-        "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
+        "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+        "columnDefs": [
+            { "targets": [0, 2], "searchable": false }
+        ]
     });
 
-
-    NotIncludedTable.columns.adjust().draw();
+    UsersNotInPage_table.columns.adjust().draw();
 
 }
 

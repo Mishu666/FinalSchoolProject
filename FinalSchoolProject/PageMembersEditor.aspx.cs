@@ -10,44 +10,45 @@ public partial class PageMembersEditor : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (!IsPostBack)
+        WarningLabel.Text = "";
+        WarningLabel.Visible = false;
+
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
-            WarningLabel.Text = "";
-            WarningLabel.Visible = false;
+            Response.Redirect("All.aspx");
+        }
+        UsersClass current_user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
+        if (!current_user.IsMod)
+        {
+            Response.Redirect("All.aspx");
+        }
 
-            if (Session["Logged"] == null || (bool)Session["Logged"] == false)
-            {
-                Response.Redirect("All.aspx");
-            }
-            UsersClass current_user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
-            if (!current_user.IsMod)
-            {
-                Response.Redirect("All.aspx");
-            }
+        FillConsultPagesDDL();
 
-            FillConsultPagesDDL();
+        string pageid = Request.Form["PageID"];
 
-            string pageid = Request.Form["PageID"];
-
-            if (pageid != null && pageid != "")
-            {
-                ViewState["PageID"] = pageid;
-            }
-
-            if ((pageid == null || pageid == "") && (ViewState["PageID"] == null || ViewState["PageID"].ToString() == ""))
+        if (!string.IsNullOrEmpty(pageid))
+        {
+            ViewState["PageID"] = pageid;
+        }
+        else
+        {
+            if (ViewState["PageID"] == null || ViewState["PageID"].ToString() == "")
             {
                 pageid = ConsultPagesDDL.Items[0].Value;
                 ViewState["PageID"] = pageid;
             }
-            else if (ViewState["PageID"] != null && ViewState["PageID"].ToString() != "")
+            else
             {
                 pageid = ViewState["PageID"].ToString();
                 ConsultPagesDDL.SelectedValue = pageid.ToString();
             }
-
-            FillUsersInPageGV(Convert.ToInt32(pageid));
-            FillUsersNotInPageGV(Convert.ToInt32(pageid));
         }
+
+        FillUsersInPageGV(Convert.ToInt32(pageid));
+        FillUsersNotInPageGV(Convert.ToInt32(pageid));
+
+
     }
 
     private void FillUsersInPageGV(int PageID)
