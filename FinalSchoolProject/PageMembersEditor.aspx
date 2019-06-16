@@ -33,7 +33,7 @@
                         <asp:TemplateField HeaderStyle-Width="70">
                             <HeaderTemplate>
                                 <label class="switch mb-0">
-                                    <input type="checkbox" id="SelectAllInGroupSwitch">
+                                    <input type="checkbox" class="SelectAllInGroupSwitch">
                                     <span class="slider round"></span>
                                 </label>
                             </HeaderTemplate>
@@ -82,7 +82,7 @@
                         <asp:TemplateField HeaderStyle-Width="70">
                             <HeaderTemplate>
                                 <label class="switch mb-0">
-                                    <input type="checkbox" id="SelectAllNotInGroupSwitch">
+                                    <input type="checkbox" class="SelectAllNotInGroupSwitch">
                                     <span class="slider round"></span>
                                 </label>
                             </HeaderTemplate>

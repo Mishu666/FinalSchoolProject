@@ -33,13 +33,13 @@
 
     });
 
-    $("#ConsultPageGVSection").on("change", "#SelectAllInGroupSwitch", function (e) {
+    $("#ConsultPageGVSection").on("change", ".SelectAllInGroupSwitch", function (e) {
 
         $(".SelectInGroupSwitch").prop("checked", $(this).prop("checked"));
 
     });
 
-    $("#ConsultPageGVSection").on("change", "#SelectAllNotInGroupSwitch", function (e) {
+    $("#ConsultPageGVSection").on("change", ".SelectAllNotInGroupSwitch", function (e) {
 
         $(".SelectNotInGroupSwitch").prop("checked", $(this).prop("checked"));
 
@@ -55,7 +55,7 @@
         $('input:checked.SelectInGroupSwitch').each(function () {
             users_to_kick.push($(this).data('user-id'));
         });
-
+        debugger;
         if (users_to_kick.length > 0) {
             KickMultipleUsers(users_to_kick, pageid, KickMultipleUsersSuccessCallback);
         }
@@ -68,10 +68,11 @@
         let pageid = parseInt($(".ConsultPagesDDL").val());
         let users_to_include = [];
 
-        $('input:checked.SelectInGroupSwitch').each(function () {
+        $('input:checked.SelectNotInGroupSwitch').each(function () {
             users_to_include.push($(this).data('user-id'));
         });
-
+        
+        debugger;
         if (users_to_include.length > 0) {
             IncludeMultipleUsers(users_to_include, pageid, IncludeMultipleUsersSuccessCallback);
         }
@@ -108,18 +109,7 @@ function BindGVs(success_callback) {
 
     data = { "PageID": pageid };
 
-    $.ajax({
-
-        method: "GET",
-        data: JSON.stringify(data),
-        url: "PageMembersEditor.aspx",
-        error: function (r) {
-            console.log("error");
-            console.log(r.responseText);
-        },
-        success: success_callback
-
-    });
+    $.get("PageMembersEditor.aspx",data,success_callback);
 
 
 }

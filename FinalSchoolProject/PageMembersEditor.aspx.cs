@@ -10,45 +10,47 @@ public partial class PageMembersEditor : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        WarningLabel.Text = "";
-        WarningLabel.Visible = false;
-
-        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        if (!IsPostBack)
         {
-            Response.Redirect("All.aspx");
-        }
-        UsersClass current_user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
-        if (!current_user.IsMod)
-        {
-            Response.Redirect("All.aspx");
-        }
+            WarningLabel.Text = "";
+            WarningLabel.Visible = false;
 
-        FillConsultPagesDDL();
-
-        string pageid = Request.Form["PageID"];
-
-        if (!string.IsNullOrEmpty(pageid))
-        {
-            ViewState["PageID"] = pageid;
-        }
-        else
-        {
-            if (ViewState["PageID"] == null || ViewState["PageID"].ToString() == "")
+            if (Session["Logged"] == null || (bool)Session["Logged"] == false)
             {
-                pageid = ConsultPagesDDL.Items[0].Value;
-                ViewState["PageID"] = pageid;
+                Response.Redirect("All.aspx");
+            }
+            UsersClass current_user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
+            if (!current_user.IsMod)
+            {
+                Response.Redirect("All.aspx");
+            }
+
+            FillConsultPagesDDL();
+
+            string pageid = Request.Params["PageID"];
+
+            if (!string.IsNullOrEmpty(pageid))
+            {
+                Session["PageID"] = pageid;
             }
             else
             {
-                pageid = ViewState["PageID"].ToString();
-                ConsultPagesDDL.SelectedValue = pageid.ToString();
+                if (Session["PageID"] == null || Session["PageID"].ToString() == "")
+                {
+                    pageid = ConsultPagesDDL.Items[0].Value;
+                    Session["PageID"] = pageid;
+                }
+                else
+                {
+                    pageid = Session["PageID"].ToString();
+                    ConsultPagesDDL.SelectedValue = pageid.ToString();
+                }
             }
+
+            FillUsersInPageGV(Convert.ToInt32(pageid));
+            FillUsersNotInPageGV(Convert.ToInt32(pageid));
+
         }
-
-        FillUsersInPageGV(Convert.ToInt32(pageid));
-        FillUsersNotInPageGV(Convert.ToInt32(pageid));
-
-
     }
 
     private void FillUsersInPageGV(int PageID)
@@ -64,13 +66,13 @@ public partial class PageMembersEditor : System.Web.UI.Page
             return;
         }
 
-        if (ViewState["UsersInPage_dt"] == null)
+        if (Session["UsersInPage_dt"] == null)
         {
             users_dt = page.GetUsersInPage();
         }
         else
         {
-            users_dt = (DataTable)ViewState["UsersInPage_dt"];
+            users_dt = (DataTable)Session["UsersInPage_dt"];
         }
 
 
@@ -93,13 +95,13 @@ public partial class PageMembersEditor : System.Web.UI.Page
             return;
         }
 
-        if (ViewState["UsersNotInPage_dt"] == null)
+        if (Session["UsersNotInPage_dt"] == null)
         {
             users_dt = page.GetUsersNotInPage();
         }
         else
         {
-            users_dt = (DataTable)ViewState["UsersNotInPage_dt"];
+            users_dt = (DataTable)Session["UsersNotInPage_dt"];
         }
 
         UsersNotInPageGV.DataSource = users_dt;
