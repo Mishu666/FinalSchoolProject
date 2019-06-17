@@ -51,7 +51,7 @@
     <asp:ContentPlaceHolder ID="head" runat="server">
     </asp:ContentPlaceHolder>
 </head>
-<body id="page-top" style="width: 100vw; height: 100vh;">
+<body id="page-top" style="width: 100vw; height: 100vh; overflow: hidden !important;">
     <form runat="server" class="h-100 main_form">
 
         <% 
@@ -65,7 +65,7 @@
         <div id="page_container" class="h-100">
             <div id="wrapper" class="h-100">
                 <!-- Sidebar -->
-                <ul class="navbar-nav bg-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+                <ul class="navbar-nav bg-primary sidebar sidebar-dark accordion pr-2" style="overflow-x: hidden !important; overflow-y: auto !important;" id="accordionSidebar">
                     <!-- Sidebar - Brand -->
                     <a class="sidebar-brand d-flex align-items-center justify-content-center text-light"
                         href="All.aspx">

@@ -66,7 +66,7 @@ public class ConsultPagesClass
 
         string sql_str = "INSERT INTO [ConsultPages] " +
             "([SubscriberCount], [PageName], [Description]) " +
-            "VALUES ({0}, '{1}', '{2}', {3}) ";
+            "VALUES ({0}, '{1}', '{2}') ";
 
         sql_str = string.Format(sql_str, this.SubscriberCount, this.PageName, this.Description);
         Dbase.ChangeTable(sql_str);

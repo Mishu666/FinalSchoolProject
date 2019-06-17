@@ -1671,6 +1671,77 @@ public class UsersService : System.Web.Services.WebService
 
     //------------------------------------------------------------------------------------------------------------
 
+    [WebMethod]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    private void CreatePage(string PageName)
+    {
+        ConsultPagesClass.CreateNew(PageName);
+    }
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public List<Warning> ValidateAndCreatePage(string PageName)
+    {
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            Abort();
+        }
+
+        List<Warning> warnings = new List<Warning>();
+        bool valid = true;
+
+        if (string.IsNullOrWhiteSpace(PageName))
+        {
+            warnings.Add(new Warning("NewConsultPageInsertButton", "Title cannot be empty"));
+            valid = false;
+        }
+
+        if (valid)
+        {
+            CreatePage(PageName);
+        }
+
+        return warnings;
+    }
+
+    //------------------------------------------------------------------------------------------------------------
+
+    [WebMethod]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    private void UpdatePageDescription(int PageID, string Description)
+    {
+
+        ConsultPagesClass cp = ConsultPagesClass.GetByID(PageID);
+        cp.Description = Description;
+        cp.Update();
+
+    }
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public List<Warning> ValidateAndUpdatePageDescription(int PageID, string Description)
+    {
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            Abort();
+        }
+
+        List<Warning> warnings = new List<Warning>();
+        bool valid = true;
+
+        if (string.IsNullOrWhiteSpace(Description))
+        {
+            warnings.Add(new Warning("NewConsultPageInsertButton", "Title cannot be empty"));
+            valid = false;
+        }
+
+        if (valid)
+        {
+            UpdatePageDescription(PageID, Description);
+        }
+
+        return warnings;
+    }
 
 
 }

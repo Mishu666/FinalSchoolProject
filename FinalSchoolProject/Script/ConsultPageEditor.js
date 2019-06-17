@@ -2,7 +2,7 @@
 
     InitDatatables();
 
-    $(".DeletePageButton").on("click", function (e) {
+    $("#GVSpace",).on("click",".DeletePageButton", function (e) {
         e.preventDefault();
         let pageid = parseInt($(this).data("page-id"));
         let row = $(this).closest("tr");
@@ -12,6 +12,15 @@
         $(this).attr("disabled", true);
 
         DeletePage(pageid, DeletePageSuccessCallback, $(this));
+    });
+
+    $("#NewConsultPageInsertButton").on("click", function(e){
+        
+        e.preventDefault();
+
+        let pagename = $("#NewConsultPageNameInput").val();
+        CreatePage(pagename, CreatePageSuccessCallback);
+
     });
 
 });
@@ -45,21 +54,69 @@ function DeletePage(Pageid, success_callback, sender) {
     });
 
 }
+//--------------------------------------------------------------------------------------
+
+function CreatePageSuccessCallback(data)
+{
+
+    let warnings = data.d;
+
+    for (let w of warnings) {
+        console.log(w);
+        let warning = createWarning(w.Text);
+        $("#AddPageWarningSpace").append(warning);
+        for (let wc of w.WarnControls) {
+            $("#" + wc).addClass("border-danger");
+
+        }
+    }
+    if (warnings.length === 0) {
+        console.log("add success");
+        BindPagesGV(BindPagesGVSuccessCalback);
+        resetForm();
+    }
+
+}
+
+function CreatePage(pagename, success_callback)
+{
+
+    data = { "PageName": pagename };
+
+    $.ajax({
+
+        method: "POST",
+        data: JSON.stringify(data),
+        dataType: "json",
+        contentType: "application/json; charset=utf-8 ",
+        url: "UsersService.asmx/ValidateAndCreatePage",
+        error: function (r) {
+            console.log("error");
+            console.log(r.responseText);
+        },
+        success: success_callback,
+        complete: function () {
+            let row = sender.closest("tr");
+            row.remove();
+        }
+    });
+
+}
 
 //--------------------------------------------------------------------------------------
 
 function BindPagesGVSuccessCalback(data) {
 
     let response = $('<div />').html(data);
-    let PagesGV = response.find(".ConsultPagesGV");
+    let PagesGV = response.find("#GVSpace");
 
-    $(".ConsultPagesGV").replaceWith(PagesGV);
+    $("#GVSpace").replaceWith(PagesGV);
     InitDatatables();
 }
 
 function BindPagesGV(success_callback) {
 
-    $.get("PagesEditor.aspx", success_callback);
+    $.get("ConsultPageEditor.aspx", success_callback);
 }
 
 //--------------------------------------------------------------------------------------
@@ -68,7 +125,7 @@ function InitDatatables() {
 
     let PagesTable = $(".ConsultPagesGV").DataTable({
         "destroy": true,
-        scrollY: "60vh",
+        scrollY: "40vh",
         stateSave: true,
         scrollCollapse: true,
         "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
