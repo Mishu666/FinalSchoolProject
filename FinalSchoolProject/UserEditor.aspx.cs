@@ -18,29 +18,11 @@ public partial class UserEditor : System.Web.UI.Page
                 Response.Redirect("All.aspx");
             }
 
-
-            string users_page_no = Request.Form["UsersGV_PageNo"];
-
-            if (users_page_no != null && users_page_no != "")
-            {
-                ViewState["UsersGV_PageNo"] = users_page_no;
-            }
-
-            if ((users_page_no == null || users_page_no == "") && (ViewState["UsersGV_PageNo"] == null || ViewState["UsersGV_PageNo"].ToString() == ""))
-            {
-                users_page_no = "1";
-                ViewState["UsersGV_PageNo"] = users_page_no;
-            }
-            else if (ViewState["UsersGV_PageNo"] != null && ViewState["UsersGV_PageNo"].ToString() != "")
-            {
-                users_page_no = ViewState["UsersGV_PageNo"].ToString();
-            }
-
-            FillUsersGV(int.Parse(users_page_no));
+            FillUsersGV();
         }
     }
 
-    private void FillUsersGV(int PageNo)
+    private void FillUsersGV()
     {
 
         DataTable users_dt;
@@ -56,8 +38,9 @@ public partial class UserEditor : System.Web.UI.Page
         }
 
         UsersGV.DataSource = users_dt;
-        UsersGV.PageIndex = PageNo;
         UsersGV.DataBind();
+        UsersGV.HeaderRow.TableSection = TableRowSection.TableHeader;
+
 
     }
 

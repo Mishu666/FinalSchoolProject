@@ -11,62 +11,138 @@ public partial class ViewUser : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        object userid = Request.QueryString["user-id"];
-
-        UsersClass current_user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
-
-        if (userid == null)
+        if (!IsPostBack)
         {
-            if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+            object userid = Request.QueryString["user-id"];
+
+            UsersClass current_user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
+
+            if (userid == null)
             {
-                Response.Redirect("All.aspx");
+                if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+                {
+                    Response.Redirect("All.aspx");
+                }
+                else
+                {
+                    ViewState["ViewUserID"] = current_user.ID;
+                }
             }
             else
             {
-                ViewState["ViewUserID"] = current_user.ID;
+                UsersClass user = UsersClass.GetByID(Convert.ToInt32(userid));
+                if (user == null)
+                {
+                    Response.Redirect("All.aspx");
+                }
+                else
+                {
+                    ViewState["ViewUserID"] = user.ID;
+                }
             }
-        }
-        else
-        {
-            UsersClass user = UsersClass.GetByID(Convert.ToInt32(userid));
-            if (user == null)
+
+            if (current_user == null) //guest viewing user profile
             {
-                Response.Redirect("All.aspx");
+                ProfileMyPostsTab.Visible = true;
             }
             else
             {
-                ViewState["ViewUserID"] = user.ID;
+                UsersClass view_user = UsersClass.GetByID(Convert.ToInt32(ViewState["ViewUserID"]));
+
+                if (view_user.ID == current_user.ID) //User viewing his own profile
+                {
+                    ProfileMyPostsTab.Visible = true;
+                    ProfileSavedPostsTab.Visible = true;
+                    ProfileDownvotedPostsTab.Visible = true;
+                    ProfileUpvotedPostsTab.Visible = true;
+                    ProfileMessagesTab.Visible = true;
+
+                    if(current_user.IsAdmin) //Admin viewing his own profile
+                    {
+                        ProfilePostReportsTab.Visible = true;
+                        ProfileCommentReportsTab.Visible = true;
+                    }
+
+                }
+                else //user viewing other user profile
+                {
+
+                    ProfileMyPostsTab.Visible = true;
+                    ProfileConvoTab.Visible = true;
+                    ProfileNewMessageTab.Visible = true;
+                }
             }
-        }
 
-        if (current_user == null) //guest viewing user profile
-        {
-            ProfileMyPostsTab.Visible = true;
-        }
-        else
-        {
-            UsersClass view_user = UsersClass.GetByID(Convert.ToInt32(ViewState["ViewUserID"]));
+            FillModeratedPagesRepeater();
 
-            if (view_user.ID == current_user.ID) //User viewing his own profile
+            string page = Request.Params["Page"];
+
+            if (!string.IsNullOrEmpty(page))
             {
-                ProfileMyPostsTab.Visible = true;
-                ProfileSavedPostsTab.Visible = true;
-                ProfileDownvotedPostsTab.Visible = true;
-                ProfileUpvotedPostsTab.Visible = true;
-                ProfileMessagesTab.Visible = true;
+                Session["Page"] = page;
             }
-            else //user viewing other user profile
+            else
             {
-
-                ProfileMyPostsTab.Visible = true;
-                ProfileConvoTab.Visible = true;
-                ProfileNewMessageTab.Visible = true;
+                if (Session["Page"] == null || Session["Page"].ToString() == "")
+                {
+                    page = "submitted";
+                    Session["Page"] = page;
+                }
+                else
+                {
+                    page = Session["Page"].ToString();
+                }
             }
+
+            if (string.IsNullOrEmpty(page))
+            {
+                FillPostsRepeater("submitted");
+            }
+            else
+            {
+                if(page == "submitted")
+                {
+                    ProfilePostsTab_Show(ProfileMyPostsTab);
+                }
+                else if(page == "saved")
+                {
+                    ProfilePostsTab_Show(ProfileSavedPostsTab);
+                }
+                else if (page == "upvoted")
+                {
+                    ProfilePostsTab_Show(ProfileUpvotedPostsTab);
+                }
+                else if (page == "downvoted")
+                {
+                    ProfilePostsTab_Show(ProfileDownvotedPostsTab);
+                }
+                else if (page == "messages")
+                {
+                    ProfileMessagesTab_Show(ProfileMessagesTab);
+                }
+                else if (page == "conversation")
+                {
+                    ProfileConvoTab_Show(ProfileConvoTab);
+                }
+                else if (page == "new_message")
+                {
+                    NewMessageTab_Show(ProfileNewMessageTab);
+                }
+                else if (page == "post_reports")
+                {
+                    ProfileReports_Show(ProfilePostReportsTab);
+                }
+                else if (page == "comment_reports")
+                {
+                    ProfileReports_Show(ProfileCommentReportsTab);
+                }
+                else
+                {
+                    Response.Redirect("All.aspx");
+                }
+            }
+
         }
-
-        FillPostsRepeater("submitted");
-        FillModeratedPagesRepeater();
-
 
     }
 
@@ -143,6 +219,27 @@ public partial class ViewUser : System.Web.UI.Page
 
     }
 
+    public void FillPostReportsRepeater(string post_type)
+    {
+
+        UsersClass current_user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
+
+        if (current_user == null | !current_user.IsAdmin) Response.Redirect("All.aspx");
+
+        DataTable reports = null;
+
+        if(post_type == "post_reports")
+            reports = PostReportsClass.GetAllWithUserData();
+
+        if (post_type == "comment_reports")
+            reports = CommentReportsClass.GetAllWithUserData();
+
+        reports_repeater.DataSource = reports;
+        reports_repeater.DataBind();
+    }
+
+    //-----------------------------------------------------------------------------------------------------
+
     public void ClearActiveTab()
     {
 
@@ -156,10 +253,8 @@ public partial class ViewUser : System.Web.UI.Page
 
     }
 
-    protected void ProfilePostsTab_ServerClick(object sender, EventArgs e)
+    protected void ProfilePostsTab_Show(HtmlAnchor anchor)
     {
-
-        HtmlAnchor anchor = (HtmlAnchor)sender;
         string post_type = anchor.Attributes["data-post-type"];
 
         ClearActiveTab();
@@ -169,15 +264,14 @@ public partial class ViewUser : System.Web.UI.Page
         user_messages_space.Visible = false;
         user_posts_space.Visible = true;
         new_message_space.Visible = false;
+        reports_space.Visible = false;
 
         FillPostsRepeater(post_type);
 
     }
 
-    protected void ProfileMessagesTab_ServerClick(object sender, EventArgs e)
+    protected void ProfileMessagesTab_Show(HtmlAnchor anchor)
     {
-
-        HtmlAnchor anchor = (HtmlAnchor)sender;
 
         ClearActiveTab();
         GlobalFunctions.AddCssClass(anchor, "active");
@@ -186,15 +280,14 @@ public partial class ViewUser : System.Web.UI.Page
         user_messages_space.Visible = true;
         user_posts_space.Visible = false;
         new_message_space.Visible = false;
+        reports_space.Visible = false;
 
         FillMessagesRepeater();
 
     }
 
-    protected void ProfileConvoTab_ServerClick(object sender, EventArgs e)
+    protected void ProfileConvoTab_Show(HtmlAnchor anchor)
     {
-
-        HtmlAnchor anchor = (HtmlAnchor)sender;
 
         ClearActiveTab();
         GlobalFunctions.AddCssClass(anchor, "active");
@@ -203,14 +296,14 @@ public partial class ViewUser : System.Web.UI.Page
         user_messages_space.Visible = false;
         user_posts_space.Visible = false;
         new_message_space.Visible = false;
+        reports_space.Visible = false;
 
         FillConvoRepeater();
 
     }
-    protected void NewMessageTab_ServerClick(object sender, EventArgs e)
-    {
 
-        HtmlAnchor anchor = (HtmlAnchor)sender;
+    protected void NewMessageTab_Show(HtmlAnchor anchor)
+    {
 
         ClearActiveTab();
         GlobalFunctions.AddCssClass(anchor, "active");
@@ -219,12 +312,39 @@ public partial class ViewUser : System.Web.UI.Page
         user_messages_space.Visible = false;
         user_posts_space.Visible = false;
         new_message_space.Visible = true;
+        reports_space.Visible = false;
     }
 
-    protected void ProfileConvoRepeater_ItemDataBound(object sender, RepeaterItemEventArgs e)
+    protected void ProfileReports_Show(HtmlAnchor anchor)
     {
 
+        string post_type = anchor.Attributes["data-post-type"];
+
+        ClearActiveTab();
+        GlobalFunctions.AddCssClass(anchor, "active");
+
+        user_convo_space.Visible = false;
+        user_messages_space.Visible = false;
+        user_posts_space.Visible = false;
+        new_message_space.Visible = false;
+        reports_space.Visible = true;
+
+        FillPostReportsRepeater(post_type);
+
     }
 
+    protected void reports_repeater_ItemDataBound(object sender, RepeaterItemEventArgs e)
+    {
+        DataRowView rowView = (DataRowView)e.Item.DataItem;
+        HtmlAnchor anchor = (HtmlAnchor)e.Item.FindControl("ViewReportedLink");
 
+        if (rowView.Row.Table.Columns.Contains("ParentPostID"))
+        {
+            anchor.HRef += rowView["ParentPostID"];
+        }
+        else
+        {
+            anchor.HRef += rowView["Posts.ID"];
+        }
+    }
 }

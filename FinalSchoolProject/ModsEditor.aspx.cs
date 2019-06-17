@@ -6,7 +6,7 @@ using System.Web.UI;
 using System.Data;
 using System.Web.UI.WebControls;
 
-public partial class PageMembersEditor : System.Web.UI.Page
+public partial class ModsEditor : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -20,7 +20,7 @@ public partial class PageMembersEditor : System.Web.UI.Page
                 Response.Redirect("All.aspx");
             }
             UsersClass current_user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
-            if (!current_user.IsMod)
+            if (!current_user.IsAdmin)
             {
                 Response.Redirect("All.aspx");
             }
@@ -66,19 +66,18 @@ public partial class PageMembersEditor : System.Web.UI.Page
             return;
         }
 
-        if (ViewState["UsersInPage_dt"] == null)
+        if (ViewState["Mods_dt"] == null)
         {
-            users_dt = page.GetUsersInPage();
+            users_dt = page.GetPageMods();
         }
         else
         {
-            users_dt = (DataTable)ViewState["UsersInPage_dt"];
+            users_dt = (DataTable)ViewState["Mods_dt"];
         }
 
-
-        UsersInPageGV.DataSource = users_dt;
-        UsersInPageGV.DataBind();
-        UsersInPageGV.HeaderRow.TableSection = TableRowSection.TableHeader;
+        PageModsGV.DataSource = users_dt;
+        PageModsGV.DataBind();
+        PageModsGV.HeaderRow.TableSection = TableRowSection.TableHeader;
 
     }
 
@@ -95,18 +94,18 @@ public partial class PageMembersEditor : System.Web.UI.Page
             return;
         }
 
-        if (ViewState["UsersNotInPage_dt"] == null)
+        if (ViewState["NotMods_dt"] == null)
         {
-            users_dt = page.GetUsersNotInPage();
+            users_dt = page.GetPageNotMods();
         }
         else
         {
-            users_dt = (DataTable)ViewState["UsersNotInPage_dt"];
+            users_dt = (DataTable)ViewState["NotMods_dt"];
         }
 
-        UsersNotInPageGV.DataSource = users_dt;
-        UsersNotInPageGV.DataBind();
-        UsersNotInPageGV.HeaderRow.TableSection = TableRowSection.TableHeader;
+        NotModsGV.DataSource = users_dt;
+        NotModsGV.DataBind();
+        NotModsGV.HeaderRow.TableSection = TableRowSection.TableHeader;
 
     }
 
@@ -114,9 +113,7 @@ public partial class PageMembersEditor : System.Web.UI.Page
     {
         ConsultPagesDDL.Items.Clear();
 
-        UsersClass current_user = UsersClass.GetByID(Convert.ToInt32(Session["CurrentUserID"]));
-
-        DataTable consult_pages = current_user.GetMyModeratedPages();
+        DataTable consult_pages = ConsultPagesClass.GetAll();
 
         foreach (DataRow consult_page in consult_pages.Rows)
         {

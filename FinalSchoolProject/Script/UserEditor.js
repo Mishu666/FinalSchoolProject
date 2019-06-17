@@ -2,11 +2,6 @@
 
     InitDatatables();
 
-    let UsersGVPageNo = window.sessionStorage.getItem("UsersGVPageNo");
-    if (UsersGVPageNo === null) {
-        window.sessionStorage.setItem("UsersGVPageNo", 1);
-    }
-
     $(".DeleteUserButton").on("click", function (e) {
         e.preventDefault();
         let userid = parseInt($(this).data("user-id"));
@@ -148,42 +143,31 @@ function BindUsersGVSuccessCalback(data) {
     let response = $('<div />').html(data);
     let UsersGV = response.find(".UsersGV");
 
-    $(".UsersGV").html(UsersGV.html());
+    $(".UsersGV").replaceWith(UsersGV);
     InitDatatables();
 }
 
 function BindUsersGV(success_callback) {
 
-    let page_no = window.sessionStorage.getItem("UsersGVPageNo");
-
-    data = { "PageNo": page_no };
-
-    $.ajax({
-
-        method: "GET",
-        data: JSON.stringify(data),
-        url: "UsersEditor.aspx",
-        error: function (r) {
-            console.log("error");
-            console.log(r.responseText);
-        },
-        success: success_callback
-
-    });
-
-
+    $.get("UsersEditor.aspx", success_callback);
 }
 
 //--------------------------------------------------------------------------------------
 
 function InitDatatables() {
 
-    $(".UsersGV").DataTable({
-        scrollY: "70vh",
+    let UsersTable = $(".UsersGV").DataTable({
+        "destroy": true,
+        scrollY: "60vh",
         stateSave: true,
         scrollCollapse: true,
-        ordering: false,
-        "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
+        "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+        "columnDefs": [
+            { "searchable": false, "targets": [1, 2, 3, 4, 5, 6] },
+            { "orderable": false, "targets": [1, 4, 5, 6] }
+        ]
     });
+
+    UsersTable.columns.adjust().draw();
 
 }

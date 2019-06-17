@@ -1,13 +1,13 @@
 ﻿$(document).ready(function () {
 
-    RecreateDataTables();
+    InitDataTables();
 
     $(".ConsultPagesDDL").change(function (e) {
 
         let pageid = $(this).val();
         $(".ToggleSubscriptionButton").attr("disabled", true);
         window.sessionStorage.setItem("pageid", pageid);
-        
+
         BindGVs(BindGVsSuccessCallback);
     });
 
@@ -55,7 +55,7 @@
         $('input:checked.SelectInGroupSwitch').each(function () {
             users_to_kick.push($(this).data('user-id'));
         });
-        debugger;
+
         if (users_to_kick.length > 0) {
             KickMultipleUsers(users_to_kick, pageid, KickMultipleUsersSuccessCallback);
         }
@@ -71,8 +71,7 @@
         $('input:checked.SelectNotInGroupSwitch').each(function () {
             users_to_include.push($(this).data('user-id'));
         });
-        
-        debugger;
+
         if (users_to_include.length > 0) {
             IncludeMultipleUsers(users_to_include, pageid, IncludeMultipleUsersSuccessCallback);
         }
@@ -92,14 +91,14 @@ $(document).ajaxStop(function () {
 
 function BindGVsSuccessCallback(data) {
 
-    let response = $(data);
+    let response = $('<div />').html(data);
     let UsersInPageSec = response.find("#UsersInPageSection");
     let UsersNotInPageSec = response.find("#UsersNotInPageSection");
 
     $("#UsersInPageSection").replaceWith(UsersInPageSec);
     $("#UsersNotInPageSection").replaceWith(UsersNotInPageSec);
 
-    RecreateDataTables();
+    InitDataTables();
 
 }
 
@@ -109,7 +108,7 @@ function BindGVs(success_callback) {
 
     data = { "PageID": pageid };
 
-    $.get("PageMembersEditor.aspx",data,success_callback);
+    $.get("PageMembersEditor.aspx", data, success_callback);
 
 
 }
@@ -228,17 +227,17 @@ function KickMultipleUsers(userids, pageid, success_callback) {
 
 //--------------------------------------------------------------------------------------
 
-function RecreateDataTables() {
+function InitDataTables() {
 
     let UsersInPage_table = $(".UsersInPageGV").DataTable({
         "destroy": true,
         scrollY: "60vh",
         stateSave: true,
         scrollCollapse: true,
-        ordering: false,
         "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
         "columnDefs": [
-            { "targets": [0, 2], "searchable": false }
+            { "searchable": false, "targets": [0, 2] },
+            { "orderable": false, "targets": [0, 2] }
         ]
     });
 
@@ -249,10 +248,10 @@ function RecreateDataTables() {
         scrollY: "60vh",
         stateSave: true,
         scrollCollapse: true,
-        ordering: false,
         "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
         "columnDefs": [
-            { "targets": [0, 2], "searchable": false }
+            { "searchable": false, "targets": [0, 2] },
+            { "orderable": false, "targets": [0, 2] }
         ]
     });
 

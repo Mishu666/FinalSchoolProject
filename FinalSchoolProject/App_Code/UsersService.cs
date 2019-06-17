@@ -504,7 +504,7 @@ public class UsersService : System.Web.Services.WebService
 
         if (string.IsNullOrWhiteSpace(reportBody))
         {
-            warnings.Add(new Warning("addPostTitle", "Report cannot be empty"));
+            warnings.Add(new Warning("ReportPostTextArea", "Report cannot be empty"));
             valid = false;
         }
 
@@ -515,6 +515,58 @@ public class UsersService : System.Web.Services.WebService
 
         return warnings;
     }
+
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    private void ReportComment(int CommentID, string reportBody)
+    {
+
+        int userID = Convert.ToInt32(Session["CurrentUserID"]);
+        CommentsClass comment = CommentsClass.GetByID(CommentID);
+        UsersClass author = UsersClass.GetByID(comment.CommentorID);
+
+        author.Points -= 20;
+        author.Flags += 1;
+        author.Update();
+
+        CommentReportsClass.CreateNew(userID, CommentID, reportBody);
+    }
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public List<Warning> ValidateAndReportComment(int CommentID, string reportBody)
+    {
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            Abort();
+        }
+
+        List<Warning> warnings = new List<Warning>();
+        CommentsClass comment = CommentsClass.GetByID(CommentID);
+
+        if (comment == null)
+        {
+            Abort();
+        }
+
+        bool valid = true;
+
+        if (string.IsNullOrWhiteSpace(reportBody))
+        {
+            warnings.Add(new Warning("ReportCommentTextArea", "Report cannot be empty"));
+            valid = false;
+        }
+
+        if (valid)
+        {
+            ReportComment(CommentID, reportBody);
+        }
+
+        return warnings;
+    }
+
+
 
     //------------------------------------------------------------------------------------------------------------
 
@@ -677,53 +729,6 @@ public class UsersService : System.Web.Services.WebService
             page.SubscriberCount += 1;
             page.Update();
         }
-
-    }
-
-    //------------------------------------------------------------------------------------------------------------
-
-    [WebMethod(EnableSession = true)]
-    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public void LockPost(int PostID)
-    {
-        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
-        {
-            Abort();
-        }
-
-        int userID = Convert.ToInt32(Session["CurrentUserID"]);
-        PostsClass post = PostsClass.GetByID(PostID);
-
-        if (post == null)
-        {
-            Abort();
-        }
-
-        if (post.IsDeleted)
-        {
-            Abort();
-        }
-
-        if (post.IsRemoved)
-        {
-            Abort();
-        }
-
-        if (post.IsLocked)
-        {
-            Abort();
-        }
-
-        UsersClass post_author = UsersClass.GetByID(post.AuthorID);
-        bool IsMod = post_author.IsModeratorFor(post.ConsultPageID);
-
-        if (post_author.IsAdmin == false && !IsMod)
-        {
-            Abort();
-        }
-
-        post.IsLocked = true;
-        post.Update();
 
     }
 
@@ -1144,7 +1149,7 @@ public class UsersService : System.Web.Services.WebService
 
     [WebMethod(EnableSession = true)]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public string DeleteUser(int UserID)
+    public void DeleteUser(int UserID)
     {
         if (Session["Logged"] == null || (bool)Session["Logged"] == false)
         {
@@ -1152,6 +1157,8 @@ public class UsersService : System.Web.Services.WebService
         }
 
         UsersClass user = UsersClass.GetByID(UserID);
+
+        if (user == null) Abort();
 
         DataTable posts_dt = user.GetUserPosts();
         foreach (DataRow dt in posts_dt.Rows)
@@ -1169,8 +1176,6 @@ public class UsersService : System.Web.Services.WebService
 
         if (UserID == (int)Session["CurrentUserID"])
             LogOutUser();
-
-        return "deleted successfully";
 
     }
 
@@ -1439,5 +1444,233 @@ public class UsersService : System.Web.Services.WebService
     }
 
     //------------------------------------------------------------------------------------------------------------
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public void DeletePage(int PageID)
+    {
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            Abort();
+        }
+
+        ConsultPagesClass page = ConsultPagesClass.GetByID(PageID);
+
+        if (page == null) Abort();
+
+        page.Delete();
+
+    }
+
+    //------------------------------------------------------------------------------------------------------------
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public void DemoteUser(int UserID, int PageID)
+    {
+
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            Abort();
+        }
+
+        ConsultPagesClass page = ConsultPagesClass.GetByID(PageID);
+
+        if (page == null)
+        {
+            Abort();
+        }
+
+        int CurrentUserID = Convert.ToInt32(Session["CurrentUserID"]);
+        UsersClass current_user = UsersClass.GetByID(CurrentUserID);
+
+        if (!current_user.IsAdmin)
+        {
+            Abort();
+        }
+
+        UsersClass UserToEdit = UsersClass.GetByID(UserID);
+
+        if (UserToEdit == null)
+        {
+            Abort();
+        }
+
+        if (UserToEdit.IsModeratorFor(PageID))
+        {
+            DataTable mod_dt = ModeratorsClass.GetByProperties(
+                new KeyValuePair<string, object>("PageID", PageID),
+                new KeyValuePair<string, object>("ModeratorID", UserID)
+                );
+
+            ModeratorsClass mod = ModeratorsClass.FromDataRow(mod_dt.Rows[0]);
+            mod.Delete();
+
+            UserToEdit.ModeratedPagesCount -= 1;
+            if(UserToEdit.ModeratedPagesCount == 0)
+            {
+                UserToEdit.IsMod = false;
+            }
+            UserToEdit.Update();
+
+        }
+
+    }
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public void PromoteUser(int UserID, int PageID)
+    {
+
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            Abort();
+        }
+
+        ConsultPagesClass page = ConsultPagesClass.GetByID(PageID);
+
+        if (page == null)
+        {
+            Abort();
+        }
+
+        int CurrentUserID = Convert.ToInt32(Session["CurrentUserID"]);
+        UsersClass current_user = UsersClass.GetByID(CurrentUserID);
+
+        if (!current_user.IsAdmin)
+        {
+            Abort();
+        }
+
+        UsersClass UserToEdit = UsersClass.GetByID(UserID);
+
+        if (UserToEdit == null)
+        {
+            Abort();
+        }
+
+        if (!UserToEdit.IsMod ||  !UserToEdit.IsModeratorFor(PageID))
+        {
+            ModeratorsClass.CreateNew(PageID, UserID);
+            UserToEdit.IsMod = true;
+            UserToEdit.ModeratedPagesCount += 1;
+            UserToEdit.Update();
+        }
+
+    }
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public void PromoteMultipleUsers(int[] UserIDs, int PageID)
+    {
+
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            Abort();
+        }
+
+        ConsultPagesClass page = ConsultPagesClass.GetByID(PageID);
+
+        if (page == null)
+        {
+            Abort();
+        }
+
+        int CurrentUserID = Convert.ToInt32(Session["CurrentUserID"]);
+        UsersClass current_user = UsersClass.GetByID(CurrentUserID);
+
+        if (!current_user.IsAdmin)
+        {
+            Abort();
+        }
+
+        UsersClass UserToEdit;
+
+        foreach (int ID in UserIDs)
+        {
+
+            UserToEdit = UsersClass.GetByID(ID);
+
+            if (UserToEdit == null)
+            {
+                continue;
+            }
+
+            if (!UserToEdit.IsMod || !UserToEdit.IsModeratorFor(PageID))
+            {
+                ModeratorsClass.CreateNew(PageID, ID);
+
+                UserToEdit.IsMod = true;
+                UserToEdit.ModeratedPagesCount += 1;
+                UserToEdit.Update();
+            }
+
+        }
+
+    }
+
+    [WebMethod(EnableSession = true)]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public void DemoteMultipleUsers(int[] UserIDs, int PageID)
+    {
+
+        if (Session["Logged"] == null || (bool)Session["Logged"] == false)
+        {
+            Abort();
+        }
+
+        ConsultPagesClass page = ConsultPagesClass.GetByID(PageID);
+
+        if (page == null)
+        {
+            Abort();
+        }
+
+        int CurrentUserID = Convert.ToInt32(Session["CurrentUserID"]);
+        UsersClass current_user = UsersClass.GetByID(CurrentUserID);
+
+        if (!current_user.IsAdmin)
+        {
+            Abort();
+        }
+
+        UsersClass UserToEdit;
+
+        foreach (int ID in UserIDs)
+        {
+
+            UserToEdit = UsersClass.GetByID(ID);
+
+            if (UserToEdit == null)
+            {
+                continue;
+            }
+
+            if (UserToEdit.IsModeratorFor(PageID))
+            {
+                DataTable mod_dt = ModeratorsClass.GetByProperties(
+                    new KeyValuePair<string, object>("PageID", PageID),
+                    new KeyValuePair<string, object>("ModeratorID", ID)
+                    );
+
+                ModeratorsClass mod = ModeratorsClass.FromDataRow(mod_dt.Rows[0]);
+                mod.Delete();
+
+                UserToEdit.ModeratedPagesCount -= 1;
+                if (UserToEdit.ModeratedPagesCount == 0)
+                {
+                    UserToEdit.IsMod = false;
+                }
+                UserToEdit.Update();
+
+            }
+
+        }
+
+    }
+
+    //------------------------------------------------------------------------------------------------------------
+
+
 
 }

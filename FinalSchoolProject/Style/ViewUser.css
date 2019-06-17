@@ -1,3 +1,7 @@
 ﻿#EditBioInput {
     resize: none;
 }
+
+a {
+    cursor: pointer !important;
+}

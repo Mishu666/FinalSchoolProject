@@ -413,7 +413,71 @@
         </div>
         <!-- Sign Up Modal -->
 
+        <!-- Report Post Modal -->
+
+        <div class="modal fade" id="ReportPostModal" tabindex="-1" role="dialog" aria-labelledby="ReportPostModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="ReportPostLabel">Report Post</h5>
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <textarea placeholder="Write your report here ..." id="ReportPostTextArea" rows="10" class="overflow-auto form-control form-control-user"></textarea>
+                        </div>
+
+                        <div id="report_post_warning_space">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">
+                            Cancel</button>
+                        <button id="ReportPostConfirm" class="btn btn-primary">Report<i class="fas fa-pen ml-2"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Report Post Modal -->
+
+        <!-- Report Comment Modal -->
+
+        <div class="modal fade" id="ReportCommentModal" tabindex="-1" role="dialog" aria-labelledby="ReportCommentModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="ReportCommentLabel">Report Comment</h5>
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <textarea placeholder="Write your report here ..." id="ReportCommentTextArea" rows="10" class="overflow-auto form-control form-control-user"></textarea>
+                        </div>
+
+                        <div id="report_comment_warning_space">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">
+                            Cancel</button>
+                        <button id="ReportCommentConfirm" class="btn btn-primary">Report<i class="fas fa-pen ml-2"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Report Comment Modal -->
+
+
+
     </form>
-    
+
 </body>
 </html>

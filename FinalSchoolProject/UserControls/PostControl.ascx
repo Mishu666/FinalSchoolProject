@@ -78,17 +78,6 @@
                     %>
 
                     <%
-                        if (current_user.IsAdmin || IsMod)
-                        {
-                    %>
-
-                    <button class="LockPostButton dropdown-item"><i class="fas fa-lock mr-2 text-gray-400"></i>Lock</button>
-
-                    <%
-                        }
-                    %>
-
-                    <%
                         if (current_user.ID == post.AuthorID)
                         {
                     %>
@@ -111,6 +100,7 @@
                     %>
 
                     <button class="ReportPostButton dropdown-item"><i class="fas fa-flag mr-2 text-gray-400"></i>Report</button>
+
                 </div>
             </div>
 

@@ -10,11 +10,12 @@
 
 <asp:Content ID="Content3" ContentPlaceHolderID="main_content" runat="Server">
 
-    <div id="content_space" class="overflow-hidden d-flex flex-row h-100 py-3 px-4">
-
+    <div id="content_space" class="overflow-hidden d-flex flex-row h-100 w-100 py-3 px-4">
+        
         <asp:GridView ID="UsersGV" BorderWidth="0" runat="server" AutoGenerateColumns="false" CssClass="UsersGV table w-100 border"
-            GridLines="None" HeaderStyle-CssClass="thead-dark" EmptyDataText="No Users Found" HeaderStyle-HorizontalAlign="Center" RowStyle-HorizontalAlign="Center" 
-            ShowHeaderWhenEmpty="true">
+            GridLines="None" HeaderStyle-CssClass="thead-dark" HeaderStyle-HorizontalAlign="Center" RowStyle-HorizontalAlign="Center" 
+            ShowHeaderWhenEmpty="true" style="table-layout: fixed !important;">          
+
             <Columns>
                 <asp:TemplateField HeaderText="Username">
                     <ItemTemplate>

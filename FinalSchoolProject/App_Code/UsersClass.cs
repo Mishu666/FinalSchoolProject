@@ -11,8 +11,8 @@ public class UsersClass
 {
     public int ID { get; protected set; }
 
-    public int Flags, Points;
-    public string Username, Password, ProfilePictureDir, Bio;
+    public int Flags, Points, ModeratedPagesCount;
+    public string Username, Password, Bio;
     public DateTime DOB, CreationDate;
     public bool IsAdmin, IsMod, IsSuspended;
 
@@ -21,12 +21,13 @@ public class UsersClass
 
     }
 
-    protected UsersClass(int ID, int Flags, int Points, string Username, string Password, string ProfilePictureDir,
+    protected UsersClass(int ID, int Flags, int Points, int ModeratedPagesCount, string Username, string Password,
                          string Bio, DateTime DOB, DateTime CreationDate, bool IsAdmin, bool IsMod, bool IsSuspended)
     {
         this.ID = ID;
         this.Flags = Flags;
         this.Points = Points;
+        this.ModeratedPagesCount = ModeratedPagesCount;
         this.Username = Username;
         this.Password = Password;
         this.Bio = Bio;
@@ -35,7 +36,6 @@ public class UsersClass
         this.IsAdmin = IsAdmin;
         this.IsMod = IsMod;
         this.IsSuspended = IsSuspended;
-        this.ProfilePictureDir = ProfilePictureDir;
     }
 
     public static UsersClass FromDataRow(DataRow dr)
@@ -45,11 +45,11 @@ public class UsersClass
         {
             ID = Convert.ToInt32(dr["ID"]),
             Flags = Convert.ToInt32(dr["Flags"]),
+            ModeratedPagesCount = Convert.ToInt32(dr["ModeratedPagesCount"]),
             Points = Convert.ToInt32(dr["Points"]),
             Username = dr["Username"].ToString(),
             Password = dr["Password"].ToString(),
             Bio = dr["Bio"].ToString(),
-            ProfilePictureDir = dr["ProfilePictureDir"].ToString(),
             DOB = Convert.ToDateTime(dr["DOB"]),
             CreationDate = Convert.ToDateTime(dr["CreationDate"]),
             IsAdmin = Convert.ToBoolean(dr["IsAdmin"]),
@@ -70,8 +70,8 @@ public class UsersClass
             IsMod = false,
             Flags = 0,
             Points = 0,
+            ModeratedPagesCount = 0,
             Bio = "Hello fellow consultants and consultees!",
-            ProfilePictureDir = "",
             CreationDate = DateTime.Now,
             IsSuspended = false,
         };
@@ -88,12 +88,12 @@ public class UsersClass
         }
 
         string sql_str = "INSERT INTO [Users] " +
-            "([Username], [Password], [Flags], [Points], " +
+            "([Username], [Password], [Flags], [Points], [ModeratedPagesCount] " +
             "[CreationDate], [DOB], [IsAdmin], [IsMod], [IsSuspended], [ProfilePictureDir], [Bio]) " +
-            "VALUES ('{0}','{1}', {2}, {3}, #{4}#, #{5}#, {6}, {7}, {8}, '{9}', '{10}') ";
+            "VALUES ('{0}','{1}', {2}, {3}, {4}, #{5}#, #{6}#, {7}, {8}, {9}, '{10}') ";
 
         sql_str = string.Format(sql_str, this.Username, this.Password, this.Flags, this.Points,
-            this.CreationDate, this.DOB, this.IsAdmin, this.IsMod, this.IsSuspended, this.ProfilePictureDir, this.Bio);
+            this.ModeratedPagesCount, this.CreationDate, this.DOB, this.IsAdmin, this.IsMod, this.IsSuspended, this.Bio);
         Dbase.ChangeTable(sql_str);
 
         string get_id = "SELECT @@IDENTITY AS ID";
@@ -107,12 +107,13 @@ public class UsersClass
     {
         string sql_str = "UPDATE [Users] " +
             "SET [Username] = '{0}', [Password] = '{1}', " +
-            "[Flags] = {2}, [Points]= {3}, [CreationDate] = #{4}#, [DOB] = #{5}#, " +
-            "[IsAdmin] = {6}, [IsMod] = {7}, [IsSuspended] = {8}, " +
-            "[ProfilePictureDir] = '{9}', [Bio] = '{10}'";
+            "[Flags] = {2}, [Points]= {3}, [ModeratedPagesCount] = {4}, " +
+            "[CreationDate] = #{5}#, [DOB] = #{6}#, " +
+            "[IsAdmin] = {7}, [IsMod] = {8}, [IsSuspended] = {9}, " +
+            "[Bio] = '{10}'";
         sql_str += " WHERE [ID]=" + this.ID;
-        sql_str = string.Format(sql_str, this.Username, this.Password, this.Flags, this.Points,
-            this.CreationDate, this.DOB, this.IsAdmin, this.IsMod, this.IsSuspended, this.ProfilePictureDir, this.Bio);
+        sql_str = string.Format(sql_str, this.Username, this.Password, this.Flags, this.Points, this.ModeratedPagesCount,
+            this.CreationDate, this.DOB, this.IsAdmin, this.IsMod, this.IsSuspended, this.Bio);
         Dbase.ChangeTable(sql_str);
     }
 
@@ -283,8 +284,8 @@ public class UsersClass
     public DataTable GetConversationWith(int UserID)
     {
 
-        string sql_str = "SELECT * FROM [Messages] WHERE ([SenderID] = {0} AND [RecipientID] = {1})" +
-            " OR ([SenderID] = {1} AND [RecipientID] = {0}) ORDER BY [SendDate]";
+        string sql_str = "SELECT [Messages.*], [Users.Username] FROM [Messages] WHERE ([SenderID] = {0} AND [RecipientID] = {1})" +
+            " OR ([SenderID] = {1} AND [RecipientID] = {0}) INNER JOIN [Users] ON [Messages.SenderID]=[Users.ID] ORDER BY [SendDate]";
 
         sql_str = string.Format(sql_str, this.ID, UserID);
 

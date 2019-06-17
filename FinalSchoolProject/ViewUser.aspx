@@ -52,34 +52,37 @@
 
             <ul class="nav nav-tabs">
                 <li class="nav-item">
-                    <a runat="server" class="nav-link active" id="ProfileMyPostsTab" visible="false" data-post-type="submitted"
-                        onserverclick="ProfilePostsTab_ServerClick">Submitted</a>
+                    <a runat="server" class="nav-link active ProfileMyPostsTab" id="ProfileMyPostsTab" visible="false" data-post-type="submitted">Submitted</a>
                 </li>
                 <li class="nav-item">
-                    <a runat="server" class="nav-link" id="ProfileSavedPostsTab" visible="false" data-post-type="saved"
-                        onserverclick="ProfilePostsTab_ServerClick">Saved</a>
+                    <a runat="server" class="nav-link ProfileSavedPostsTab" id="ProfileSavedPostsTab" visible="false" data-post-type="saved">Saved</a>
                 </li>
                 <li class="nav-item">
-                    <a runat="server" class="nav-link" id="ProfileUpvotedPostsTab" visible="false" data-post-type="upvoted"
-                        onserverclick="ProfilePostsTab_ServerClick">Upvoted</a>
+                    <a runat="server" class="nav-link ProfileUpvotedPostsTab" id="ProfileUpvotedPostsTab" visible="false" data-post-type="upvoted">Upvoted</a>
                 </li>
                 <li class="nav-item">
-                    <a runat="server" class="nav-link" id="ProfileDownvotedPostsTab" visible="false" data-post-type="downvoted"
-                        onserverclick="ProfilePostsTab_ServerClick">Downvoted</a>
+                    <a runat="server" class="nav-link ProfileDownvotedPostsTab" id="ProfileDownvotedPostsTab" visible="false" data-post-type="downvoted">Downvoted</a>
                 </li>
                 <li class="nav-item">
-                    <a runat="server" class="nav-link" id="ProfileMessagesTab" visible="false"
-                        onserverclick="ProfileMessagesTab_ServerClick">Messages</a>
+                    <a runat="server" class="nav-link ProfileMessagesTab" id="ProfileMessagesTab" visible="false">Messages</a>
                 </li>
                 <li class="nav-item">
-                    <a runat="server" class="nav-link" id="ProfileConvoTab" visible="false"
-                        onserverclick="ProfileConvoTab_ServerClick">Conversation</a>
+                    <a runat="server" class="nav-link ProfilePostReportsTab" id="ProfilePostReportsTab" data-post-type="post_reports" visible="false">Post Reports</a>
+                </li>
+                <li class="nav-item">
+                    <a runat="server" class="nav-link ProfileCommentReportsTab" id="ProfileCommentReportsTab" data-post-type="comment_reports" visible="false">Comment Reports</a>
+                </li>
+                <li class="nav-item">
+                    <a runat="server" class="nav-link ProfileConvoTab" id="ProfileConvoTab" visible="false">Conversation</a>
+                </li>
+                <li class="nav-item">
+                    <a runat="server" class="nav-link ProfileNewMessageTab" id="ProfileNewMessageTab" visible="false">Write Message</a>
                 </li>
 
-                <li class="nav-item">
-                    <a runat="server" class="nav-link" id="ProfileNewMessageTab" visible="false"
-                        onserverclick="NewMessageTab_ServerClick">Write Message</a>
-                </li>
+                <div class="loading_spinner spinner-border text-primary ml-auto" role="status" style="display: none;">
+                    <span class="sr-only">Loading...</span>
+                </div>
+
             </ul>
 
             <div id="user_posts_space" runat="server" class="d-flex flex-column pr-3 mt-3"
@@ -130,7 +133,7 @@
 
             <div id="user_convo_space" runat="server" class="mt-3 w-100 pr-3 h-100" style="overflow-x: hidden !important; overflow-y: scroll !important;" visible="false">
 
-                <asp:Repeater ID="ProfileConvoRepeater" runat="server" OnItemDataBound="ProfileConvoRepeater_ItemDataBound">
+                <asp:Repeater ID="ProfileConvoRepeater" runat="server">
                     <ItemTemplate>
                         <div id="message_card" runat="server" class="card shadow-sm mb-3 w-100">
                             <div class="card-body">
@@ -139,7 +142,7 @@
                                 </div>
                             </div>
                             <div class="card-footer d-flex flex-row align-items-center justify-content-between py-1">
-                                <div class="text-xs"><%# UsersClass.GetByID(Convert.ToInt32(Eval("SenderID"))).Username %></div>
+                                <div class="text-xs"><%# Eval("Username") %></div>
                                 <div class="text-xs"><%# Convert.ToDateTime(Eval("SendDate")).ToString("dd/MM/yyyy HH:mm") %></div>
                             </div>
                         </div>
@@ -164,10 +167,30 @@
 
             </div>
 
+            <div id="reports_space" runat="server" class="mt-3 w-100 pr-3 h-100" style="overflow-x: hidden !important; overflow-y: scroll !important;" visible="false">
+
+                <asp:Repeater ID="reports_repeater" runat="server" OnItemDataBound="reports_repeater_ItemDataBound">
+                    <ItemTemplate>
+                        <div id="report_card" runat="server" class="card shadow-sm mb-3 w-100">
+                            <div class="card-body">
+                                <div class="card-text">
+                                    <div><%# Eval("Body") %></div>
+                                </div>
+                            </div>
+                            <div class="card-footer d-flex flex-row align-items-center justify-content-start py-1">
+                                <div class="text-md">Report By - <%# Eval("Username") %></div>
+                                <a id="ViewReportedLink" class="ml-3 mr-auto" runat="server" href="ViewPost.aspx?post-id=">view Post</a>
+                                <div class="text-xs"><%# Convert.ToDateTime(Eval("CreationDate")).ToString("dd/MM/yyyy HH:mm") %></div>
+                            </div>
+                        </div>
+                    </ItemTemplate>
+                </asp:Repeater>
+
+            </div>
+
         </div>
 
         <div id="user_space" class="card shadow-sm ml-3 d-flex flex-column h-100" style="width: 35% !important;">
-            <img src="<%= user.ProfilePictureDir %>" alt="profile picture" onerror="this.remove();" class="card-img-top" />
             <div class="card-body" id="default_user_view">
                 <h5 class="card-title mr-1">
 
@@ -219,7 +242,7 @@
                 %>
 
                 <span class="text-lg mt-3 d-block">Moderated Pages:</span>
-                <ul class="list-group pr-3" style="height: 30% !important; overflow-y: visible !important;">
+                <ul class="list-group" style="height: 30% !important; overflow-y: visible !important;">
                     <asp:Repeater ID="ModeratedPagesRepeater" runat="server">
                         <ItemTemplate>
                             <li class="list-group-item d-flex justify-content-between align-items-center"><%# Eval("PageName") %>

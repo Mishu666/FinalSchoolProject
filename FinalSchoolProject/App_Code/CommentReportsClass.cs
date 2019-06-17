@@ -111,6 +111,16 @@ public class CommentReportsClass
 
         return all;
     }
+    public static DataTable GetAllWithUserData()
+    {
+        string sql_str = "SELECT [CommentReports].*, [Users].Username, [Comments].ParentPostID FROM " +
+            "([CommentReports] INNER JOIN [Users] ON [CommentReports].ReporterID=[Users].ID) " +
+            "INNER JOIN [Comments] ON [CommentReports].ReportedCommentID = [Comments].ID";
+        DataTable all = Dbase.SelectFromTable(sql_str);
+
+        return all;
+
+    }
 
     public static CommentReportsClass GetByID(int ID)
     {

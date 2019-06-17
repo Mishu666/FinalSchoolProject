@@ -32,7 +32,7 @@
         toolbar: 'undo redo | formatselect | link bold italic forecolor backcolor emoticons | alignleft aligncenter alignright alignjustify ltr rtl | bullist numlist outdent indent | removeformat | help'
     });
 
-    $("#SendMessageButton").on("click", function (e) {
+    $("#content_space").on("click", "#SendMessageButton", function (e) {
         e.preventDefault();
 
         let msg = tinymce.activeEditor.getContent();
@@ -75,6 +75,52 @@
         e.preventDefault();
         $("#default_user_view").hide();
         $("#edit_user_view").show();
+    });
+
+
+    $("#content_space").on("click", ".ProfileMyPostsTab", function (e) {
+        window.sessionStorage.setItem("page", "submitted");
+        BindSpace(BindSpaceSuccessCallback);
+    });
+    $("#content_space").on("click", ".ProfileSavedPostsTab", function (e) {
+        window.sessionStorage.setItem("page", "saved");
+        BindSpace(BindSpaceSuccessCallback);
+
+    });
+    $("#content_space").on("click", ".ProfileUpvotedPostsTab", function (e) {
+        window.sessionStorage.setItem("page", "upvoted");
+        BindSpace(BindSpaceSuccessCallback);
+
+    });
+    $("#content_space").on("click", ".ProfileDownvotedPostsTab", function (e) {
+        window.sessionStorage.setItem("page", "downvoted");
+        BindSpace(BindSpaceSuccessCallback);
+
+    });
+    $("#content_space").on("click", ".ProfileMessagesTab", function (e) {
+        window.sessionStorage.setItem("page", "messages");
+        BindSpace(BindSpaceSuccessCallback);
+
+    });
+    $("#content_space").on("click", ".ProfilePostReportsTab", function (e) {
+        window.sessionStorage.setItem("page", "post_reports");
+        BindSpace(BindSpaceSuccessCallback);
+
+    });
+    $("#content_space").on("click", ".ProfileCommentReportsTab", function (e) {
+        window.sessionStorage.setItem("page", "comment_reports");
+        BindSpace(BindSpaceSuccessCallback);
+
+    });
+    $("#content_space").on("click", ".ProfileConvoTab", function (e) {
+        window.sessionStorage.setItem("page", "conversation");
+        BindSpace(BindSpaceSuccessCallback);
+
+    });
+    $("#content_space").on("click", ".ProfileNewMessageTab", function (e) {
+        window.sessionStorage.setItem("page", "submitted");
+        BindSpace(BindSpaceSuccessCallback);
+
     });
 
 });
@@ -193,3 +239,38 @@ function updateUserInfo(username, bio, password_confirm, new_pass, new_pass_conf
 
     });
 }
+
+//----------------------------------------------------------------------------------------------------------------------------
+
+function BindSpaceSuccessCallback(data) {
+
+    let response = $('<div />').html(data);
+    let main_space = response.find("#main_space");
+
+    $("#main_space").replaceWith(main_space);
+
+}
+
+function BindSpace(success_callback) {
+
+    let page = window.sessionStorage.getItem("page");
+
+    data = { "Page": page };
+
+    $.get("ViewUser.aspx", data, success_callback);
+
+}
+
+//----------------------------------------------------------------------------------------------------------------------------
+
+$(document).ajaxStart(function () {
+
+    $(".loading_spinner").show();
+
+});
+
+$(document).ajaxComplete(function () {
+
+    $(".loading_spinner").hide();
+
+});

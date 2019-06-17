@@ -2,6 +2,10 @@
     margin-bottom: 0;
 }
 
+#ReportPostTextArea {
+    resize: none !important;
+}
+
 /* custom scrollbar */
 
 /* width */

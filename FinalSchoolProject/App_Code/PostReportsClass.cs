@@ -111,6 +111,17 @@ public class PostReportsClass
         return all;
     }
 
+    public static DataTable GetAllWithUserData()
+    {
+        string sql_str = "SELECT [PostReports].*, [Users].Username, [Posts].ID FROM " +
+       "([PostReports] INNER JOIN [Users] ON [PostReports].ReporterID=[Users].ID) " +
+       "INNER JOIN [Posts] ON [PostReports].ReportedPostID = [Posts].ID";
+        DataTable all = Dbase.SelectFromTable(sql_str);
+
+        return all;
+
+    }
+
     public static PostReportsClass GetByID(int ID)
     {
         KeyValuePair<string, object> id_pair = new KeyValuePair<string, object>("ID", ID);

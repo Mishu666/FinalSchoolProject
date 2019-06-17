@@ -12,7 +12,6 @@ public class ConsultPagesClass
     public int ID { get; protected set; }
     public int SubscriberCount;
     public string PageName, Description;
-    public bool IsLocked;
 
     #region constructors
 
@@ -21,13 +20,12 @@ public class ConsultPagesClass
 
     }
 
-    protected ConsultPagesClass(int ID, int SubscriberCount, string PageName,string Description, bool IsLocked)
+    protected ConsultPagesClass(int ID, int SubscriberCount, string PageName,string Description)
     {
         this.ID = ID;
         this.SubscriberCount = SubscriberCount;
         this.Description = Description;
         this.PageName = PageName;
-        this.IsLocked = IsLocked;
     }
 
     public static ConsultPagesClass FromDataRow(DataRow dr)
@@ -39,7 +37,6 @@ public class ConsultPagesClass
             SubscriberCount = Convert.ToInt32(dr["SubscriberCount"]),
             PageName = dr["PageName"].ToString(),
             Description = dr["Description"].ToString(),
-            IsLocked = Convert.ToBoolean(dr["IsLocked"])
         };
         return obj;
     }
@@ -51,7 +48,6 @@ public class ConsultPagesClass
             PageName = PageName,
             SubscriberCount = 0,
             Description = "",
-            IsLocked = false
         };
         page.Insert();
         return page;
@@ -69,10 +65,10 @@ public class ConsultPagesClass
         }
 
         string sql_str = "INSERT INTO [ConsultPages] " +
-            "([SubscriberCount], [PageName], [Description], [IsLocked]) " +
+            "([SubscriberCount], [PageName], [Description]) " +
             "VALUES ({0}, '{1}', '{2}', {3}) ";
 
-        sql_str = string.Format(sql_str, this.SubscriberCount, this.PageName, this.Description, this.IsLocked);
+        sql_str = string.Format(sql_str, this.SubscriberCount, this.PageName, this.Description);
         Dbase.ChangeTable(sql_str);
 
         string get_id = "SELECT @@IDENTITY AS ID";
@@ -85,9 +81,9 @@ public class ConsultPagesClass
     public void Update()
     {
         string sql_str = "UPDATE [ConsultPages] " +
-            "SET [SubscriberCount] = {0}, [PageName] = '{1}', [IsLocked] = {2}, [Description] = '{3}'";
+            "SET [SubscriberCount] = {0}, [PageName] = '{1}', [Description] = '{2}'";
         sql_str += " WHERE [ID]=" + this.ID;
-        sql_str = string.Format(sql_str, this.SubscriberCount, this.PageName, this.IsLocked, this.Description);
+        sql_str = string.Format(sql_str, this.SubscriberCount, this.PageName, this.Description);
         Dbase.ChangeTable(sql_str);
     }
 
@@ -160,6 +156,18 @@ public class ConsultPagesClass
     public DataTable GetUsersNotInPage()
     {
         string sql = "SELECT * FROM [Users] WHERE [ID] NOT IN (SELECT [SubscriberID] FROM [Subscriptions] WHERE [PageID]=" + this.ID + ")";
+        return Dbase.SelectFromTable(sql);
+    }
+
+    public DataTable GetPageMods()
+    {
+        string sql = "SELECT * FROM [Users] WHERE [ID] IN (SELECT [ModeratorID] FROM [Moderators] WHERE [PageID]=" + this.ID + ")";
+        return Dbase.SelectFromTable(sql);
+    }
+
+    public DataTable GetPageNotMods()
+    {
+        string sql = "SELECT * FROM [Users] WHERE [ID] NOT IN (SELECT [ModeratorID] FROM [Moderators] WHERE [PageID]=" + this.ID + ")";
         return Dbase.SelectFromTable(sql);
     }
 

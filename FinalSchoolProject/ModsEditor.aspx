@@ -1,8 +1,8 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="PageMembersEditor.aspx.cs" Inherits="PageMembersEditor" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="ModsEditor.aspx.cs" Inherits="ModsEditor" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
 
-    <script type="text/javascript" src="Script/PageMembersEditor.js"></script>
+    <script type="text/javascript" src="Script/ModsEditor.js"></script>
 
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="nav_items_cph" runat="Server">
@@ -22,11 +22,11 @@
             <asp:Label ID="WarningLabel" runat="server" CssClass="text-danger" Visible="false"></asp:Label>
 
         </div>
-        <div id="ConsultPageGVSection" class="w-100 flex-grow-1 d-flex flex-row justify-content-center align-items-center">
+        <div id="GVSection" class="w-100 flex-grow-1 d-flex flex-row justify-content-center align-items-center">
 
-            <div id="UsersInPageSection" class="h-100 mr-3" style="width: 45% !important;">
+            <div id="ModsSection" class="h-100 mr-3" style="width: 45% !important;">
 
-                <asp:GridView ID="UsersInPageGV" BorderWidth="0" runat="server" AutoGenerateColumns="false" CssClass="UsersInPageGV table border w-100" style="table-layout: fixed !important;"
+                <asp:GridView ID="PageModsGV" BorderWidth="0" runat="server" AutoGenerateColumns="false" CssClass="PageModsGV table border w-100" Style="table-layout: fixed !important;"
                     GridLines="None" HeaderStyle-CssClass="thead-dark" HeaderStyle-HorizontalAlign="Center" RowStyle-HorizontalAlign="Center" ShowHeaderWhenEmpty="true">
 
                     <Columns>
@@ -49,9 +49,9 @@
                                 <asp:Label ID="UsernameLabel" runat="server" Text='<%# Eval("Username") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Kick">
+                        <asp:TemplateField HeaderText="Demote">
                             <ItemTemplate>
-                                <button type="button" class="btn btn-link KickUserButton ToggleSubscriptionButton" data-user-id='<%# Eval("ID") %>'>
+                                <button type="button" class="btn btn-link DemoteUserButton ToggleModButton" data-user-id='<%# Eval("ID") %>'>
                                     <i class="fas fa-times mr-2"></i>Kick
                                 </button>
                             </ItemTemplate>
@@ -63,19 +63,19 @@
             </div>
             <div id="MoveUsersButtonSpace" class="flex-grow-1 h-100 d-flex flex-column justify-content-start align-items-center border-left border-right">
 
-                <button type="button" class="btn btn-primary w-75 my-5" id="KickFromPageButton">
+                <button type="button" class="btn btn-primary w-75 my-5" id="DemoteMultipleButton">
                     <i class="fas fa-arrow-right"></i>
                 </button>
 
-                <button type="button" class="btn btn-primary w-75" id="IncludeInPageButton">
+                <button type="button" class="btn btn-primary w-75" id="PromoteMultipleButton">
                     <i class="fas fa-arrow-left"></i>
                 </button>
 
             </div>
 
-            <div id="UsersNotInPageSection" class="h-100 ml-3" style="width: 45% !important;">
+            <div id="NotModsSection" class="h-100 ml-3" style="width: 45% !important;">
 
-                <asp:GridView ID="UsersNotInPageGV" BorderWidth="0" runat="server" AutoGenerateColumns="false" CssClass="UsersNotInPageGV table w-100 border" style="table-layout: fixed !important;"
+                <asp:GridView ID="NotModsGV" BorderWidth="0" runat="server" AutoGenerateColumns="false" CssClass="NotModsGV table w-100 border" Style="table-layout: fixed !important;"
                     GridLines="None" HeaderStyle-CssClass="thead-dark" HeaderStyle-HorizontalAlign="Center" RowStyle-HorizontalAlign="Center" ShowHeaderWhenEmpty="true">
 
                     <Columns>
@@ -98,9 +98,9 @@
                                 <asp:Label ID="UsernameLabel" runat="server" Text='<%# Eval("Username") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Include">
+                        <asp:TemplateField HeaderText="Promote">
                             <ItemTemplate>
-                                <button type="button" class="btn btn-link InclueUserButton ToggleSubscriptionButton" data-user-id='<%# Eval("ID") %>'>
+                                <button type="button" class="btn btn-link PromoteUserButton ToggleModButton" data-user-id='<%# Eval("ID") %>'>
                                     <i class="fas fa-plus mr-2"></i>Include
                                 </button>
                             </ItemTemplate>
@@ -112,5 +112,6 @@
         </div>
 
     </div>
+
 </asp:Content>
 

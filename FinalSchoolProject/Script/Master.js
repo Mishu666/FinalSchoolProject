@@ -34,11 +34,7 @@ $(document).ready(function () {
         logoutUser(logoutUserSuccess);
     });
 
-    $("#loginModal").on("hidden.bs.modal", function (e) {
-        resetForm();
-    });
-
-    $("#signupModal").on("hidden.bs.modal", function (e) {
+    $(".modal").on("hidden.bs.modal", function (e) {
         resetForm();
     });
 
